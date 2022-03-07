@@ -294,9 +294,6 @@ const main = async () => {
     bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot started`);
   }
 
-  setTimeout(sendIntro, 10000);
-  setTimeout(sendReminder, 20000);
-
   cron.schedule('0 12 * * 0', () => {
     sendIntro();
   });
