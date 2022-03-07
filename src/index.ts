@@ -302,8 +302,17 @@ const main = async () => {
     sendReminder();
   });
 
-  process.once('SIGINT', () => bot.stop('SIGINT'));
-  process.once('SIGTERM', () => bot.stop('SIGTERM'));
+  process.once('SIGINT', () => {
+    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT`);
+
+    bot.stop('SIGINT');
+  });
+
+  process.once('SIGTERM', () => {
+    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM`);
+
+    bot.stop('SIGTERM');
+  });
 };
 
 main();

@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "esModuleInterop": true
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "strict": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
