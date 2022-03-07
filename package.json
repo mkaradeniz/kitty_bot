@@ -1,7 +1,7 @@
 {
-  "name": "random_time_sheet_generator",
+  "name": "kitty_bot",
   "version": "1.0.0",
-  "description": "Generate random time sheets and send them as an email.",
+  "description": "A Telegram bot to help Kitty organize our pub quiz participation.",
   "author": "Max Karadeniz <max@karadeniz.io>",
   "license": "MIT",
   "main": "dist/index.js",

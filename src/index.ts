@@ -2,7 +2,7 @@ require('dotenv').config();
 
 import pluralize from 'pluralize';
 import { Telegraf } from 'telegraf';
-import { addDays, isAfter, endOfDay, format, getISODay } from 'date-fns';
+import { isAfter, format, getISODay } from 'date-fns';
 import { uniqBy } from 'lodash';
 
 import envConfig from './config/env';
@@ -10,8 +10,8 @@ import findNextWednesday from './utils/date/findNextWednesday';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 
 // Types
-import { DayOfWeek } from './types';
 import { ChatMember } from 'telegraf/typings/core/types/typegram';
+import { DayOfWeek } from './types';
 
 const bot = new Telegraf(envConfig.botToken);
 
@@ -37,11 +37,24 @@ const getPlayersCount = () => {
   return state.players.length + state.playersExternal.length;
 };
 
+const resetState = () => {
+  state = {
+    isIntroSent: false,
+    isLineupComplete: false,
+    isReminder1Sent: false,
+    players: [],
+    playersExternal: [],
+    quizDate: findNextWednesday(),
+  };
+};
+
 const LINEUP_COMPLETE = `🍻 We did it! Our lineup is complete! 🍻`;
 const TUTORIAL_LINE_1 = `Send a 👆 if you're in.`;
 const TUTORIAL_LINE_2 = `If you're bringing others, post how many with 1️⃣2️⃣3️⃣4️⃣5️⃣.`;
 const TUTORIAL_LINE_3 = `Write <code>!lineup</code> to see the current list of players for this week.`;
 const TUTORIAL_LINE_4 = `Write <code>!final</code> to finalize this week's lineup.`;
+
+// TODO: SCOPE STATE TO CHAT ID
 
 bot.use(async (ctx, next) => {
   const chatId = ctx?.message?.chat.id;
@@ -49,21 +62,12 @@ bot.use(async (ctx, next) => {
   if (!isNotNullOrUndefined(chatId)) {
     await next();
 
-    console.timeEnd(`Processing update ${ctx.update.update_id}`);
-
     return;
   }
 
   if (isAfter(new Date(), state.quizDate)) {
     // Reset State
-    state = {
-      isIntroSent: false,
-      isLineupComplete: false,
-      isReminder1Sent: false,
-      players: [],
-      playersExternal: [],
-      quizDate: findNextWednesday(),
-    };
+    resetState();
   }
 
   const dayOfWeek = getISODay(new Date());
@@ -101,9 +105,29 @@ bot.use(async (ctx, next) => {
   await next();
 });
 
-bot.start(ctx => {
-  ctx.telegram.sendMessage(ctx.message.chat.id, 'Started');
+bot.start(async ctx => {
+  console.log('hi!');
+  await ctx.telegram.sendMessage(envConfig.adminUserId, 'Started');
+  console.log('hi?');
 });
+
+// const bla = async () => {
+//   if (isNotNullOrUndefined(bot.context)) {
+//     if (getPlayersCount() === 8) {
+//       await bot.context.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+
+//       const lineup = state.players
+//         .slice()
+//         .sort((a, b) => b.user.first_name.localeCompare(a.user.first_name))
+//         .map(player => player.user.first_name)
+//         .join(',');
+
+//       await bot.context.telegram.sendMessage(chatId, `Our lineup for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>: ${lineup}.`, {
+//         parse_mode: 'HTML',
+//       });
+//     }
+//   }
+// };
 
 bot.hears(new RegExp('([👆])'), async ctx => {
   const dayOfWeek = getISODay(new Date());
@@ -138,6 +162,8 @@ bot.hears(new RegExp('([👆])'), async ctx => {
       { parse_mode: 'HTML' },
     );
   }
+
+  // bla();
 
   if (getPlayersCount() === 8) {
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
@@ -210,6 +236,10 @@ bot.hears('!final', async ctx => {
   await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>: ${lineup}.`, {
     parse_mode: 'HTML',
   });
+});
+
+bot.hears('!restart', async ctx => {
+  resetState();
 });
 
 bot.launch();
