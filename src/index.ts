@@ -16,7 +16,7 @@ import { DayOfWeek } from './types';
 import contextMiddleware, { KittyBotContext } from './middleware/contextMiddleware';
 import stateMiddleware from './middleware/stateMiddleware';
 import { LINEUP_COMPLETE } from './config/texts';
-import getNumberOfInviteesFromEmoji from './utils/emoji/getNumberOfInviteesFromEmoji';
+import getNumberOfInviteesFromEmoji from './utils/state/getNumberOfInviteesFromEmoji';
 
 const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 
