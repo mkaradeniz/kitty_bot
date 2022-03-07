@@ -7,18 +7,8 @@ import { Message, Update, User } from 'telegraf/typings/core/types/typegram';
 
 export interface KittyBotContext extends Context {
   myContext: {
-    addPlayer: (chatId: number, user: User) => void;
-    addPlayersExternal: (chatId: number, invitedBy: User, numberOfInvitees: number) => void;
     chatId: number;
-    getLineup: (chatId: number) => string;
-    getPlayerCount: (chatId: number) => number;
-    getQuizDate: (chatId: number) => string;
-    isUserPlayingAlready: (chatId: number, userId: number) => boolean;
     message?: Update.New & Update.NonChannel & Message.TextMessage;
-    resetState: (chatId: number) => void;
-    setIntroSent: (chatId: number) => void;
-    setLineupComplete: (chatId: number) => void;
-    setReminder1Sent: (chatId: number) => void;
     state: { [chatId: number]: KittyBotState };
     user?: User;
   };
