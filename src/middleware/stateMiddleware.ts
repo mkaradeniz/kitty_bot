@@ -19,11 +19,7 @@ export interface KittyBotState {
   quizDate: Date;
 }
 
-export interface State {
-  [chatId: number]: KittyBotState;
-}
-
-let state: State = {};
+let state: { [chatId: number]: KittyBotState } = {};
 
 const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => {
   const addPlayer = (chatId: number, user: User) => {
