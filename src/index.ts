@@ -11,99 +11,60 @@ import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 
 // Types
 import { ChatMember } from 'telegraf/typings/core/types/typegram';
+import { Context } from 'telegraf';
 import { DayOfWeek } from './types';
+import contextMiddleware, { KittyBotContext } from './middleware/contextMiddleware';
+import stateMiddleware from './middleware/stateMiddleware';
+import { LINEUP_COMPLETE } from './config/texts';
+import getNumberOfInviteesFromEmoji from './utils/emoji/getNumberOfInviteesFromEmoji';
 
-const bot = new Telegraf(envConfig.botToken);
+const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 
-type State = {
-  isIntroSent: boolean;
-  isLineupComplete: boolean;
-  isReminder1Sent: boolean;
-  players: ChatMember[];
-  playersExternal: { invitedBy: ChatMember }[];
-  quizDate: Date;
-};
+// Setup
+bot.use(contextMiddleware);
 
-let state: State = {
-  isIntroSent: false,
-  isLineupComplete: false,
-  isReminder1Sent: false,
-  players: [],
-  playersExternal: [],
-  quizDate: findNextWednesday(),
-};
+// State Management
+bot.use(stateMiddleware);
 
-const getPlayersCount = () => {
-  return state.players.length + state.playersExternal.length;
-};
+// bot.use(async (ctx, next) => {
+//   const { chatId } = ctx.myContext;
 
-const resetState = () => {
-  state = {
-    isIntroSent: false,
-    isLineupComplete: false,
-    isReminder1Sent: false,
-    players: [],
-    playersExternal: [],
-    quizDate: findNextWednesday(),
-  };
-};
+//   const dayOfWeek = getISODay(new Date());
 
-const LINEUP_COMPLETE = `🍻 We did it! Our lineup is complete! 🍻`;
-const TUTORIAL_LINE_1 = `Send a 👆 if you're in.`;
-const TUTORIAL_LINE_2 = `If you're bringing others, post how many with 1️⃣2️⃣3️⃣4️⃣5️⃣.`;
-const TUTORIAL_LINE_3 = `Write <code>!lineup</code> to see the current list of players for this week.`;
-const TUTORIAL_LINE_4 = `Write <code>!final</code> to finalize this week's lineup.`;
+//   // TODO: This does need to be timed somehow, otherwise we would need to write something on sunday so it triggers
+//   if (dayOfWeek === DayOfWeek.Sunday) {
+//     if (!state.isIntroSent) {
+//       await ctx.telegram.sendMessage(chatId, `🍻 QUIZZY TIME 🍻`);
+//       await ctx.telegram.sendMessage(chatId, `Who's in for quizzy on the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>?`, {
+//         parse_mode: 'HTML',
+//       });
+//       await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_1);
+//       await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_2);
+//       await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_3, { parse_mode: 'HTML' });
+//       await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_4, { parse_mode: 'HTML' });
+
+//       state.isIntroSent = true;
+//     }
+//   }
+
+//   if (dayOfWeek === DayOfWeek.Monday) {
+//     if (!state.isLineupComplete && !state.isReminder1Sent) {
+//       if (getPlayersCount() < 8) {
+//         await ctx.telegram.sendMessage(chatId, `🍻 REMINDER: We still have empty spots! 🍻`);
+//         await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_1);
+//         await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_2);
+//         await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_3, { parse_mode: 'HTML' });
+//         await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_4, { parse_mode: 'HTML' });
+
+//         state.isReminder1Sent = true;
+//       }
+//     }
+//   }
+
+//   return next();
+// });
 
 // TODO: SCOPE STATE TO CHAT ID
-
-bot.use(async (ctx, next) => {
-  const chatId = ctx?.message?.chat.id;
-
-  if (!isNotNullOrUndefined(chatId)) {
-    await next();
-
-    return;
-  }
-
-  if (isAfter(new Date(), state.quizDate)) {
-    // Reset State
-    resetState();
-  }
-
-  const dayOfWeek = getISODay(new Date());
-
-  // TODO: This does need to be timed somehow, otherwise we would need to write something on sunday so it triggers
-  if (dayOfWeek === DayOfWeek.Sunday) {
-    if (!state.isIntroSent) {
-      await ctx.telegram.sendMessage(chatId, `🍻 QUIZZY TIME 🍻`);
-      await ctx.telegram.sendMessage(chatId, `Who's in for quizzy on the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>?`, {
-        parse_mode: 'HTML',
-      });
-      await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_1);
-      await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_2);
-      await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_3, { parse_mode: 'HTML' });
-      await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_4, { parse_mode: 'HTML' });
-
-      state.isIntroSent = true;
-    }
-  }
-
-  if (dayOfWeek === DayOfWeek.Monday) {
-    if (!state.isLineupComplete && !state.isReminder1Sent) {
-      if (getPlayersCount() < 8) {
-        await ctx.telegram.sendMessage(chatId, `🍻 REMINDER: We still have empty spots! 🍻`);
-        await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_1);
-        await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_2);
-        await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_3, { parse_mode: 'HTML' });
-        await ctx.telegram.sendMessage(chatId, TUTORIAL_LINE_4, { parse_mode: 'HTML' });
-
-        state.isReminder1Sent = true;
-      }
-    }
-  }
-
-  await next();
-});
 
 bot.start(async ctx => {
   console.log('hi!');
@@ -111,135 +72,157 @@ bot.start(async ctx => {
   console.log('hi?');
 });
 
-// const bla = async () => {
-//   if (isNotNullOrUndefined(bot.context)) {
-//     if (getPlayersCount() === 8) {
-//       await bot.context.telegram.sendMessage(chatId, LINEUP_COMPLETE);
-
-//       const lineup = state.players
-//         .slice()
-//         .sort((a, b) => b.user.first_name.localeCompare(a.user.first_name))
-//         .map(player => player.user.first_name)
-//         .join(',');
-
-//       await bot.context.telegram.sendMessage(chatId, `Our lineup for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>: ${lineup}.`, {
-//         parse_mode: 'HTML',
-//       });
-//     }
-//   }
-// };
-
-bot.hears(new RegExp('([👆])'), async ctx => {
+bot.hears(new RegExp('([1️⃣,2️⃣,3️⃣,4️⃣,5️⃣])'), async ctx => {
   const dayOfWeek = getISODay(new Date());
 
   if (dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
     return;
   }
 
-  const chatId = ctx.message.chat.id;
-  const userId = ctx.message.from.id;
+  const { addPlayersExternal, chatId, getQuizDate, getLineup, message, getPlayerCount, user } = ctx.myContext;
 
-  // User is already playing in this week's quiz.
-  if (state.players.findIndex(participant => participant.user.id === userId) > -1) {
+  const lineup = getLineup(chatId);
+
+  const quizDate = getQuizDate(chatId);
+  const userId = ctx.myContext.user?.id;
+
+  if (!isNotNullOrUndefined(user) || !isNotNullOrUndefined(userId)) {
     return;
   }
 
-  const user = await ctx.telegram.getChatMember(chatId, userId);
+  const numberOfInvitees = getNumberOfInviteesFromEmoji(message?.text);
 
-  const nextPlayers = uniqBy([...state.players, user], participant => participant.user.id);
+  if (numberOfInvitees === 0) {
+    return;
+  }
 
-  state.players = nextPlayers;
+  addPlayersExternal(chatId, user, numberOfInvitees);
 
-  await ctx.telegram.sendMessage(chatId, `${ctx.message.from.first_name} is in! 🍺`);
+  await ctx.telegram.sendMessage(chatId, `${user.first_name} invited ${numberOfInvitees} ${pluralize('player', numberOfInvitees)}! 🍺`);
 
-  if (getPlayersCount() < 8) {
+  const playerCount = getPlayerCount(chatId);
+
+  if (playerCount < 8) {
     await ctx.telegram.sendMessage(
       chatId,
-      `We have <b>${getPlayersCount()}</b> ${pluralize('player', getPlayersCount())} confirmed for the <b>${format(
-        state.quizDate,
-        `do 'of' MMMM`,
-      )}</B>.`,
+      `We have <b>${playerCount}</b> ${pluralize('player', playerCount)} confirmed for the <b>${quizDate}</B>.`,
       { parse_mode: 'HTML' },
     );
   }
 
-  // bla();
-
-  if (getPlayersCount() === 8) {
+  if (playerCount >= 8) {
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
 
-    const lineup = state.players
-      .slice()
-      .sort((a, b) => b.user.first_name.localeCompare(a.user.first_name))
-      .map(player => player.user.first_name)
-      .join(',');
+    await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
+  }
+});
 
-    await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>: ${lineup}.`, {
-      parse_mode: 'HTML',
-    });
+bot.hears(new RegExp('(👆)'), async ctx => {
+  const dayOfWeek = getISODay(new Date());
+
+  if (dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
+    return;
+  }
+
+  const { addPlayer, chatId, getQuizDate, getLineup, isUserPlayingAlready, getPlayerCount, user } = ctx.myContext;
+
+  const lineup = getLineup(chatId);
+  const quizDate = getQuizDate(chatId);
+  const userId = ctx.myContext.user?.id;
+
+  if (!isNotNullOrUndefined(user) || !isNotNullOrUndefined(userId)) {
+    return;
+  }
+
+  // User is already playing in this week's quiz.
+  if (isUserPlayingAlready(chatId, userId)) {
+    return;
+  }
+
+  addPlayer(chatId, user);
+
+  await ctx.telegram.sendMessage(chatId, `${user.first_name} is in! 🍺`);
+
+  const playerCount = getPlayerCount(chatId);
+
+  if (playerCount < 8) {
+    await ctx.telegram.sendMessage(
+      chatId,
+      `We have <b>${playerCount}</b> ${pluralize('player', playerCount)} confirmed for the <b>${quizDate}</B>.`,
+      { parse_mode: 'HTML' },
+    );
+  }
+
+  if (playerCount >= 8) {
+    await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+
+    const lineup = getLineup(chatId);
+
+    await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${quizDate}</B>: ${lineup}.`, { parse_mode: 'HTML' });
+    await ctx.telegram.sendMessage(chatId, `Total: ${playerCount}`);
+  }
+
+  if (playerCount > 2) {
+    await ctx.telegram.sendMessage(chatId, `Oh oh, we're overbooked. What now?`);
   }
 });
 
 bot.hears('!lineup', async ctx => {
-  const chatId = ctx.message.chat.id;
+  const { chatId, getLineup, getPlayerCount, getQuizDate, state } = ctx.myContext;
 
-  if (!isNotNullOrUndefined(state)) {
-    return;
-  }
+  const playerCount = getPlayerCount(chatId);
+  const quizDate = getQuizDate(chatId);
 
-  if (state.players.length === 0) {
-    await ctx.telegram.sendMessage(
-      chatId,
-      `We have no confirmed players for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B> at the moment.`,
-      { parse_mode: 'HTML' },
-    );
+  if (playerCount === 0) {
+    await ctx.telegram.sendMessage(chatId, `We have no confirmed players for the <b>${quizDate}</B> at the moment.`, {
+      parse_mode: 'HTML',
+    });
 
     return;
   }
 
-  await ctx.telegram.sendMessage(chatId, `Confirmed for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B> are:`, { parse_mode: 'HTML' });
+  const lineup = getLineup(chatId);
 
-  for (const participant of state.players.slice().sort((a, b) => b.user.first_name.localeCompare(a.user.first_name))) {
-    await ctx.telegram.sendMessage(chatId, `${participant.user.first_name}`);
-  }
+  await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
 
-  await ctx.telegram.sendMessage(chatId, `Total: ${state.players.length}`);
-
-  if (state.isLineupComplete) {
+  if (state[chatId].isLineupComplete) {
     await ctx.telegram.sendMessage(chatId, `This lineup is final.`);
   }
 });
 
+//
+// !final
+//
+
 bot.hears('!final', async ctx => {
-  const chatId = ctx.message.chat.id;
+  const { chatId, getLineup, getPlayerCount, getQuizDate, setLineupComplete } = ctx.myContext;
 
-  if (!isNotNullOrUndefined(state)) {
-    return;
-  }
-
-  if (getPlayersCount() === 0) {
+  if (getPlayerCount(chatId) === 0) {
     await ctx.telegram.sendMessage(chatId, `Are you sure? We have no players yet.`);
 
     return;
   }
 
-  state.isLineupComplete = true;
+  setLineupComplete(chatId);
 
   await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
 
-  const lineup = state.players
-    .slice()
-    .sort((a, b) => b.user.first_name.localeCompare(a.user.first_name))
-    .map(player => player.user.first_name)
-    .join(',');
+  const lineup = getLineup(chatId);
+  const quizDate = getQuizDate(chatId);
 
-  await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${format(state.quizDate, `do 'of' MMMM`)}</B>: ${lineup}.`, {
-    parse_mode: 'HTML',
-  });
+  await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${quizDate}</B>: ${lineup}.`, { parse_mode: 'HTML' });
 });
 
-bot.hears('!restart', async ctx => {
-  resetState();
+//
+// !reset
+//
+
+bot.hears('!reset', async ctx => {
+  const { chatId, resetState } = ctx.myContext;
+
+  resetState(chatId);
+
+  await ctx.telegram.sendMessage(chatId, `State was reset.`);
 });
 
 bot.launch();
