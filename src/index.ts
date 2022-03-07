@@ -20,6 +20,8 @@ import getNumberOfInviteesFromEmoji from './utils/emoji/getNumberOfInviteesFromE
 
 const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 
+// TODO: I'm out
+
 // Setup
 bot.use(contextMiddleware);
 

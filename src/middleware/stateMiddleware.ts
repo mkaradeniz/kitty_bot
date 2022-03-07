@@ -1,12 +1,14 @@
+import pluralize from 'pluralize';
 import { format, isAfter } from 'date-fns';
 
 import findNextWednesday from '../utils/date/findNextWednesday';
+import getExternalPlayersMap from '../utils/state/getExternalPlayersMap';
+import getInvitorNameById from '../utils/state/getInvitorNameById';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 
 // Types
-import { ChatMember, User } from 'telegraf/typings/core/types/typegram';
 import { KittyBotContext } from './contextMiddleware';
-import pluralize from 'pluralize';
+import { User } from 'telegraf/typings/core/types/typegram';
 
 export interface KittyBotState {
   isIntroSent: boolean;
@@ -17,7 +19,11 @@ export interface KittyBotState {
   quizDate: Date;
 }
 
-let state: { [chatId: number]: KittyBotState } = {};
+export interface State {
+  [chatId: number]: KittyBotState;
+}
+
+let state: State = {};
 
 const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => {
   const addPlayer = (chatId: number, user: User) => {
@@ -39,19 +45,7 @@ const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) 
   const getLineup = (chatId: number) => {
     const playerCount = getPlayerCount(chatId);
 
-    const externalPlayersMap = state[chatId].playersExternal.reduce((externalPlayersMap, externalPlayer) => {
-      if (!isNotNullOrUndefined(externalPlayersMap[externalPlayer.invitedBy.id])) {
-        return {
-          ...externalPlayersMap,
-          [externalPlayer.invitedBy.id]: 1,
-        };
-      }
-
-      return {
-        ...externalPlayersMap,
-        [externalPlayer.invitedBy.id]: externalPlayersMap[externalPlayer.invitedBy.id] + 1,
-      };
-    }, {} as { [invitedByFirstName: string]: number });
+    const externalPlayersMap = getExternalPlayersMap(state[chatId]);
 
     const players = state[chatId].players
       .slice()
@@ -59,26 +53,25 @@ const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) 
       .map(player => `🥒🐭 ${player.first_name}`)
       .join('\n');
 
-    const getInvitorNameById = (invatorId: string) => {
-      return state[chatId].playersExternal.find(externalPlayer => externalPlayer.invitedBy.id === Number.parseInt(invatorId))?.invitedBy
-        .first_name;
-    };
-
     const externalPlayers = Object.entries(externalPlayersMap)
-      .map(
-        ([invitedBy, numberOfInvites]) =>
-          `\n + ${numberOfInvites} ${pluralize('random', numberOfInvites)} (invited by ${getInvitorNameById(invitedBy)})`,
-      )
+      .map(([invitedBy, numberOfInvites]) => {
+        if (state[chatId].players.length === 0) {
+          return `${numberOfInvites} ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(invitedBy, state[chatId])})`;
+        }
+
+        return `\n + ${numberOfInvites} ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(
+          invitedBy,
+          state[chatId],
+        )})`;
+      })
       .join('\n');
 
-    const lineup2 = [players, externalPlayers].join(' ');
+    const lineup = [players, externalPlayers].join(' ').trim();
 
-    const lineup = `Our lineup for the <b>${getQuizDate(chatId)}</B>\n${lineup2}\nTotal: ${playerCount} ${pluralize(
+    return `🍻 Our lineup for the <b>${getQuizDate(chatId)}</B> 🍻\n\n${lineup}\n\n${playerCount} ${pluralize(
       'player',
       playerCount,
-    )}`;
-
-    return lineup;
+    )} in total`;
   };
 
   const getPlayerCount = (chatId: number) => {
