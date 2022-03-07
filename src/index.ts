@@ -303,13 +303,17 @@ const main = async () => {
   });
 
   process.once('SIGINT', () => {
-    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT`);
+    if (envConfig.isProduction) {
+      bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT`);
+    }
 
     bot.stop('SIGINT');
   });
 
   process.once('SIGTERM', () => {
-    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM`);
+    if (envConfig.isProduction) {
+      bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM`);
+    }
 
     bot.stop('SIGTERM');
   });
