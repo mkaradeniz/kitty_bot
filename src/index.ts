@@ -8,6 +8,7 @@ import { getISODay } from 'date-fns';
 import contextMiddleware from './middleware/contextMiddleware';
 import envConfig from './config/env';
 import getNumberOfInviteesFromEmoji from './utils/state/getNumberOfInviteesFromEmoji';
+import getRandomHelloGif from './utils/misc/getRandomHelloGif';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 import sendLineupEmail from './utils/email/sendLineupEmail';
 import stateMiddleware, {
@@ -31,7 +32,6 @@ import { LINEUP_COMPLETE, OVERBOOKED, TUTORIAL_LINE_1, TUTORIAL_LINE_2, TUTORIAL
 // Types
 import { DayOfWeek } from './types';
 import { KittyBotContext } from './middleware/contextMiddleware';
-import getRandomHelloGif from './utils/misc/getRandomHelloGif';
 
 const MAX_PLAYERS = 8;
 
