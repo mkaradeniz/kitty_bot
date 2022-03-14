@@ -1,5 +1,9 @@
 const getNumberOfInviteesFromEmoji = (emoji?: string | null) => {
   switch (emoji) {
+    case '0️⃣': {
+      return 0;
+    }
+
     case '1️⃣': {
       return 1;
     }
@@ -20,8 +24,24 @@ const getNumberOfInviteesFromEmoji = (emoji?: string | null) => {
       return 5;
     }
 
+    case '5️⃣': {
+      return 5;
+    }
+
+    case '6️⃣': {
+      return 6;
+    }
+
+    case '7️⃣': {
+      return 7;
+    }
+
+    case '8️⃣': {
+      return 8;
+    }
+
     default: {
-      return 0;
+      return -1;
     }
   }
 };

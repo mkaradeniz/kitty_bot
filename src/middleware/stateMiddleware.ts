@@ -11,11 +11,10 @@ import { KittyBotContext } from './contextMiddleware';
 import { User } from 'telegraf/typings/core/types/typegram';
 
 export interface KittyBotState {
-  isIntroSent: boolean;
-  isLineupComplete: boolean;
-  isReminder1Sent: boolean;
+  isEmailSent: boolean;
   players: User[];
   playersExternal: { invitedBy: User }[];
+  playersOut: User[];
   quizDate: Date;
 }
 
@@ -23,8 +22,10 @@ let state: { [chatId: number]: KittyBotState } = {};
 
 export const addPlayer = (chatId: number, user: User) => {
   const nextPlayers = [...state[chatId].players.filter(player => player.id !== user.id), user];
+  const nextPlayersOut = [...state[chatId].players.filter(player => player.id !== user.id)];
 
   state[chatId].players = nextPlayers;
+  state[chatId].playersOut = nextPlayersOut;
 };
 
 export const addPlayersExternal = (chatId: number, invitedBy: User, numberOfInvitees: number) => {
@@ -39,14 +40,23 @@ export const addPlayersExternal = (chatId: number, invitedBy: User, numberOfInvi
 
 export const getLineup = (chatId: number) => {
   const playerCount = getPlayerCount(chatId);
+  const playerOutCount = getPlayerOutCount(chatId);
 
   const externalPlayersMap = getExternalPlayersMap(state[chatId]);
 
   const players = state[chatId].players
     .slice()
     .sort((a, b) => b.first_name.localeCompare(a.first_name))
-    .map(player => `🥒🐭 ${player.first_name}`)
+    .map(player => `🥒🐭 <b>${player.first_name}</b>`)
     .join('\n');
+
+  const playersOut = state[chatId].playersOut
+    .slice()
+    .sort((a, b) => b.first_name.localeCompare(a.first_name))
+    .map(player => `${player.first_name}`)
+    .join(',');
+
+  const playersOutText = playerOutCount > 0 ? `\n${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
 
   const externalPlayers =
     state[chatId].playersExternal.length > 0
@@ -71,7 +81,7 @@ export const getLineup = (chatId: number) => {
 
   const total = `\n<b>${playerCount}</b> ${pluralize('player', playerCount)} in total`;
 
-  const lineup = [players, externalPlayers, total]
+  const lineup = [players, externalPlayers, playersOutText, total]
     .filter(isNotNullOrUndefined)
     .join('\n')
     .trim();
@@ -83,51 +93,64 @@ export const getPlayerCount = (chatId: number) => {
   return state[chatId].players.length + state[chatId].playersExternal.length;
 };
 
+export const getPlayerOutCount = (chatId: number) => {
+  return state[chatId].playersOut.length;
+};
+
 export const getQuizDate = (chatId: number) => {
   const quizDate = format(state[chatId].quizDate, `do 'of' MMMM`);
 
   return quizDate;
 };
 
+export const playerHasInvitations = (chatId: number, invitedBy: User) => {
+  const hasInvitations = state[chatId].playersExternal.some(externalPlayer => externalPlayer.invitedBy.id === invitedBy.id);
+
+  return hasInvitations;
+};
+
+export const isEmailSent = (chatId: number) => {
+  return state[chatId].isEmailSent;
+};
+
+export const isStateDefined = (chatId: number) => {
+  return isNotNullOrUndefined(state[chatId]);
+};
+
 export const isUserPlayingAlready = (chatId: number, userId: number) => {
   return state[chatId].players.findIndex(player => player.id === userId) > -1;
 };
 
+export const isUserOutAlready = (chatId: number, userId: number) => {
+  return state[chatId].playersOut.findIndex(player => player.id === userId) > -1;
+};
+
 export const removePlayer = (chatId: number, user: User) => {
   const nextPlayers = [...state[chatId].players.filter(player => player.id !== user.id)];
+  const nextPlayersOut = [...state[chatId].players.filter(player => player.id !== user.id), user];
 
   state[chatId].players = nextPlayers;
+  state[chatId].playersOut = nextPlayersOut;
 };
 
 export const resetState = (chatId: number) => {
   state = {
     [chatId]: {
-      isIntroSent: false,
-      isLineupComplete: false,
-      isReminder1Sent: false,
+      isEmailSent: false,
       players: [],
       playersExternal: [],
-      quizDate: findNextWednesday(),
+      playersOut: [],
+      quizDate: findNextWednesday(new Date()),
     },
   };
 };
 
-export const setIntroSent = (chatId: number) => {
-  state[chatId].isIntroSent = true;
-};
-
-export const setLineupComplete = (chatId: number) => {
-  state[chatId].isLineupComplete = true;
-};
-
-export const setReminder1Sent = (chatId: number) => {
-  state[chatId].isReminder1Sent = true;
+export const setEmailSent = (chatId: number) => {
+  state[chatId].isEmailSent = true;
 };
 
 const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => {
-  ctx.myContext.state = state;
-
-  if (!isNotNullOrUndefined(ctx.myContext?.state?.[ctx.myContext.chatId])) {
+  if (!isNotNullOrUndefined(state[ctx.myContext.chatId])) {
     resetState(ctx.myContext.chatId);
   }
 

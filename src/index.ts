@@ -9,22 +9,29 @@ import contextMiddleware from './middleware/contextMiddleware';
 import envConfig from './config/env';
 import getNumberOfInviteesFromEmoji from './utils/state/getNumberOfInviteesFromEmoji';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
+import sendLineupEmail from './utils/email/sendLineupEmail';
 import stateMiddleware, {
   addPlayer,
   addPlayersExternal,
   getLineup,
   getPlayerCount,
+  getPlayerOutCount,
   getQuizDate,
+  isEmailSent,
+  isStateDefined,
+  isUserOutAlready,
   isUserPlayingAlready,
+  playerHasInvitations,
   removePlayer,
   resetState,
-  setLineupComplete,
+  setEmailSent,
 } from './middleware/stateMiddleware';
 import { LINEUP_COMPLETE, OVERBOOKED, TUTORIAL_LINE_1, TUTORIAL_LINE_2, TUTORIAL_LINE_3, TUTORIAL_LINE_4 } from './config/texts';
 
 // Types
 import { DayOfWeek } from './types';
 import { KittyBotContext } from './middleware/contextMiddleware';
+import getRandomHelloGif from './utils/misc/getRandomHelloGif';
 
 const MAX_PLAYERS = 8;
 
@@ -35,7 +42,7 @@ bot.use(contextMiddleware);
 bot.use(stateMiddleware);
 
 // Commands
-bot.hears(new RegExp('([1️⃣,2️⃣,3️⃣,4️⃣,5️⃣])'), async ctx => {
+bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), async ctx => {
   const dayOfWeek = getISODay(new Date());
 
   if (dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
@@ -53,13 +60,25 @@ bot.hears(new RegExp('([1️⃣,2️⃣,3️⃣,4️⃣,5️⃣])'), async ctx =
 
   const numberOfInvitees = getNumberOfInviteesFromEmoji(message?.text);
 
-  if (numberOfInvitees === 0) {
+  if (numberOfInvitees === -1) {
     return;
   }
 
-  addPlayersExternal(chatId, user, numberOfInvitees);
+  if (numberOfInvitees === 0) {
+    if (!playerHasInvitations(chatId, user)) {
+      return;
+    }
 
-  await ctx.telegram.sendMessage(chatId, `${user.first_name} invited ${numberOfInvitees} ${pluralize('player', numberOfInvitees)}! 🍺`);
+    await ctx.telegram.sendMessage(chatId, `<b>${user.first_name}</b> revoked their previous invitations! 🧂`, { parse_mode: 'HTML' });
+  } else {
+    await ctx.telegram.sendMessage(
+      chatId,
+      `<b>${user.first_name}</b> invited <b>${numberOfInvitees}</b> ${pluralize('player', numberOfInvitees)}! 🍺`,
+      { parse_mode: 'HTML' },
+    );
+  }
+
+  addPlayersExternal(chatId, user, numberOfInvitees);
 
   const playerCount = getPlayerCount(chatId);
 
@@ -107,7 +126,7 @@ bot.hears(new RegExp('(👍)'), async ctx => {
 
   addPlayer(chatId, user);
 
-  await ctx.telegram.sendMessage(chatId, `🥒🐭 ${user.first_name} is in! 🍺`);
+  await ctx.telegram.sendMessage(chatId, `🥒🐭 <b>${user.first_name}</b> is in! 🍺`, { parse_mode: 'HTML' });
 
   const playerCount = getPlayerCount(chatId);
 
@@ -155,13 +174,13 @@ bot.hears(new RegExp('(👎)'), async ctx => {
   }
 
   // User is already playing in this week's quiz.
-  if (!isUserPlayingAlready(chatId, userId)) {
+  if (isUserOutAlready(chatId, userId)) {
     return;
   }
 
   removePlayer(chatId, user);
 
-  await ctx.telegram.sendMessage(chatId, `🥒🐭 ${user.first_name} is out! 🧂`);
+  await ctx.telegram.sendMessage(chatId, `🥒🐭 <b>${user.first_name}</b> is out! 🧂`, { parse_mode: 'HTML' });
 
   const playerCount = getPlayerCount(chatId);
 
@@ -176,8 +195,6 @@ bot.hears(new RegExp('(👎)'), async ctx => {
   if (playerCount >= MAX_PLAYERS) {
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
 
-    setLineupComplete(chatId);
-
     const lineup = getLineup(chatId);
 
     await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${quizDate}</B>: ${lineup}.`, { parse_mode: 'HTML' });
@@ -189,8 +206,56 @@ bot.hears(new RegExp('(👎)'), async ctx => {
   }
 });
 
+bot.hears(new RegExp('hallöchen', 'i'), async ctx => {
+  const { chatId, message, user } = ctx.myContext;
+
+  const messageId = message?.message_id;
+
+  if (!isNotNullOrUndefined(messageId)) {
+    return;
+  }
+
+  if (isNotNullOrUndefined(user) && user.id === 47647715) {
+    await ctx.telegram.sendAnimation(
+      chatId,
+      'https://media1.giphy.com/media/dIBzteMy7M5H6iy7CX/giphy.gif?cid=790b761109a8d3ff6790e885fdc6b4e58e56b4bb9d918aec&rid=giphy.gif&ct=g',
+      { reply_to_message_id: messageId },
+    );
+
+    return;
+  }
+
+  try {
+    await ctx.telegram.sendAnimation(chatId, getRandomHelloGif(), { reply_to_message_id: messageId });
+  } catch {
+    // Do nothing
+  }
+});
+
+bot.hears(new RegExp('hallihallo', 'i'), async ctx => {
+  const { chatId, message } = ctx.myContext;
+
+  const messageId = message?.message_id;
+
+  if (!isNotNullOrUndefined(messageId)) {
+    return;
+  }
+
+  try {
+    await ctx.telegram.sendAnimation(
+      chatId,
+      'https://media4.giphy.com/media/ULgyBIoljSnrnih7pJ/giphy.gif?cid=790b76112f6603b75be9db813ee4264cb72aba46265777fe&rid=giphy.gif&ct=g',
+      {
+        reply_to_message_id: messageId,
+      },
+    );
+  } catch {
+    // Do nothing
+  }
+});
+
 bot.command('lineup', async ctx => {
-  const { chatId, state } = ctx.myContext;
+  const { chatId } = ctx.myContext;
 
   const dayOfWeek = getISODay(new Date());
 
@@ -206,9 +271,10 @@ bot.command('lineup', async ctx => {
   }
 
   const playerCount = getPlayerCount(chatId);
+  const playerOutCount = getPlayerOutCount(chatId);
   const quizDate = getQuizDate(chatId);
 
-  if (playerCount === 0) {
+  if (playerCount + playerOutCount === 0) {
     await ctx.telegram.sendMessage(chatId, `We have no confirmed players for the <b>${quizDate}</B> at the moment.`, {
       parse_mode: 'HTML',
     });
@@ -221,36 +287,42 @@ bot.command('lineup', async ctx => {
   await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
 });
 
-// bot.command('final', async ctx => {
-//   const { chatId } = ctx.myContext;
+bot.hears('!final', async ctx => {
+  const { chatId } = ctx.myContext;
 
-//   const dayOfWeek = getISODay(new Date());
+  const dayOfWeek = getISODay(new Date());
+  const playerCount = getPlayerCount(chatId);
 
-//   if (
-//     dayOfWeek !== DayOfWeek.Sunday &&
-//     dayOfWeek !== DayOfWeek.Monday &&
-//     dayOfWeek !== DayOfWeek.Tuesday &&
-//     dayOfWeek !== DayOfWeek.Wednesday
-//   ) {
-//     await ctx.telegram.sendMessage(chatId, `We start forming the lineup for next week on Sunday.`);
+  if (dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
+    await ctx.telegram.sendMessage(chatId, `We start forming the lineup for next week on Sunday.`);
 
-//     return;
-//   }
+    return;
+  }
 
-//   if (getPlayerCount(chatId) === 0) {
-//     await ctx.telegram.sendMessage(chatId, `Are you sure? We have no players yet.`);
+  if (playerCount === 0) {
+    await ctx.telegram.sendMessage(chatId, `Are you sure? We have no players yet.`);
 
-//     return;
-//   }
+    return;
+  }
 
-//   setLineupComplete(chatId);
+  if (!isEmailSent(chatId)) {
+    try {
+      await sendLineupEmail(playerCount);
 
-//   await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+      setEmailSent(chatId);
+    } catch (err) {
+      console.error(err);
 
-//   const lineup = getLineup(chatId);
+      bot.telegram?.sendMessage(envConfig.adminUserId, `Mail Sending failed. Check logs.`);
+    }
+  }
 
-//   await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
-// });
+  await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+
+  const lineup = getLineup(chatId);
+
+  await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
+});
 
 bot.hears('!reset', async ctx => {
   const { chatId } = ctx.myContext;
@@ -285,10 +357,28 @@ const sendReminder = async () => {
   }
 };
 
+const sendEmailReminder = async () => {
+  const chatId = envConfig.pubQuizGroupId;
+
+  if (!isEmailSent(chatId)) {
+    await bot.telegram?.sendMessage(
+      chatId,
+      `⚠️ We still haven't sent Scott the mail with our lineup. Write <code>!final</code> to send it now. ⚠️`,
+      { parse_mode: 'HTML' },
+    );
+  }
+};
+
 const main = async () => {
+  const chatId = envConfig.pubQuizGroupId;
+
   await bot.launch();
 
   console.log('Kitty Bot is online!');
+
+  if (!isStateDefined(chatId)) {
+    resetState(chatId);
+  }
 
   if (envConfig.isProduction) {
     bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot started`);
@@ -300,6 +390,14 @@ const main = async () => {
 
   cron.schedule('0 10 * * 1', () => {
     sendReminder();
+  });
+
+  cron.schedule('0 10 * * 2', () => {
+    sendReminder();
+  });
+
+  cron.schedule('0 15 * * 2', () => {
+    sendEmailReminder();
   });
 
   process.once('SIGINT', () => {

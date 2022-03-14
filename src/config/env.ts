@@ -3,6 +3,12 @@ import { describe, Type } from '@mrboolean/envconfig';
 export interface EnvConfig {
   adminUserId: number;
   botToken: string;
+  emailAuthHost: string;
+  emailAuthPassword: string;
+  emailAuthPort: number;
+  emailAuthUser: string;
+  emailFrom: string;
+  emailTo: string;
   isDev: boolean;
   isProduction: boolean;
   pubQuizGroupId: number;
@@ -17,6 +23,36 @@ const envConfig: EnvConfig = describe({
   botToken: {
     isRequired: true,
     name: 'BOT_TOKEN',
+    type: Type.STRING,
+  },
+  emailAuthHost: {
+    isRequired: true,
+    name: 'EMAIL_AUTH_HOST',
+    type: Type.STRING,
+  },
+  emailAuthPassword: {
+    isRequired: true,
+    name: 'EMAIL_AUTH_PASSWORD',
+    type: Type.STRING,
+  },
+  emailAuthPort: {
+    isRequired: true,
+    name: 'EMAIL_AUTH_PORT',
+    type: Type.NUMBER,
+  },
+  emailAuthUser: {
+    isRequired: true,
+    name: 'EMAIL_AUTH_USER',
+    type: Type.STRING,
+  },
+  emailFrom: {
+    isRequired: true,
+    name: 'EMAIL_FROM',
+    type: Type.STRING,
+  },
+  emailTo: {
+    isRequired: true,
+    name: 'EMAIL_TO',
     type: Type.STRING,
   },
   isDev: {

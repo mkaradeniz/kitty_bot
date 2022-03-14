@@ -4,7 +4,7 @@ import { addDays, endOfDay, getISODay } from 'date-fns';
 import { DayOfWeek } from '../../types';
 
 // Recursive!
-const findNextWednesday = (date: Date = new Date()): Date => {
+const findNextWednesday = (date: Date): Date => {
   const isoDayOfWeek = getISODay(date);
 
   if (isoDayOfWeek === DayOfWeek.Wednesday) {

@@ -2,14 +2,12 @@ import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 
 // Types
 import { Context } from 'telegraf';
-import { KittyBotState } from './stateMiddleware';
 import { Message, Update, User } from 'telegraf/typings/core/types/typegram';
 
 export interface KittyBotContext extends Context {
   myContext: {
     chatId: number;
     message?: Update.New & Update.NonChannel & Message.TextMessage;
-    state: { [chatId: number]: KittyBotState };
     user?: User;
   };
 }
