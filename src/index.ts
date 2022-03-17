@@ -10,7 +10,7 @@ import envConfig from './config/env';
 import getNumberOfInviteesFromEmoji from './utils/state/getNumberOfInviteesFromEmoji';
 import getRandomHelloGif from './utils/misc/getRandomHelloGif';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
-import sendLineupEmail from './utils/email/sendLineupEmail';
+import sendLineupEmail from './utils/misc/sendLineupEmail';
 import stateMiddleware, {
   addPlayer,
   addPlayersExternal,
@@ -216,11 +216,15 @@ bot.hears(new RegExp('hallöchen', 'i'), async ctx => {
   }
 
   if (isNotNullOrUndefined(user) && user.id === 47647715) {
-    await ctx.telegram.sendAnimation(
-      chatId,
-      'https://media1.giphy.com/media/dIBzteMy7M5H6iy7CX/giphy.gif?cid=790b761109a8d3ff6790e885fdc6b4e58e56b4bb9d918aec&rid=giphy.gif&ct=g',
-      { reply_to_message_id: messageId },
-    );
+    try {
+      await ctx.telegram.sendAnimation(
+        chatId,
+        'https://media1.giphy.com/media/dIBzteMy7M5H6iy7CX/giphy.gif?cid=790b761109a8d3ff6790e885fdc6b4e58e56b4bb9d918aec&rid=giphy.gif&ct=g',
+        { reply_to_message_id: messageId },
+      );
+    } catch {
+      // Do nothing
+    }
 
     return;
   }
@@ -381,7 +385,7 @@ const main = async () => {
   }
 
   if (envConfig.isProduction) {
-    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot started`);
+    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online!`);
   }
 
   cron.schedule('0 12 * * 0', () => {

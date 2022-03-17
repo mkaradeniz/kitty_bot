@@ -1,7 +1,7 @@
 import pluralize from 'pluralize';
 import { format, isAfter } from 'date-fns';
 
-import findNextWednesday from '../utils/date/findNextWednesday';
+import findNextWednesday from '../utils/misc/findNextWednesday';
 import getExternalPlayersMap from '../utils/state/getExternalPlayersMap';
 import getInvitorNameById from '../utils/state/getInvitorNameById';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
