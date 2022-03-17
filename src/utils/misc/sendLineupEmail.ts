@@ -31,10 +31,11 @@ const sendLineupEmail = (playerCount: number): Promise<void> => {
     };
 
     const mailConfig = {
+      cc: envConfig.emailCc,
       from: envConfig.emailFrom,
-      to: envConfig.emailTo,
       subject,
       text,
+      to: envConfig.emailTo,
     };
 
     const transporter = nodemailer.createTransport(smtpConfig);

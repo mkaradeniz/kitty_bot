@@ -7,6 +7,7 @@ export interface EnvConfig {
   emailAuthPassword: string;
   emailAuthPort: number;
   emailAuthUser: string;
+  emailCc: string;
   emailFrom: string;
   emailTo: string;
   isDev: boolean;
@@ -43,6 +44,11 @@ const envConfig: EnvConfig = describe({
   emailAuthUser: {
     isRequired: true,
     name: 'EMAIL_AUTH_USER',
+    type: Type.STRING,
+  },
+  emailCc: {
+    isRequired: true,
+    name: 'EMAIL_CC',
     type: Type.STRING,
   },
   emailFrom: {
