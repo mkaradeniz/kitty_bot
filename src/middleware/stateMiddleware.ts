@@ -22,7 +22,7 @@ let state: { [chatId: number]: KittyBotState } = {};
 
 export const addPlayer = (chatId: number, user: User) => {
   const nextPlayers = [...state[chatId].players.filter(player => player.id !== user.id), user];
-  const nextPlayersOut = [...state[chatId].players.filter(player => player.id !== user.id)];
+  const nextPlayersOut = [...state[chatId].playersOut.filter(player => player.id !== user.id)];
 
   state[chatId].players = nextPlayers;
   state[chatId].playersOut = nextPlayersOut;
@@ -127,7 +127,7 @@ export const isUserOutAlready = (chatId: number, userId: number) => {
 
 export const removePlayer = (chatId: number, user: User) => {
   const nextPlayers = [...state[chatId].players.filter(player => player.id !== user.id)];
-  const nextPlayersOut = [...state[chatId].players.filter(player => player.id !== user.id), user];
+  const nextPlayersOut = [...state[chatId].playersOut.filter(player => player.id !== user.id), user];
 
   state[chatId].players = nextPlayers;
   state[chatId].playersOut = nextPlayersOut;

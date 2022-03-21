@@ -192,15 +192,6 @@ bot.hears(new RegExp('(👎)'), async ctx => {
     );
   }
 
-  if (playerCount >= MAX_PLAYERS) {
-    await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
-
-    const lineup = getLineup(chatId);
-
-    await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${quizDate}</B>: ${lineup}.`, { parse_mode: 'HTML' });
-    await ctx.telegram.sendMessage(chatId, `Total: ${playerCount}`);
-  }
-
   if (playerCount > MAX_PLAYERS) {
     await ctx.telegram.sendMessage(chatId, OVERBOOKED);
   }
@@ -385,7 +376,7 @@ const main = async () => {
   }
 
   if (envConfig.isProduction) {
-    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online!`);
+    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online! `);
   }
 
   cron.schedule('0 12 * * 0', () => {
