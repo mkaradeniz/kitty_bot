@@ -37,6 +37,8 @@ const MAX_PLAYERS = 8;
 
 const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 
+// TODO Double Reminder
+
 // Middlewares
 bot.use(contextMiddleware);
 bot.use(stateMiddleware);
@@ -344,9 +346,17 @@ const sendReminder = async () => {
   const playerCount = getPlayerCount(chatId);
 
   if (playerCount < MAX_PLAYERS) {
+    const playerOutCount = getPlayerOutCount(chatId);
+    const chatMembersCount = await bot.telegram?.getChatMembersCount(chatId);
+    const notRespondedCount = chatMembersCount - 1 - playerCount - playerOutCount;
+
+    const notRespondedMessage =
+      notRespondedCount > 0 ? `<b>${notRespondedCount}</b> ${pluralize('player', notRespondedCount)} did not respond yet.\n\n` : '';
+
     await bot.telegram?.sendMessage(
       chatId,
-      `🍻 REMINDER: We still have empty spots! 🍻\n\n${TUTORIAL_LINE_1}\n\n${TUTORIAL_LINE_2}\n\n${TUTORIAL_LINE_3}\n\n${TUTORIAL_LINE_4}`,
+      `🍻 REMINDER: We still have <b>${MAX_PLAYERS -
+        playerCount}</b> empty spots! 🍻\n\n${notRespondedMessage}${TUTORIAL_LINE_1}\n\n${TUTORIAL_LINE_2}\n\n${TUTORIAL_LINE_3}\n\n${TUTORIAL_LINE_4}\n\n`,
       { parse_mode: 'HTML' },
     );
   }
@@ -377,17 +387,15 @@ const main = async () => {
 
   if (envConfig.isProduction) {
     bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online! `);
+
+    bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is online. Hallöchen 🤖`);
   }
 
   cron.schedule('0 12 * * 0', () => {
     sendIntro();
   });
 
-  cron.schedule('0 10 * * 1', () => {
-    sendReminder();
-  });
-
-  cron.schedule('0 10 * * 2', () => {
+  cron.schedule('0 12 * * 1,2', () => {
     sendReminder();
   });
 
@@ -398,6 +406,8 @@ const main = async () => {
   process.once('SIGINT', () => {
     if (envConfig.isProduction) {
       bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT`);
+
+      bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
     }
 
     bot.stop('SIGINT');
@@ -406,6 +416,8 @@ const main = async () => {
   process.once('SIGTERM', () => {
     if (envConfig.isProduction) {
       bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM`);
+
+      bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
     }
 
     bot.stop('SIGTERM');

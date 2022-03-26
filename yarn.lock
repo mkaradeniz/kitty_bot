@@ -889,6 +889,11 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
+telegraf-getchatmembers@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/telegraf-getchatmembers/-/telegraf-getchatmembers-1.0.1.tgz#e9376aed3c9cd9274ceedbf275e499f1a5d8426d"
+  integrity sha512-00M33mFGEZxAY91x/VdXFb0m0ruirnyrE/WsneSWGgsLqM0f86JQCevUeih7UP0DhZNLVmu3pxe7ds5ybwV11Q==
+
 telegraf@^4.7.0:
   version "4.7.0"
   resolved "https://registry.yarnpkg.com/telegraf/-/telegraf-4.7.0.tgz#6ee8a8f98900a67472f1ca935c0aba3e8fa49f05"
