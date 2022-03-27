@@ -1,7 +1,7 @@
 {
   "name": "kitty_bot",
   "version": "1.0.0",
-  "description": "A Telegram bot to help Kitty organize our pub quiz participation.",
+  "description": "A Telegram bot to replace Kitty organizing our pub quiz participation.",
   "author": "Max Karadeniz <max@karadeniz.io>",
   "license": "MIT",
   "main": "dist/index.js",
