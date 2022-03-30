@@ -6,6 +6,7 @@
     "nodejs",
     "telegrafjs",
     "telegram",
+    "telegram-bots",
     "typescript"
   ],
   "author": "Max Karadeniz <max@karadeniz.io>",
