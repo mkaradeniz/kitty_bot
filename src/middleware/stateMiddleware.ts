@@ -5,6 +5,7 @@ import findNextWednesday from '../utils/misc/findNextWednesday';
 import getExternalPlayersMap from '../utils/state/getExternalPlayersMap';
 import getInvitorNameById from '../utils/state/getInvitorNameById';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import { LINEUP_EMOJI } from '../config/texts';
 
 // Types
 import { KittyBotContext } from './contextMiddleware';
@@ -19,6 +20,9 @@ export interface KittyBotState {
 }
 
 let state: { [chatId: number]: KittyBotState } = {};
+
+// @ts-expect-error | TypeScript doesn't have types for this yet.
+const listFormatter = new Intl.ListFormat('en');
 
 export const addPlayer = (chatId: number, user: User) => {
   const nextPlayers = [...state[chatId].players.filter(player => player.id !== user.id), user];
@@ -46,38 +50,37 @@ export const getLineup = (chatId: number) => {
 
   const players = state[chatId].players
     .slice()
-    .sort((a, b) => b.first_name.localeCompare(a.first_name))
+    .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `🥒🐭 <b>${player.first_name}</b>`)
     .join('\n');
 
-  const playersOut = state[chatId].playersOut
+  const playersOutList = state[chatId].playersOut
     .slice()
-    .sort((a, b) => b.first_name.localeCompare(a.first_name))
-    .map(player => `${player.first_name}`)
-    .join(',');
+    .sort((a, b) => a.first_name.localeCompare(b.first_name))
+    .map(player => `${player.first_name}`);
 
-  const playersOutText = playerOutCount > 0 ? `\n${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
+  const playersOut = listFormatter.format(playersOutList);
+
+  const playersOutText = playerOutCount > 0 ? `\n🧂 ${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
 
   const externalPlayers =
     state[chatId].playersExternal.length > 0
       ? Object.entries(externalPlayersMap)
           .map(([invitedBy, numberOfInvites]) => {
             if (state[chatId].players.length === 0) {
-              return `${numberOfInvites} ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(
+              return `<b>${numberOfInvites}</b> ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(
                 invitedBy,
                 state[chatId],
               )})`;
             }
 
-            return `+ ${numberOfInvites} ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(
+            return `+ <b>${numberOfInvites}</b> ${pluralize('guest', numberOfInvites)} (invited by ${getInvitorNameById(
               invitedBy,
               state[chatId],
             )})`;
           })
           .join('\n')
       : null;
-
-  // const isComplete = state[chatId].isLineupComplete ? `\nThis lineup is final!` : null;
 
   const total = `\n<b>${playerCount}</b> ${pluralize('player', playerCount)} in total`;
 
@@ -86,7 +89,7 @@ export const getLineup = (chatId: number) => {
     .join('\n')
     .trim();
 
-  return `🍻 Our lineup for the <b>${getQuizDate(chatId)}</b> 🍻\n\n${lineup}`;
+  return `${LINEUP_EMOJI} Our lineup for the <b>${getQuizDate(chatId)}</b> ${LINEUP_EMOJI}\n\n${lineup}`;
 };
 
 export const getPlayerCount = (chatId: number) => {

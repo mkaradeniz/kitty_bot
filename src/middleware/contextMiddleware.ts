@@ -19,13 +19,13 @@ const contextMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>
     ctx.myContext = {};
   }
 
-  const chatId = ctx?.message?.chat.id ?? undefined;
+  const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
   if (!isNotNullOrUndefined(chatId)) {
     return;
   }
 
-  const user = ctx?.message?.from ?? undefined;
+  const user = ctx?.message?.from ?? ctx.callbackQuery?.from ?? undefined;
 
   ctx.myContext.chatId = chatId;
   ctx.myContext.user = user;
