@@ -2,6 +2,12 @@
   "name": "kitty_bot",
   "version": "1.0.0",
   "description": "A Telegram bot to replace Kitty organizing our pub quiz participation.",
+  "keywords": [
+    "nodejs",
+    "telegrafjs",
+    "telegram",
+    "typescript"
+  ],
   "author": "Max Karadeniz <max@karadeniz.io>",
   "license": "MIT",
   "main": "dist/index.js",
