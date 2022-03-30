@@ -12,6 +12,7 @@ export interface EnvConfig {
   emailTo: string;
   isDev: boolean;
   isProduction: boolean;
+  maxPlayers: number;
   pubQuizGroupId: number;
 }
 
@@ -70,6 +71,12 @@ const envConfig: EnvConfig = describe({
     name: 'NODE_ENV',
     isRequired: true,
     sanitize: (value: any): boolean => value === 'production',
+  },
+  maxPlayers: {
+    isRequired: false,
+    name: 'MAX_PLAYERS',
+    standard: 8,
+    type: Type.NUMBER,
   },
   pubQuizGroupId: {
     isRequired: true,

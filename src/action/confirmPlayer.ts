@@ -4,7 +4,6 @@ import { getISODay } from 'date-fns';
 import envConfig from '../config/env';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { LINEUP_COMPLETE, OVERBOOKED } from '../config/texts';
-import { MAX_PLAYERS } from '../config/constants';
 import { addPlayer, getLineup, getPlayerCount, getQuizDate, isUserPlayingAlready } from '../middleware/stateMiddleware';
 
 // Types
@@ -52,7 +51,7 @@ const createConfirmPlayer = (isCallback: boolean = false) => async (ctx: KittyBo
     );
   }
 
-  if (playerCount >= MAX_PLAYERS) {
+  if (playerCount >= envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
 
     const lineup = getLineup(chatId);
@@ -60,7 +59,7 @@ const createConfirmPlayer = (isCallback: boolean = false) => async (ctx: KittyBo
     await ctx.telegram.sendMessage(chatId, `Our lineup for the <b>${quizDate}</B>: ${lineup}.`, { parse_mode: 'HTML' });
   }
 
-  if (playerCount > MAX_PLAYERS) {
+  if (playerCount > envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(chatId, OVERBOOKED);
   }
 

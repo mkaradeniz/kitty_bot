@@ -5,7 +5,6 @@ import envConfig from '../config/env';
 import getNumberOfInviteesFromEmoji from '../utils/state/getNumberOfInviteesFromEmoji';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { LINEUP_COMPLETE, OVERBOOKED } from '../config/texts';
-import { MAX_PLAYERS } from '../config/constants';
 import { addPlayersExternal, getLineup, getPlayerCount, getQuizDate, playerHasInvitations } from '../middleware/stateMiddleware';
 
 // Types
@@ -66,7 +65,7 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
     );
   }
 
-  if (playerCount >= MAX_PLAYERS) {
+  if (playerCount >= envConfig.maxPlayers) {
     const lineup = getLineup(chatId);
 
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
@@ -74,7 +73,7 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
     await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
   }
 
-  if (playerCount > MAX_PLAYERS) {
+  if (playerCount > envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(chatId, OVERBOOKED);
   }
 

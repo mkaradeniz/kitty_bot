@@ -3,7 +3,6 @@ import { getISODay } from 'date-fns';
 
 import envConfig from '../config/env';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { MAX_PLAYERS } from '../config/constants';
 import { OVERBOOKED } from '../config/texts';
 import { getPlayerCount, getQuizDate, isUserOutAlready, removePlayer } from '../middleware/stateMiddleware';
 
@@ -58,7 +57,7 @@ const createUnconfirmPlayer = (isCallback: boolean = false) => async (ctx: Kitty
     );
   }
 
-  if (playerCount > MAX_PLAYERS) {
+  if (playerCount > envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(chatId, OVERBOOKED);
   }
 

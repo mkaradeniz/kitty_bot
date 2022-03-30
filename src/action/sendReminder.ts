@@ -2,7 +2,7 @@ import pluralize from 'pluralize';
 import { Markup } from 'telegraf';
 
 import envConfig from '../config/env';
-import { CALLBACK_TYPE_CONFIRM, CALLBACK_TYPE_LINEUP, CALLBACK_TYPE_UNCONFIRM, MAX_PLAYERS } from '../config/constants';
+import { CALLBACK_TYPE_CONFIRM, CALLBACK_TYPE_LINEUP, CALLBACK_TYPE_UNCONFIRM } from '../config/constants';
 import { CONFIRM_EMOJI, DECLINE_EMOJI, LINEUP_EMOJI, TUTORIAL } from '../config/texts';
 import { getPlayerCount, getPlayerOutCount, isEmailSent } from '../middleware/stateMiddleware';
 
@@ -19,11 +19,11 @@ const createSendReminder = (bot: Telegraf<KittyBotContext>) => async () => {
 
   const playerCount = getPlayerCount(chatId);
 
-  if (playerCount < MAX_PLAYERS) {
+  if (playerCount < envConfig.maxPlayers) {
     const playerOutCount = getPlayerOutCount(chatId);
     const chatMembersCount = await bot.telegram?.getChatMembersCount(chatId);
     const notRespondedCount = chatMembersCount - 1 - playerCount - playerOutCount;
-    const emptySpots = MAX_PLAYERS - playerCount;
+    const emptySpots = envConfig.maxPlayers - playerCount;
 
     const notRespondedMessage =
       notRespondedCount > 0 ? `<b>${notRespondedCount}</b> ${pluralize('player', notRespondedCount)} did not respond yet.\n\n` : '';
