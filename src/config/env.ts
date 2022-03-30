@@ -9,7 +9,9 @@ export interface EnvConfig {
   emailAuthUser: string;
   emailCc: string;
   emailFrom: string;
+  emailFromName: string;
   emailTo: string;
+  emailToName: string;
   isDev: boolean;
   isProduction: boolean;
   maxPlayers: number;
@@ -57,9 +59,19 @@ const envConfig: EnvConfig = describe({
     name: 'EMAIL_FROM',
     type: Type.STRING,
   },
+  emailFromName: {
+    isRequired: true,
+    name: 'EMAIL_FROM_NAME',
+    type: Type.STRING,
+  },
   emailTo: {
     isRequired: true,
     name: 'EMAIL_TO',
+    type: Type.STRING,
+  },
+  emailToName: {
+    isRequired: true,
+    name: 'EMAIL_TO_NAME',
     type: Type.STRING,
   },
   isDev: {

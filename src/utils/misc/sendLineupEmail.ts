@@ -3,7 +3,7 @@ import pluralize from 'pluralize';
 
 import envConfig from '../../config/env';
 
-const buildEmailText = (playerCount: number) => `Hallöchen Scott,
+const buildEmailText = (playerCount: number) => `Hallöchen ${envConfig.emailToName},
 
 we will be ${playerCount} ${pluralize('person', playerCount)} this week.
 
@@ -12,7 +12,7 @@ Cheers
 
 KittyBot`;
 
-const buildEmailSubject = (playerCount: number) => `Kitty's Table will be ${playerCount} this week`;
+const buildEmailSubject = (playerCount: number) => `${envConfig.emailFromName} will be ${playerCount} this week`;
 
 const sendLineupEmail = (playerCount: number): Promise<void> => {
   const subject = buildEmailSubject(playerCount);
@@ -32,7 +32,7 @@ const sendLineupEmail = (playerCount: number): Promise<void> => {
 
     const mailConfig = {
       cc: envConfig.emailCc,
-      from: envConfig.emailFrom,
+      from: `${envConfig.emailFromName} <${envConfig.emailFrom}>`,
       subject,
       text,
       to: envConfig.emailTo,
