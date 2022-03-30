@@ -10,27 +10,28 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "dev": "nodemon src/index.ts",
-    "start": "node ./dist"
+    "start": "node ./dist",
+    "test:types": "tsc --project tsconfig.json --pretty --noEmit && clear"
   },
   "devDependencies": {
     "@mkaradeniz/prettier-config": "^3.0.0",
-    "@types/dotenv": "^4.0.3",
+    "@types/dotenv": "^8.2.0",
     "@types/lodash": "^4.14.179",
-    "@types/node": "^16.11.26",
+    "@types/node": "^17.0.23",
     "@types/node-cron": "^3.0.1",
+    "@types/nodemailer": "^6.4.4",
     "@types/pluralize": "^0.0.29",
     "prettier": "^1.13.7",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.2"
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@mrboolean/envconfig": "^3.0.0",
-    "@types/nodemailer": "^6.4.4",
     "date-fns": "^2.28.0",
     "dotenv": "^16.0.0",
     "lodash": "^4.17.21",
     "node-cron": "^3.0.0",
-    "nodemailer": "^6.7.2",
+    "nodemailer": "^6.7.3",
     "nodemon": "^2.0.15",
     "pluralize": "^8.0.0",
     "telegraf": "^4.7.0"
