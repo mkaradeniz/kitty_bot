@@ -27,6 +27,7 @@ const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 
 // Middlewares
 bot.use(contextMiddleware);
+
 bot.use(stateMiddleware);
 
 // Callback Actions
