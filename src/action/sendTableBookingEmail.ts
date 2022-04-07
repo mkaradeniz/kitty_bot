@@ -33,10 +33,14 @@ const createSendTableBookingEmail = (bot: Telegraf<KittyBotContext>) => async (c
       await sendLineupEmail(playerCount);
 
       setEmailSent(chatId);
+
+      await ctx.telegram.sendMessage(chatId, `💌 I just sent ${envConfig.emailToName} a (love-)letter.`);
     } catch (err) {
       console.error(err);
 
-      bot.telegram?.sendMessage(envConfig.adminUserId, `Mail Sending failed. Check logs.`);
+      bot.telegram?.sendMessage(envConfig.adminUserId, `Mail sending failed. Check logs.`);
+
+      await ctx.telegram.sendMessage(chatId, `Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
     }
   }
 
