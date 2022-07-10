@@ -2,8 +2,7 @@ import { getISODay } from 'date-fns';
 
 import envConfig from '../config/env';
 import sendLineupEmail from '../utils/misc/sendLineupEmail';
-import { LINEUP_COMPLETE } from '../config/texts';
-import { getLineup, getPlayerCount, isEmailSent, setEmailSent } from '../middleware/stateMiddleware';
+import { getPlayerCount, isEmailSent, setEmailSent } from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
@@ -43,12 +42,6 @@ const createSendTableBookingEmail = (bot: Telegraf<KittyBotContext>) => async (c
       await ctx.telegram.sendMessage(chatId, `Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
     }
   }
-
-  await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
-
-  const lineup = getLineup(chatId);
-
-  await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
 };
 
 export default createSendTableBookingEmail;

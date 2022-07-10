@@ -1,10 +1,18 @@
+import pluralize from 'pluralize';
+import envConfig from './env';
+
 export const CONFIRM_EMOJI = '👍';
 export const DECLINE_EMOJI = '👎';
 export const LINEUP_EMOJI = '📜';
+export const LOTTERY_EMOJI = '🍀';
+export const PLAYER_OUT_EMOJI = '🧂';
+export const PLAYER_REJECTED_EMOJI = '😪';
 
 export const LINEUP_COMPLETE = `🍻 We did it! Our lineup is complete! 🍻`;
 
-export const OVERBOOKED = `⚠️ We're overbooked! ⚠️`;
+export const OVERBOOKED = `⚠️ We're overbooked! ⚠️
+We have to pick <b>${envConfig.maxPlayers}</b> ${pluralize('player', envConfig.maxPlayers)} from everyone who confirmed.
+Send a ${LOTTERY_EMOJI} or click on the button below to peform the lottery.`;
 
 export const TUTORIAL = `Send a ${CONFIRM_EMOJI} if you're in\n
 Send a ${DECLINE_EMOJI} if you're out.\n

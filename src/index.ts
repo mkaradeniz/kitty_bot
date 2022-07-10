@@ -6,6 +6,7 @@ import { Telegraf } from 'telegraf';
 import contextMiddleware from './middleware/contextMiddleware';
 import createConfirmGuests from './action/confirmGuests';
 import createConfirmPlayer from './action/confirmPlayer';
+import createLottery from './action/lottery';
 import createSendEmailReminder from './action/sendEmailReminder';
 import createSendIntro from './action/sendIntro';
 import createSendLineup from './action/sendLineup';
@@ -17,8 +18,8 @@ import replyToHallihallo from './action/replyToHallihallo';
 import replyToHallochen from './action/replyToHallochen';
 import resetStateCommand from './action/resetState';
 import stateMiddleware, { isStateDefined, resetState } from './middleware/stateMiddleware';
-import { CALLBACK_TYPE_CONFIRM, CALLBACK_TYPE_LINEUP, CALLBACK_TYPE_UNCONFIRM } from './config/constants';
-import { CONFIRM_EMOJI, DECLINE_EMOJI, LINEUP_EMOJI } from './config/texts';
+import { CALLBACK_TYPE_CONFIRM, CALLBACK_TYPE_LINEUP, CALLBACK_TYPE_LOTTERY, CALLBACK_TYPE_UNCONFIRM } from './config/constants';
+import { CONFIRM_EMOJI, DECLINE_EMOJI, LINEUP_EMOJI, LOTTERY_EMOJI } from './config/texts';
 
 // Types
 import { KittyBotContext } from './middleware/contextMiddleware';
@@ -37,6 +38,8 @@ bot.action(CALLBACK_TYPE_LINEUP, createSendLineup(true));
 
 bot.action(CALLBACK_TYPE_UNCONFIRM, createUnconfirmPlayer(true));
 
+bot.action(CALLBACK_TYPE_LOTTERY, createLottery(true));
+
 // Commands
 bot.command('lineup', createSendLineup());
 
@@ -48,6 +51,8 @@ bot.hears(new RegExp(`(${CONFIRM_EMOJI})`), createConfirmPlayer());
 bot.hears(new RegExp(`(${DECLINE_EMOJI})`), createUnconfirmPlayer());
 
 bot.hears(new RegExp(`(${LINEUP_EMOJI})`), createSendLineup());
+
+bot.hears(new RegExp(`(${LOTTERY_EMOJI})`), createLottery());
 
 bot.hears(new RegExp('hallöchen', 'i'), replyToHallochen);
 
@@ -88,6 +93,10 @@ const main = async () => {
 
   cron.schedule('0 15 * * 2', () => {
     sendEmailReminder();
+  });
+
+  cron.schedule('0 2 * * 4', () => {
+    resetState(chatId);
   });
 
   process.once('SIGINT', () => {

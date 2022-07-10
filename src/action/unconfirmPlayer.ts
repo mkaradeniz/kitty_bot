@@ -1,9 +1,12 @@
 import pluralize from 'pluralize';
+import { Markup } from 'telegraf';
 import { getISODay } from 'date-fns';
 
+import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { OVERBOOKED } from '../config/texts';
+import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
+import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_OUT_EMOJI } from '../config/texts';
 import { getPlayerCount, getQuizDate, isUserOutAlready, removePlayer } from '../middleware/stateMiddleware';
 
 // Types
@@ -45,20 +48,35 @@ const createUnconfirmPlayer = (isCallback: boolean = false) => async (ctx: Kitty
 
   removePlayer(chatId, user);
 
-  await ctx.telegram.sendMessage(chatId, `🥒🐭 <b>${user.first_name}</b> is out! 🧂`, { parse_mode: 'HTML' });
+  await ctx.telegram.sendMessage(chatId, `🥒🐭 <b>${user.first_name}</b> is out! ${PLAYER_OUT_EMOJI}`, { parse_mode: 'HTML' });
 
   const playerCount = getPlayerCount(chatId);
 
-  if (playerCount < 8) {
+  if (playerCount < envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(
       chatId,
       `We have <b>${playerCount}</b> confirmed ${pluralize('player', playerCount)} for the <b>${quizDate}</B>.`,
       { parse_mode: 'HTML' },
     );
+
+    return callback();
+  }
+
+  if (playerCount === envConfig.maxPlayers) {
+    await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+
+    await createSendLineup(isCallback)(ctx);
+
+    return callback();
   }
 
   if (playerCount > envConfig.maxPlayers) {
-    await ctx.telegram.sendMessage(chatId, OVERBOOKED);
+    await createSendLineup(isCallback)(ctx);
+
+    await ctx.telegram.sendMessage(chatId, OVERBOOKED, {
+      parse_mode: 'HTML',
+      ...Markup.inlineKeyboard([Markup.button.callback(LOTTERY_EMOJI, CALLBACK_TYPE_LOTTERY)]),
+    });
   }
 
   return callback();

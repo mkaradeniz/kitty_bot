@@ -1,11 +1,14 @@
 import pluralize from 'pluralize';
+import { Markup } from 'telegraf';
 import { getISODay } from 'date-fns';
 
+import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import getNumberOfInviteesFromEmoji from '../utils/state/getNumberOfInviteesFromEmoji';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { LINEUP_COMPLETE, OVERBOOKED } from '../config/texts';
-import { addPlayersExternal, getLineup, getPlayerCount, getQuizDate, playerHasInvitations } from '../middleware/stateMiddleware';
+import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
+import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_OUT_EMOJI } from '../config/texts';
+import { addPlayersExternal, getPlayerCount, getQuizDate, playerHasInvitations } from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
@@ -44,7 +47,9 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
       return callback();
     }
 
-    await ctx.telegram.sendMessage(chatId, `<b>${user.first_name}</b> revoked their previous invitations! 🧂`, { parse_mode: 'HTML' });
+    await ctx.telegram.sendMessage(chatId, `<b>${user.first_name}</b> revoked their previous invitations! ${PLAYER_OUT_EMOJI}`, {
+      parse_mode: 'HTML',
+    });
   } else {
     await ctx.telegram.sendMessage(
       chatId,
@@ -57,24 +62,31 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
 
   const playerCount = getPlayerCount(chatId);
 
-  if (playerCount < 8) {
+  if (playerCount < envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(
       chatId,
       `We have <b>${playerCount}</b> confirmed ${pluralize('player', playerCount)} for the <b>${quizDate}</B>.`,
       { parse_mode: 'HTML' },
     );
+
+    return callback();
   }
 
-  if (playerCount >= envConfig.maxPlayers) {
-    const lineup = getLineup(chatId);
-
+  if (playerCount === envConfig.maxPlayers) {
     await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
 
-    await ctx.telegram.sendMessage(chatId, lineup, { parse_mode: 'HTML' });
+    await createSendLineup(isCallback)(ctx);
+
+    return callback();
   }
 
   if (playerCount > envConfig.maxPlayers) {
-    await ctx.telegram.sendMessage(chatId, OVERBOOKED);
+    await createSendLineup(isCallback)(ctx);
+
+    await ctx.telegram.sendMessage(chatId, OVERBOOKED, {
+      parse_mode: 'HTML',
+      ...Markup.inlineKeyboard([Markup.button.callback(LOTTERY_EMOJI, CALLBACK_TYPE_LOTTERY)]),
+    });
   }
 
   return callback();

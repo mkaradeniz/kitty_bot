@@ -2,10 +2,11 @@ import pluralize from 'pluralize';
 import { format, isAfter } from 'date-fns';
 
 import findNextWednesday from '../utils/misc/findNextWednesday';
+import formatListPart from '../utils/misc/formatListPart';
 import getExternalPlayersMap from '../utils/state/getExternalPlayersMap';
 import getInvitorNameById from '../utils/state/getInvitorNameById';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { LINEUP_EMOJI } from '../config/texts';
+import { LINEUP_EMOJI, PLAYER_OUT_EMOJI, PLAYER_REJECTED_EMOJI } from '../config/texts';
 
 // Types
 import { KittyBotContext } from './contextMiddleware';
@@ -16,6 +17,7 @@ export interface KittyBotState {
   players: User[];
   playersExternal: { invitedBy: User }[];
   playersOut: User[];
+  playersRejected: User[];
   quizDate: Date;
 }
 
@@ -45,6 +47,7 @@ export const addPlayersExternal = (chatId: number, invitedBy: User, numberOfInvi
 export const getLineup = (chatId: number) => {
   const playerCount = getPlayerCount(chatId);
   const playerOutCount = getPlayerOutCount(chatId);
+  const playerRejectedCount = getPlayerRejectedCount(chatId);
 
   const externalPlayersMap = getExternalPlayersMap(state[chatId]);
 
@@ -59,9 +62,28 @@ export const getLineup = (chatId: number) => {
     .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `${player.first_name}`);
 
-  const playersOut = listFormatter.format(playersOutList);
+  const playersRejectedList = state[chatId].playersRejected
+    .slice()
+    .sort((a, b) => a.first_name.localeCompare(b.first_name))
+    .map(player => `${player.first_name}`);
 
-  const playersOutText = playerOutCount > 0 ? `\n🧂 ${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
+  const playersOut = listFormatter
+    .formatToParts(playersOutList)
+    .map(formatListPart)
+    .join('');
+
+  const playersRejected = listFormatter
+    .formatToParts(playersRejectedList)
+    .map(formatListPart)
+    .join('');
+
+  const playersOutText =
+    playerOutCount > 0 ? `\n${PLAYER_OUT_EMOJI} ${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
+
+  const playersRejectedText =
+    playerRejectedCount > 0
+      ? `\n${PLAYER_REJECTED_EMOJI} ${playersRejected} ${pluralize('was', playerRejectedCount)} not picked in the lottery.`
+      : null;
 
   const externalPlayers =
     state[chatId].playersExternal.length > 0
@@ -84,12 +106,38 @@ export const getLineup = (chatId: number) => {
 
   const total = `\n<b>${playerCount}</b> ${pluralize('player', playerCount)} in total`;
 
-  const lineup = [players, externalPlayers, playersOutText, total]
+  const lineup = [players, externalPlayers, playersRejectedText, playersOutText, total]
     .filter(isNotNullOrUndefined)
     .join('\n')
     .trim();
 
   return `${LINEUP_EMOJI} Our lineup for the <b>${getQuizDate(chatId)}</b> ${LINEUP_EMOJI}\n\n${lineup}`;
+};
+
+export const getPlayers = (chatId: number) => {
+  return state[chatId].players;
+};
+
+export const getPlayersRejected = (chatId: number) => {
+  return state[chatId].playersRejected;
+};
+
+type SetPlayersInput = {
+  chatId: number;
+  nextPlayers: User[];
+};
+
+export const setPlayers = ({ chatId, nextPlayers }: SetPlayersInput) => {
+  state[chatId].players = nextPlayers;
+};
+
+type SetPlayersRejectedInput = {
+  chatId: number;
+  nextPlayersRejected: User[];
+};
+
+export const setPlayersRejected = ({ chatId, nextPlayersRejected }: SetPlayersRejectedInput) => {
+  state[chatId].playersRejected = nextPlayersRejected;
 };
 
 export const getPlayerCount = (chatId: number) => {
@@ -98,6 +146,14 @@ export const getPlayerCount = (chatId: number) => {
 
 export const getPlayerOutCount = (chatId: number) => {
   return state[chatId].playersOut.length;
+};
+
+export const getPlayerRejectedCount = (chatId: number) => {
+  return state[chatId].playersRejected.length;
+};
+
+export const getPlayerExternalCount = (chatId: number) => {
+  return state[chatId].playersExternal.length;
 };
 
 export const getQuizDate = (chatId: number) => {
@@ -143,6 +199,7 @@ export const resetState = (chatId: number) => {
       players: [],
       playersExternal: [],
       playersOut: [],
+      playersRejected: [],
       quizDate: findNextWednesday(new Date()),
     },
   };
