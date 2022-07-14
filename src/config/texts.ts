@@ -6,7 +6,7 @@ export const DECLINE_EMOJI = '👎';
 export const LINEUP_EMOJI = '📜';
 export const LOTTERY_EMOJI = '🍀';
 export const PLAYER_OUT_EMOJI = '🧂';
-export const PLAYER_REJECTED_EMOJI = '😪';
+export const PLAYER_BENCHED_EMOJI = '🪑';
 
 export const LINEUP_COMPLETE = `🍻 We did it! Our lineup is complete! 🍻`;
 

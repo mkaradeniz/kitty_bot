@@ -6,7 +6,7 @@ import formatListPart from '../utils/misc/formatListPart';
 import getExternalPlayersMap from '../utils/state/getExternalPlayersMap';
 import getInvitorNameById from '../utils/state/getInvitorNameById';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { LINEUP_EMOJI, PLAYER_OUT_EMOJI, PLAYER_REJECTED_EMOJI } from '../config/texts';
+import { LINEUP_EMOJI, PLAYER_OUT_EMOJI, PLAYER_BENCHED_EMOJI } from '../config/texts';
 
 // Types
 import { KittyBotContext } from './contextMiddleware';
@@ -15,9 +15,9 @@ import { User } from 'telegraf/typings/core/types/typegram';
 export interface KittyBotState {
   isEmailSent: boolean;
   players: User[];
+  playersBenched: User[];
   playersExternal: { invitedBy: User }[];
   playersOut: User[];
-  playersRejected: User[];
   quizDate: Date;
 }
 
@@ -47,7 +47,7 @@ export const addPlayersExternal = (chatId: number, invitedBy: User, numberOfInvi
 export const getLineup = (chatId: number) => {
   const playerCount = getPlayerCount(chatId);
   const playerOutCount = getPlayerOutCount(chatId);
-  const playerRejectedCount = getPlayerRejectedCount(chatId);
+  const playerBenchedCount = getPlayerBenchedCount(chatId);
 
   const externalPlayersMap = getExternalPlayersMap(state[chatId]);
 
@@ -62,7 +62,7 @@ export const getLineup = (chatId: number) => {
     .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `${player.first_name}`);
 
-  const playersRejectedList = state[chatId].playersRejected
+  const playersBenchedList = state[chatId].playersBenched
     .slice()
     .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `${player.first_name}`);
@@ -72,18 +72,16 @@ export const getLineup = (chatId: number) => {
     .map(formatListPart)
     .join('');
 
-  const playersRejected = listFormatter
-    .formatToParts(playersRejectedList)
+  const playersBenched = listFormatter
+    .formatToParts(playersBenchedList)
     .map(formatListPart)
     .join('');
 
   const playersOutText =
     playerOutCount > 0 ? `\n${PLAYER_OUT_EMOJI} ${playersOut} ${pluralize('is', playerOutCount)} out this week.` : null;
 
-  const playersRejectedText =
-    playerRejectedCount > 0
-      ? `\n${PLAYER_REJECTED_EMOJI} ${playersRejected} ${pluralize('was', playerRejectedCount)} not picked in the lottery.`
-      : null;
+  const playersBenchedText =
+    playerBenchedCount > 0 ? `\n${PLAYER_BENCHED_EMOJI} ${playersBenched} ${pluralize('is', playerBenchedCount)} benched this week.` : null;
 
   const externalPlayers =
     state[chatId].playersExternal.length > 0
@@ -106,7 +104,7 @@ export const getLineup = (chatId: number) => {
 
   const total = `\n<b>${playerCount}</b> ${pluralize('player', playerCount)} in total`;
 
-  const lineup = [players, externalPlayers, playersRejectedText, playersOutText, total]
+  const lineup = [players, externalPlayers, playersBenchedText, playersOutText, total]
     .filter(isNotNullOrUndefined)
     .join('\n')
     .trim();
@@ -118,8 +116,8 @@ export const getPlayers = (chatId: number) => {
   return state[chatId].players;
 };
 
-export const getPlayersRejected = (chatId: number) => {
-  return state[chatId].playersRejected;
+export const getplayersBenched = (chatId: number) => {
+  return state[chatId].playersBenched;
 };
 
 type SetPlayersInput = {
@@ -131,13 +129,13 @@ export const setPlayers = ({ chatId, nextPlayers }: SetPlayersInput) => {
   state[chatId].players = nextPlayers;
 };
 
-type SetPlayersRejectedInput = {
+type SetplayersBenchedInput = {
   chatId: number;
-  nextPlayersRejected: User[];
+  nextplayersBenched: User[];
 };
 
-export const setPlayersRejected = ({ chatId, nextPlayersRejected }: SetPlayersRejectedInput) => {
-  state[chatId].playersRejected = nextPlayersRejected;
+export const setplayersBenched = ({ chatId, nextplayersBenched }: SetplayersBenchedInput) => {
+  state[chatId].playersBenched = nextplayersBenched;
 };
 
 export const getPlayerCount = (chatId: number) => {
@@ -148,8 +146,8 @@ export const getPlayerOutCount = (chatId: number) => {
   return state[chatId].playersOut.length;
 };
 
-export const getPlayerRejectedCount = (chatId: number) => {
-  return state[chatId].playersRejected.length;
+export const getPlayerBenchedCount = (chatId: number) => {
+  return state[chatId].playersBenched.length;
 };
 
 export const getPlayerExternalCount = (chatId: number) => {
@@ -199,7 +197,7 @@ export const resetState = (chatId: number) => {
       players: [],
       playersExternal: [],
       playersOut: [],
-      playersRejected: [],
+      playersBenched: [],
       quizDate: findNextWednesday(new Date()),
     },
   };

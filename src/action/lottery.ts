@@ -5,16 +5,16 @@ import { getISODay } from 'date-fns';
 import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import formatListPart from '../utils/misc/formatListPart';
-import getRandomRejectedGif from '../utils/misc/getRandomRejectedGif';
+import getRandomBenchedGif from '../utils/misc/getRandomBenchedGif';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { PLAYER_REJECTED_EMOJI } from '../config/texts';
+import { PLAYER_BENCHED_EMOJI } from '../config/texts';
 import {
   getPlayerCount,
   getPlayerExternalCount,
   getPlayers,
-  getPlayersRejected,
+  getplayersBenched,
   setPlayers,
-  setPlayersRejected,
+  setplayersBenched,
 } from '../middleware/stateMiddleware';
 
 // Types
@@ -52,7 +52,7 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
       if (playerCount < envConfig.maxPlayers) {
         await ctx.telegram.sendMessage(
           chatId,
-          `Now that is just cruel, <b>${user.first_name}</b>. We're not even full and you want to reject someone?`,
+          `Now that is just cruel, <b>${user.first_name}</b>. We're not even full and you want to bench someone?`,
           { parse_mode: 'HTML' },
         );
       }
@@ -63,7 +63,7 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
           `Now that is just cruel, <b>${user.first_name}</b>. We have exactly <b>${envConfig.maxPlayers}</b> ${pluralize(
             'players',
             envConfig.maxPlayers,
-          )} and you want to reject someone?`,
+          )} and you want to bench someone?`,
           { parse_mode: 'HTML' },
         );
       }
@@ -85,7 +85,7 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
       `We have <b>${playersExternalCount}</b> ${pluralize(
         'guest',
         playersExternalCount,
-      )}, we should uninvite them before rejecting pickles.`,
+      )}, we should uninvite them before benching pickles.`,
       {
         parse_mode: 'HTML',
       },
@@ -100,29 +100,29 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
   );
 
   const players = getPlayers(chatId);
-  const playersRejected = getPlayersRejected(chatId);
-  const allPlayers = [...players, ...playersRejected];
+  const playersBenched = getplayersBenched(chatId);
+  const allPlayers = [...players, ...playersBenched];
   const pickedPlayers = sampleSize(allPlayers, envConfig.maxPlayers);
-  const nextPlayersRejected = differenceBy(allPlayers, pickedPlayers, user => user.id);
+  const nextplayersBenched = differenceBy(allPlayers, pickedPlayers, user => user.id);
 
   setPlayers({ chatId, nextPlayers: pickedPlayers });
-  setPlayersRejected({ chatId, nextPlayersRejected });
+  setplayersBenched({ chatId, nextplayersBenched });
 
-  const nextPlayersRejectedList = nextPlayersRejected
+  const nextplayersBenchedList = nextplayersBenched
     .slice()
     .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `${player.first_name}`);
 
-  const nextPlayersRejectedText = listFormatter
-    .formatToParts(nextPlayersRejectedList)
+  const nextplayersBenchedText = listFormatter
+    .formatToParts(nextplayersBenchedList)
     .map(formatListPart)
     .join('');
 
-  const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextPlayersRejectedText} ${PLAYER_REJECTED_EMOJI}.`, {
+  const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextplayersBenchedText} 😪.`, {
     parse_mode: 'HTML',
   });
 
-  await ctx.telegram.sendAnimation(chatId, getRandomRejectedGif(), {
+  await ctx.telegram.sendAnimation(chatId, getRandomBenchedGif(), {
     reply_to_message_id: message.message_id,
   });
 

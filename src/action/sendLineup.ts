@@ -1,7 +1,7 @@
 import { getISODay } from 'date-fns';
 
 import envConfig from '../config/env';
-import { getLineup, getPlayerCount, getPlayerOutCount, getPlayerRejectedCount, getQuizDate } from '../middleware/stateMiddleware';
+import { getLineup, getPlayerCount, getPlayerOutCount, getPlayerBenchedCount, getQuizDate } from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
@@ -32,10 +32,10 @@ const createSendLineup = (isCallback: boolean = false) => async (ctx: KittyBotCo
 
   const playerCount = getPlayerCount(chatId);
   const playerOutCount = getPlayerOutCount(chatId);
-  const playerRejectedCount = getPlayerRejectedCount(chatId);
+  const playerBenchedCount = getPlayerBenchedCount(chatId);
   const quizDate = getQuizDate(chatId);
 
-  if (playerCount + playerOutCount + playerRejectedCount === 0) {
+  if (playerCount + playerOutCount + playerBenchedCount === 0) {
     await ctx.telegram.sendMessage(chatId, `We have no confirmed players for the <b>${quizDate}</B> at the moment.`, {
       parse_mode: 'HTML',
     });
