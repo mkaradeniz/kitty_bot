@@ -63,61 +63,67 @@ bot.hears('!final', createSendTableBookingEmail(bot));
 bot.hears('!reset', resetStateCommand);
 
 const main = async () => {
-  const chatId = envConfig.pubQuizGroupId;
+  try {
+    const chatId = envConfig.pubQuizGroupId;
 
-  await bot.launch();
+    await bot.launch();
 
-  console.info('Kitty Bot is online! 🤖');
+    console.info('Kitty Bot is online! 🤖');
 
-  if (!isStateDefined(chatId)) {
-    resetState(chatId);
-  }
-
-  if (envConfig.isProduction) {
-    bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online! 🤖`);
-
-    bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is online. Hallöchen 🤖`);
-  }
-
-  const sendEmailReminder = createSendEmailReminder(bot);
-  const sendIntro = createSendIntro(bot);
-  const sendReminder = createSendReminder(bot);
-
-  cron.schedule('0 12 * * 0', () => {
-    sendIntro();
-  });
-
-  cron.schedule('0 12 * * 1,2', () => {
-    sendReminder();
-  });
-
-  cron.schedule('0 15 * * 2', () => {
-    sendEmailReminder();
-  });
-
-  cron.schedule('0 2 * * 4', () => {
-    resetState(chatId);
-  });
-
-  process.once('SIGINT', () => {
-    if (envConfig.isProduction) {
-      bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT 😵`);
-
-      bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+    if (!isStateDefined(chatId)) {
+      resetState(chatId);
     }
 
-    bot.stop('SIGINT');
-  });
-
-  process.once('SIGTERM', () => {
     if (envConfig.isProduction) {
-      bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM 😵`);
+      bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online! 🤖`);
 
-      bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+      bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is online. Hallöchen 🤖`);
     }
 
-    bot.stop('SIGTERM');
-  });
+    const sendEmailReminder = createSendEmailReminder(bot);
+    const sendIntro = createSendIntro(bot);
+    const sendReminder = createSendReminder(bot);
+
+    cron.schedule('0 12 * * 0', () => {
+      sendIntro();
+    });
+
+    cron.schedule('0 12 * * 1,2', () => {
+      sendReminder();
+    });
+
+    cron.schedule('0 15 * * 2', () => {
+      sendEmailReminder();
+    });
+
+    cron.schedule('0 2 * * 4', () => {
+      console.log('Resetting state through cronjob.', new Date().toISOString());
+
+      resetState(chatId);
+    });
+
+    process.once('SIGINT', () => {
+      if (envConfig.isProduction) {
+        bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT 😵`);
+
+        bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+      }
+
+      bot.stop('SIGINT');
+    });
+
+    process.once('SIGTERM', () => {
+      if (envConfig.isProduction) {
+        bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM 😵`);
+
+        bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+      }
+
+      bot.stop('SIGTERM');
+    });
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 main();

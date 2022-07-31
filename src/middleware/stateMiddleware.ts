@@ -201,6 +201,8 @@ export const resetState = (chatId: number) => {
       quizDate: findNextWednesday(new Date()),
     },
   };
+
+  console.info(`State has been reset.`, new Date().toISOString());
 };
 
 export const setEmailSent = (chatId: number) => {
