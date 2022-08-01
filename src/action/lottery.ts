@@ -6,9 +6,13 @@ import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import formatListPart from '../utils/misc/formatListPart';
 import getRandomBenchedGif from '../utils/misc/getRandomBenchedGif';
+import getUsersWithCountBenched from '../db/getUsersWithCountBenched';
+import getWeightedSample from '../utils/misc/getWeightedSample';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import playerBenchCountIncrement from '../db/playerBenchCountIncrement';
 import wait from '../utils/misc/wait';
 import {
+  getPlayerBenchedCount,
   getPlayerCount,
   getPlayerExternalCount,
   getPlayers,
@@ -24,7 +28,12 @@ import { KittyBotContext } from '../middleware/contextMiddleware';
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
 
-const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotContext) => {
+type CreateLotteryInput = {
+  isCallback?: boolean;
+  isForced?: boolean;
+};
+
+const createLottery = ({ isCallback = false, isForced = false }: CreateLotteryInput = {}) => async (ctx: KittyBotContext) => {
   const callback = () => {
     if (isCallback) {
       ctx.answerCbQuery('');
@@ -46,8 +55,9 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
   }
 
   const playerCount = getPlayerCount(chatId);
+  const playerBenchedCount = getPlayerBenchedCount(chatId);
 
-  if (playerCount <= envConfig.maxPlayers) {
+  if ((!isForced && playerCount <= envConfig.maxPlayers) || (isForced && playerCount + playerBenchedCount <= envConfig.maxPlayers)) {
     if (playerCount > 0 || playerCount === envConfig.maxPlayers) {
       if (playerCount < envConfig.maxPlayers) {
         await ctx.telegram.sendMessage(
@@ -102,8 +112,13 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
   const players = getPlayers(chatId);
   const playersBenched = getPlayersBenched(chatId);
   const allPlayers = [...players, ...playersBenched];
-  const pickedPlayers = sampleSize(allPlayers, envConfig.maxPlayers);
-  const nextPlayersBenched = differenceBy(allPlayers, pickedPlayers, user => user.id);
+
+  const playersWithCountBenched = await getUsersWithCountBenched(allPlayers);
+
+  const pickedPlayers = getWeightedSample(playersWithCountBenched, envConfig.maxPlayers);
+  const nextPlayersBenched = differenceBy(playersWithCountBenched, pickedPlayers, player => player.id);
+
+  await playerBenchCountIncrement(nextPlayersBenched);
 
   setPlayers({ chatId, nextPlayers: pickedPlayers });
   setPlayersBenched({ chatId, nextPlayersBenched });
@@ -120,8 +135,13 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
 
   await wait(1000);
 
-  await ctx.telegram.sendMessage(chatId, `...`);
+  await ctx.telegram.sendMessage(chatId, `3...`);
+  await wait(1000);
 
+  await ctx.telegram.sendMessage(chatId, `2...`);
+  await wait(1000);
+
+  await ctx.telegram.sendMessage(chatId, `1...`);
   await wait(1000);
 
   const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextPlayersBenchedText} 😪.`, { parse_mode: 'HTML' });

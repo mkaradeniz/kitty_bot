@@ -131,11 +131,11 @@ export const setPlayers = ({ chatId, nextPlayers }: SetPlayersInput) => {
 
 type SetPlayersBenchedInput = {
   chatId: number;
-  nextplayersBenched: User[];
+  nextPlayersBenched: User[];
 };
 
-export const setPlayersBenched = ({ chatId, nextplayersBenched }: SetPlayersBenchedInput) => {
-  state[chatId].playersBenched = nextplayersBenched;
+export const setPlayersBenched = ({ chatId, nextPlayersBenched }: SetPlayersBenchedInput) => {
+  state[chatId].playersBenched = nextPlayersBenched;
 };
 
 export const getPlayerCount = (chatId: number) => {
@@ -168,6 +168,15 @@ export const playerHasInvitations = (chatId: number, invitedBy: User) => {
 
 export const isEmailSent = (chatId: number) => {
   return state[chatId].isEmailSent;
+};
+
+type IsUserBenchedInput = {
+  chatId: number;
+  userId: number;
+};
+
+export const isUserBenched = ({ chatId, userId }: IsUserBenchedInput) => {
+  return state[chatId].playersBenched.map(playerBenched => playerBenched.id).includes(userId);
 };
 
 export const isStateDefined = (chatId: number) => {

@@ -13,6 +13,7 @@ import createSendLineup from './action/sendLineup';
 import createSendReminder from './action/sendReminder';
 import createSendTableBookingEmail from './action/sendTableBookingEmail';
 import createUnconfirmPlayer from './action/unconfirmPlayer';
+import dbMiddleware from './middleware/dbMiddleware';
 import envConfig from './config/env';
 import replyToHallihallo from './action/replyToHallihallo';
 import replyToHallochen from './action/replyToHallochen';
@@ -29,6 +30,8 @@ const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
 // Middlewares
 bot.use(contextMiddleware);
 
+bot.use(dbMiddleware);
+
 bot.use(stateMiddleware);
 
 // Callback Actions
@@ -38,7 +41,7 @@ bot.action(CALLBACK_TYPE_LINEUP, createSendLineup(true));
 
 bot.action(CALLBACK_TYPE_UNCONFIRM, createUnconfirmPlayer(true));
 
-bot.action(CALLBACK_TYPE_LOTTERY, createLottery(true));
+bot.action(CALLBACK_TYPE_LOTTERY, createLottery({ isCallback: true }));
 
 // Commands
 bot.command('lineup', createSendLineup());
@@ -51,6 +54,8 @@ bot.hears(new RegExp(`(${CONFIRM_EMOJI})`), createConfirmPlayer());
 bot.hears(new RegExp(`(${DECLINE_EMOJI})`), createUnconfirmPlayer());
 
 bot.hears(new RegExp(`(${LINEUP_EMOJI})`), createSendLineup());
+
+bot.hears(new RegExp(`(!${LOTTERY_EMOJI}${LOTTERY_EMOJI}${LOTTERY_EMOJI})`), createLottery({ isForced: true }));
 
 bot.hears(new RegExp(`(${LOTTERY_EMOJI})`), createLottery());
 

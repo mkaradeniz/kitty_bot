@@ -14,8 +14,7 @@ export interface KittyBotContext extends Context {
 
 const contextMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => {
   if (!isNotNullOrUndefined(ctx.myContext)) {
-    // TODO: Is this really the way to go?
-    // @ts-ignore
+    // @ts-expect-error
     ctx.myContext = {};
   }
 

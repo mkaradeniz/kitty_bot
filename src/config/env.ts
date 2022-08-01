@@ -3,6 +3,7 @@ import { describe, Type } from '@mrboolean/envconfig';
 export interface EnvConfig {
   adminUserId: number;
   botToken: string;
+  databaseUrl: string;
   emailAuthHost: string;
   emailAuthPassword: string;
   emailAuthPort: number;
@@ -27,6 +28,11 @@ const envConfig: EnvConfig = describe({
   botToken: {
     isRequired: true,
     name: 'BOT_TOKEN',
+    type: Type.STRING,
+  },
+  databaseUrl: {
+    isRequired: true,
+    name: 'DATABASE_URL',
     type: Type.STRING,
   },
   emailAuthHost: {

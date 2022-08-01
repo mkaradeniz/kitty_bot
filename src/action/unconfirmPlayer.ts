@@ -6,12 +6,27 @@ import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
-import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_OUT_EMOJI } from '../config/texts';
-import { getPlayerCount, getQuizDate, isUserOutAlready, removePlayer } from '../middleware/stateMiddleware';
+import { CONFIRM_EMOJI, LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_OUT_EMOJI } from '../config/texts';
+import {
+  addPlayer,
+  getPlayerBenchedCount,
+  getPlayerCount,
+  getPlayersBenched,
+  getQuizDate,
+  isUserBenched,
+  isUserOutAlready,
+  removePlayer,
+  setPlayersBenched,
+} from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
 import { KittyBotContext } from '../middleware/contextMiddleware';
+import getUsersWithCountBenched from '../db/getUsersWithCountBenched';
+import getWeightedSample from '../utils/misc/getWeightedSample';
+import { differenceBy } from 'lodash';
+import getRandomUnbenchedGif from '../utils/misc/getRandomUnbenchedGif';
+import playerBenchCountDecrement from '../db/playerBenchCountDecrement';
 
 const createUnconfirmPlayer = (isCallback: boolean = false) => async (ctx: KittyBotContext) => {
   const callback = () => {
@@ -46,9 +61,37 @@ const createUnconfirmPlayer = (isCallback: boolean = false) => async (ctx: Kitty
     return callback();
   }
 
+  if (isUserBenched({ chatId, userId })) {
+    const benchedPlayers = getPlayersBenched(chatId);
+    const nextPlayersBenched = benchedPlayers.filter(player => player.id !== userId);
+
+    setPlayersBenched({ chatId, nextPlayersBenched });
+  }
+
   removePlayer(chatId, user);
 
   await ctx.telegram.sendMessage(chatId, `🥒🐭 <b>${user.first_name}</b> is out! ${PLAYER_OUT_EMOJI}`, { parse_mode: 'HTML' });
+
+  if (getPlayerBenchedCount(chatId) > 0) {
+    const benchedPlayers = getPlayersBenched(chatId);
+
+    const playersWithCountBenched = await getUsersWithCountBenched(benchedPlayers);
+
+    const [pickedPlayer] = getWeightedSample(playersWithCountBenched, 1);
+    const nextPlayersBenched = differenceBy(playersWithCountBenched, [pickedPlayer], player => player.id);
+
+    addPlayer(chatId, pickedPlayer);
+    setPlayersBenched({ chatId, nextPlayersBenched });
+    await playerBenchCountDecrement(pickedPlayer);
+
+    const message = await ctx.telegram.sendMessage(
+      chatId,
+      `You're back on on the team, <b>${pickedPlayer.first_name}</b> ${CONFIRM_EMOJI}}.`,
+      { parse_mode: 'HTML' },
+    );
+
+    await ctx.telegram.sendAnimation(chatId, getRandomUnbenchedGif(), { reply_to_message_id: message.message_id });
+  }
 
   const playerCount = getPlayerCount(chatId);
 

@@ -6,8 +6,8 @@ import createSendLineup from './sendLineup';
 import envConfig from '../config/env';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
-import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED } from '../config/texts';
-import { addPlayer, getPlayerCount, getQuizDate, isUserPlayingAlready } from '../middleware/stateMiddleware';
+import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_BENCHED_EMOJI } from '../config/texts';
+import { addPlayer, getPlayerCount, getQuizDate, isUserBenched, isUserPlayingAlready } from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
@@ -37,6 +37,14 @@ const createConfirmPlayer = (isCallback: boolean = false) => async (ctx: KittyBo
 
   // User is already playing in this week's quiz.
   if (isUserPlayingAlready(chatId, userId)) {
+    return callback();
+  }
+
+  if (isUserBenched({ chatId, userId })) {
+    await ctx.telegram.sendMessage(chatId, `Sorry <b>${user.first_name}</b>, you're benched this week. ${PLAYER_BENCHED_EMOJI}`, {
+      parse_mode: 'HTML',
+    });
+
     return callback();
   }
 

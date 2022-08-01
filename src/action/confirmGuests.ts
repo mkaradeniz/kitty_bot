@@ -8,7 +8,13 @@ import getNumberOfInviteesFromEmoji from '../utils/state/getNumberOfInviteesFrom
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
 import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_OUT_EMOJI } from '../config/texts';
-import { addPlayersExternal, getPlayerCount, getQuizDate, playerHasInvitations } from '../middleware/stateMiddleware';
+import {
+  addPlayersExternal,
+  getPlayerBenchedCount,
+  getPlayerCount,
+  getQuizDate,
+  playerHasInvitations,
+} from '../middleware/stateMiddleware';
 
 // Types
 import { DayOfWeek } from '../types';
@@ -37,6 +43,7 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
   }
 
   const numberOfInvitees = getNumberOfInviteesFromEmoji(message?.text);
+  const playerBenchedCount = getPlayerBenchedCount(chatId);
 
   if (numberOfInvitees === -1) {
     return callback();
@@ -50,6 +57,17 @@ const createConfirmGuests = (isCallback: boolean = false) => async (ctx: KittyBo
     await ctx.telegram.sendMessage(chatId, `<b>${user.first_name}</b> revoked their previous invitations! ${PLAYER_OUT_EMOJI}`, {
       parse_mode: 'HTML',
     });
+  } else if (playerBenchedCount > 0) {
+    await ctx.telegram.sendMessage(
+      chatId,
+      `<b>${user.first_name}</b>, you can't invite ${pluralize(
+        'player',
+        numberOfInvitees,
+      )} if we still have pickles on the bench. Please unbench them before inviting guests.`,
+      { parse_mode: 'HTML' },
+    );
+
+    return callback();
   } else {
     await ctx.telegram.sendMessage(
       chatId,
