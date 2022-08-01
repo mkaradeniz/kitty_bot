@@ -116,7 +116,7 @@ export const getPlayers = (chatId: number) => {
   return state[chatId].players;
 };
 
-export const getplayersBenched = (chatId: number) => {
+export const getPlayersBenched = (chatId: number) => {
   return state[chatId].playersBenched;
 };
 
@@ -129,12 +129,12 @@ export const setPlayers = ({ chatId, nextPlayers }: SetPlayersInput) => {
   state[chatId].players = nextPlayers;
 };
 
-type SetplayersBenchedInput = {
+type SetPlayersBenchedInput = {
   chatId: number;
   nextplayersBenched: User[];
 };
 
-export const setplayersBenched = ({ chatId, nextplayersBenched }: SetplayersBenchedInput) => {
+export const setPlayersBenched = ({ chatId, nextplayersBenched }: SetPlayersBenchedInput) => {
   state[chatId].playersBenched = nextplayersBenched;
 };
 
@@ -214,7 +214,7 @@ const stateMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) 
     resetState(ctx.myContext.chatId);
   }
 
-  if (isAfter(new Date(), ctx.state.quizDate)) {
+  if (isAfter(new Date(), state[ctx.myContext.chatId].quizDate)) {
     resetState(ctx.myContext.chatId);
   }
 

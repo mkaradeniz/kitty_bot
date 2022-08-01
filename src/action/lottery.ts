@@ -12,9 +12,9 @@ import {
   getPlayerCount,
   getPlayerExternalCount,
   getPlayers,
-  getplayersBenched,
+  getPlayersBenched,
   setPlayers,
-  setplayersBenched,
+  setPlayersBenched,
 } from '../middleware/stateMiddleware';
 
 // Types
@@ -100,13 +100,13 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
   );
 
   const players = getPlayers(chatId);
-  const playersBenched = getplayersBenched(chatId);
+  const playersBenched = getPlayersBenched(chatId);
   const allPlayers = [...players, ...playersBenched];
   const pickedPlayers = sampleSize(allPlayers, envConfig.maxPlayers);
   const nextplayersBenched = differenceBy(allPlayers, pickedPlayers, user => user.id);
 
   setPlayers({ chatId, nextPlayers: pickedPlayers });
-  setplayersBenched({ chatId, nextplayersBenched });
+  setPlayersBenched({ chatId, nextplayersBenched });
 
   const nextplayersBenchedList = nextplayersBenched
     .slice()
