@@ -7,4 +7,3 @@ node_modules/
 src/templates/email.ts
 
 yarn-error.log
-*.db
