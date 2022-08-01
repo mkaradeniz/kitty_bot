@@ -7,6 +7,7 @@ import envConfig from '../config/env';
 import formatListPart from '../utils/misc/formatListPart';
 import getRandomBenchedGif from '../utils/misc/getRandomBenchedGif';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import wait from '../utils/misc/wait';
 import {
   getPlayerCount,
   getPlayerExternalCount,
@@ -102,28 +103,30 @@ const createLottery = (isCallback: boolean = false) => async (ctx: KittyBotConte
   const playersBenched = getPlayersBenched(chatId);
   const allPlayers = [...players, ...playersBenched];
   const pickedPlayers = sampleSize(allPlayers, envConfig.maxPlayers);
-  const nextplayersBenched = differenceBy(allPlayers, pickedPlayers, user => user.id);
+  const nextPlayersBenched = differenceBy(allPlayers, pickedPlayers, user => user.id);
 
   setPlayers({ chatId, nextPlayers: pickedPlayers });
-  setPlayersBenched({ chatId, nextplayersBenched });
+  setPlayersBenched({ chatId, nextPlayersBenched });
 
-  const nextplayersBenchedList = nextplayersBenched
+  const nextPlayersBenchedList = nextPlayersBenched
     .slice()
     .sort((a, b) => a.first_name.localeCompare(b.first_name))
     .map(player => `${player.first_name}`);
 
-  const nextplayersBenchedText = listFormatter
-    .formatToParts(nextplayersBenchedList)
+  const nextPlayersBenchedText = listFormatter
+    .formatToParts(nextPlayersBenchedList)
     .map(formatListPart)
     .join('');
 
-  const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextplayersBenchedText} 😪.`, {
-    parse_mode: 'HTML',
-  });
+  await wait(1000);
 
-  await ctx.telegram.sendAnimation(chatId, getRandomBenchedGif(), {
-    reply_to_message_id: message.message_id,
-  });
+  await ctx.telegram.sendMessage(chatId, `...`);
+
+  await wait(1000);
+
+  const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextPlayersBenchedText} 😪.`, { parse_mode: 'HTML' });
+
+  await ctx.telegram.sendAnimation(chatId, getRandomBenchedGif(), { reply_to_message_id: message.message_id });
 
   await createSendLineup(isCallback)(ctx);
 
