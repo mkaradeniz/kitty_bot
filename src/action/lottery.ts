@@ -7,7 +7,6 @@ import envConfig from '../config/env';
 import formatListPart from '../utils/misc/formatListPart';
 import getRandomBenchedGif from '../utils/misc/getRandomBenchedGif';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import { PLAYER_BENCHED_EMOJI } from '../config/texts';
 import {
   getPlayerCount,
   getPlayerExternalCount,
