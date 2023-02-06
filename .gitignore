@@ -1,0 +1,10 @@
+.DS_Store
+.env
+
+dist/
+node_modules/
+
+src/templates/email.ts
+
+yarn-error.log
+*.db

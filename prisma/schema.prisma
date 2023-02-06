@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// # Models
+
+model Player {
+  // Meta
+  createdAt  DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt   @unique
+  updatedAt  DateTime @updatedAt
+
+  // Fields
+  countBenched Int @default(0)
+}
