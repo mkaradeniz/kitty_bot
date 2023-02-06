@@ -1,6 +1,6 @@
 import arrayify from '../utils/misc/arrayify';
-import prisma from '../../prisma/prisma';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import prisma from '../../prisma/prisma';
 
 // Types
 import { User } from 'telegraf/typings/core/types/typegram';

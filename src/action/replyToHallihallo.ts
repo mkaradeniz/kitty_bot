@@ -1,11 +1,14 @@
+import createSendGif from '../utils/message/createSendGif';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 
 // Types
-import { KittyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
-const replyToHallihallo = async (ctx: KittyBotContext) => {
+const replyToHallihallo = async (ctx: MyBotContext) => {
   try {
-    const { chatId, message } = ctx.myContext;
+    const sendGif = createSendGif(ctx);
+
+    const { message } = ctx.myContext;
 
     const messageId = message?.message_id;
 
@@ -13,12 +16,9 @@ const replyToHallihallo = async (ctx: KittyBotContext) => {
       return;
     }
 
-    await ctx.telegram.sendAnimation(
-      chatId,
+    await sendGif(
       'https://media4.giphy.com/media/ULgyBIoljSnrnih7pJ/giphy.gif?cid=790b76112f6603b75be9db813ee4264cb72aba46265777fe&rid=giphy.gif&ct=g',
-      {
-        reply_to_message_id: messageId,
-      },
+      messageId,
     );
   } catch (err) {
     console.error(err);

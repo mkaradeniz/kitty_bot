@@ -1,11 +1,12 @@
 import createPlayer from '../db/createPlayer';
 import doesPlayerExist from '../db/doesPlayerExist';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 
 // Types
-import { KittyBotContext } from './contextMiddleware';
+import { MyBotContext } from './contextMiddleware';
 
-const dbMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => {
+const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
   try {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
@@ -13,7 +14,10 @@ const dbMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => 
       return next();
     }
 
+    await getOrCreateCurrentQuizDb();
+
     const userId = ctx?.message?.from?.id ?? ctx.callbackQuery?.from?.id ?? undefined;
+    const userFirstName = ctx?.message?.from?.first_name ?? ctx.callbackQuery?.from?.first_name ?? '👻';
 
     if (!isNotNullOrUndefined(userId)) {
       return next();
@@ -23,7 +27,7 @@ const dbMiddleware = async (ctx: KittyBotContext, next: () => Promise<void>) => 
       return next();
     }
 
-    await createPlayer(userId);
+    await createPlayer({ firstName: userFirstName, telegramId: userId });
 
     return next();
   } catch (err) {

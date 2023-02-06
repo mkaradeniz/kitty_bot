@@ -1,148 +1,91 @@
-import pluralize from 'pluralize';
-import { Markup } from 'telegraf';
 import { differenceBy } from 'lodash';
-import { getISODay } from 'date-fns';
 
+import benchPlayersDb from '../db/benchPlayers';
+import confirmPlayersDb from '../db/confirmPlayers';
 import createCallback from '../utils/misc/createCallback';
+import createSendGif from '../utils/message/createSendGif';
 import createSendLineup from './sendLineup';
-import envConfig from '../config/env';
+import createSendMessage from '../utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
 import getRandomUnbenchedGif from '../utils/gifs/getRandomUnbenchedGif';
-import getUsersWithCountBenched from '../db/getUsersWithCountBenched';
+import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import isPlayerBenched from '../utils/state/isPlayerBenched';
+import isPlayerOut from '../utils/state/isPlayerOut';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
-import playerBenchCountDecrement from '../db/playerBenchCountDecrement';
-import { CALLBACK_TYPE_LOTTERY } from '../config/constants';
-import { LINEUP_COMPLETE, LOTTERY_EMOJI, OVERBOOKED, PLAYER_BENCHED_EMOJI, POSITIVE_EMOJI } from '../config/texts';
-import {
-  addPlayer,
-  benchPlayer,
-  getPlayerBenchedCount,
-  getPlayerCount,
-  getPlayersBenched,
-  getQuizDate,
-  isUserBenched,
-  isUserOutAlready,
-  setPlayersBenched,
-} from '../middleware/stateMiddleware';
+import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_DECLINE, EMOJI_REPEAT } from '../config/texts';
 
 // Types
-import { DayOfWeek } from '../types';
-import { KittyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
-const createBenchPlayer = (isCallback = false) => async (ctx: KittyBotContext) => {
-  const callback = createCallback({ ctx, isCallback });
+const createBenchPlayer =
+  (isCallback = false) =>
+  async (ctx: MyBotContext) => {
+    const callback = createCallback({ ctx, isCallback });
 
-  try {
-    const dayOfWeek = getISODay(new Date());
+    try {
+      const sendGif = createSendGif(ctx);
+      const sendMessage = createSendMessage(ctx);
 
-    if (
-      envConfig.isProduction &&
-      dayOfWeek !== DayOfWeek.Sunday &&
-      dayOfWeek !== DayOfWeek.Monday &&
-      dayOfWeek !== DayOfWeek.Tuesday &&
-      dayOfWeek !== DayOfWeek.Wednesday
-    ) {
-      return callback();
-    }
+      const currentQuiz = await getOrCreateCurrentQuizDb();
+      const { usernameInBold } = getUsernameFromContext(ctx);
 
-    const { chatId, user } = ctx.myContext;
+      const telegramId = getTelegramIdFromContext(ctx);
 
-    const quizDate = getQuizDate(chatId);
-    const userId = ctx.myContext.user?.id;
+      if (!isNotNullOrUndefined(telegramId)) {
+        return callback();
+      }
 
-    if (!isNotNullOrUndefined(user) || !isNotNullOrUndefined(userId)) {
-      return callback();
-    }
+      if (isPlayerOut({ currentQuiz, telegramId })) {
+        await sendMessage(
+          `You can't bench yourself, ${usernameInBold}, if you're were never going to participate in the first place. ${EMOJI_REPEAT}`,
+        );
 
-    // User is already playing in this week's quiz.
-    if (isUserOutAlready(chatId, userId)) {
-      return callback();
-    }
+        return callback();
+      }
 
-    const playerBenchedCount = getPlayerBenchedCount(chatId);
+      const playersBenchedCount = getPlayersBenchedCount(currentQuiz);
 
-    if (playerBenchedCount === 0) {
-      await ctx.telegram.sendMessage(
-        chatId,
-        `<b>${user.first_name}</b>, you can't bench yourself if we don't have anyone on the bench waiting.`,
-        { parse_mode: 'HTML' },
-      );
+      if (playersBenchedCount === 0) {
+        await sendMessage(
+          `${usernameInBold}, you can't bench yourself if we don't have anyone on the bench waiting. If you want to cancel your registration, type ${EMOJI_DECLINE}.`,
+        );
 
-      return callback();
-    }
+        return callback();
+      }
 
-    if (isUserBenched({ chatId, userId })) {
-      await ctx.telegram.sendMessage(chatId, `<b>${user.first_name}</b>, you can't be benched more than you are benched already.`, {
-        parse_mode: 'HTML',
-      });
+      if (isPlayerBenched({ currentQuiz, telegramId })) {
+        await sendMessage(`${usernameInBold}, you can't be benched more than you are benched already.`);
 
-      return callback();
-    }
+        return callback();
+      }
 
-    // Pick one of the benched players.
-    const benchedPlayers = getPlayersBenched(chatId);
+      const benchedPlayers = currentQuiz.playersBenched;
 
-    const playersWithCountBenched = await getUsersWithCountBenched(benchedPlayers);
+      const [pickedPlayer] = pickPlayersWeighted(benchedPlayers, 1);
+      const nextPlayersBenched = differenceBy(benchedPlayers, [pickedPlayer], player => player.id);
 
-    const [pickedPlayer] = pickPlayersWeighted(playersWithCountBenched, 1);
-    const nextPlayersBenched = differenceBy(playersWithCountBenched, [pickedPlayer], player => player.id);
+      await confirmPlayersDb(pickedPlayer.telegramId);
+      await benchPlayersDb(nextPlayersBenched.map(pickedPlayer => pickedPlayer.telegramId));
 
-    addPlayer(chatId, pickedPlayer);
-    setPlayersBenched({ chatId, nextPlayersBenched });
-    await playerBenchCountDecrement(pickedPlayer);
+      const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${EMOJI_POSITIVE}.`);
 
-    const message = await ctx.telegram.sendMessage(
-      chatId,
-      `You're back on the team, <b>${pickedPlayer.first_name}</b> ${POSITIVE_EMOJI}.`,
-      { parse_mode: 'HTML' },
-    );
+      await sendGif(getRandomUnbenchedGif(), sentMessage.message_id);
 
-    await ctx.telegram.sendAnimation(chatId, getRandomUnbenchedGif(), { reply_to_message_id: message.message_id });
+      await benchPlayersDb(telegramId);
 
-    // Bench player
-    benchPlayer(chatId, user);
-
-    await ctx.telegram.sendMessage(
-      chatId,
-      `${PLAYER_BENCHED_EMOJI} <b>${user.first_name}</b> takes one for the team and benches themselves!`,
-      { parse_mode: 'HTML' },
-    );
-
-    const playerCount = getPlayerCount(chatId);
-
-    if (playerCount < envConfig.maxPlayers) {
-      await ctx.telegram.sendMessage(
-        chatId,
-        `We have <b>${playerCount}</b> confirmed ${pluralize('player', playerCount)} for the <b>${quizDate}</B>.`,
-        { parse_mode: 'HTML' },
-      );
-
-      return callback();
-    }
-
-    if (playerCount === envConfig.maxPlayers) {
-      await ctx.telegram.sendMessage(chatId, LINEUP_COMPLETE);
+      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrifices themselves selflessly to the bench!`);
 
       await createSendLineup(isCallback)(ctx);
 
       return callback();
+    } catch (err) {
+      console.error(err);
+
+      return callback();
     }
-
-    if (playerCount > envConfig.maxPlayers) {
-      await createSendLineup(isCallback)(ctx);
-
-      await ctx.telegram.sendMessage(chatId, OVERBOOKED, {
-        parse_mode: 'HTML',
-        ...Markup.inlineKeyboard([Markup.button.callback(LOTTERY_EMOJI, CALLBACK_TYPE_LOTTERY)]),
-      });
-    }
-
-    return callback();
-  } catch (err) {
-    console.error(err);
-
-    return callback();
-  }
-};
+  };
 
 export default createBenchPlayer;

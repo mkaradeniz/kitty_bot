@@ -5,44 +5,46 @@ import stringify from 'safe-json-stringify';
 import { Telegraf } from 'telegraf';
 import { fmt, code } from 'telegraf/format';
 
+import calculateLastQuizsBenchedPlayersBenchCount from './action/calculateLastQuizsBenchedPlayersBenchCount';
 import contextMiddleware from './middleware/contextMiddleware';
 import createBenchPlayer from './action/benchPlayer';
 import createConfirmGuests from './action/confirmGuests';
 import createConfirmPlayer from './action/confirmPlayer';
 import createLottery from './action/lottery';
-import createSendEmailReminder from './action/sendEmailReminder';
-import createSendIntro from './action/sendIntro';
+import createResetCurrentQuizCommand from './action/resetState';
+import createSendEmailReminder from './action/contextless/sendEmailReminder';
+import createSendIntro from './action/contextless/sendIntro';
 import createSendLineup from './action/sendLineup';
-import createSendReminder from './action/sendReminder';
+import createSendReminder from './action/contextless/sendReminder';
+import createSendTableBookingCancelEmail from './action/sendTableBookingCancelEmail';
 import createSendTableBookingEmail from './action/sendTableBookingEmail';
 import createUnconfirmPlayer from './action/unconfirmPlayer';
 import dbMiddleware from './middleware/dbMiddleware';
 import envConfig from './config/env';
+import getOrCreateCurrentQuizDb from './db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 import replyToHallihallo from './action/replyToHallihallo';
 import replyToHallochen from './action/replyToHallochen';
-import resetStateCommand from './action/resetState';
-import sendStateCommand from './action/sendState';
-import stateMiddleware, { isStateDefined, resetState } from './middleware/stateMiddleware';
+import sendDebugCommand from './action/sendDebug';
 import {
   CALLBACK_TYPE_BENCH,
   CALLBACK_TYPE_CONFIRM,
   CALLBACK_TYPE_LINEUP,
   CALLBACK_TYPE_LOTTERY,
+  CALLBACK_TYPE_SEND_EMAIL,
   CALLBACK_TYPE_UNCONFIRM,
 } from './config/constants';
-import { CONFIRM_EMOJI, DECLINE_EMOJI, LINEUP_EMOJI, LOTTERY_EMOJI, PLAYER_BENCHED_EMOJI } from './config/texts';
+import { EMOJI_CONFIRM, EMOJI_DECLINE, EMOJI_LINEUP, EMOJI_LOTTERY, EMOJI_PLAYER_BENCHED } from './config/texts';
 
 // Types
-import { KittyBotContext } from './middleware/contextMiddleware';
+import { MyBotContext } from './middleware/contextMiddleware';
 
-const bot = new Telegraf<KittyBotContext>(envConfig.botToken);
+const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 
 // Middlewares
 bot.use(contextMiddleware);
 
 bot.use(dbMiddleware);
-
-bot.use(stateMiddleware);
 
 // Callback Actions
 bot.action(CALLBACK_TYPE_BENCH, createBenchPlayer(true));
@@ -51,37 +53,38 @@ bot.action(CALLBACK_TYPE_CONFIRM, createConfirmPlayer(true));
 
 bot.action(CALLBACK_TYPE_LINEUP, createSendLineup(true));
 
-bot.action(CALLBACK_TYPE_UNCONFIRM, createUnconfirmPlayer(true));
-
 bot.action(CALLBACK_TYPE_LOTTERY, createLottery({ isCallback: true }));
 
-// Commands
-bot.command('lineup', createSendLineup());
+bot.action(CALLBACK_TYPE_SEND_EMAIL, createSendTableBookingEmail(true));
+
+bot.action(CALLBACK_TYPE_UNCONFIRM, createUnconfirmPlayer(true));
 
 // Hears
 bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), createConfirmGuests());
 
-bot.hears(new RegExp(`(${PLAYER_BENCHED_EMOJI})`), createBenchPlayer());
+bot.hears(new RegExp(`(${EMOJI_PLAYER_BENCHED})`), createBenchPlayer());
 
-bot.hears(new RegExp(`(${CONFIRM_EMOJI})`), createConfirmPlayer());
+bot.hears(new RegExp(`(${EMOJI_CONFIRM})`), createConfirmPlayer());
 
-bot.hears(new RegExp(`(${DECLINE_EMOJI})`), createUnconfirmPlayer());
+bot.hears(new RegExp(`(${EMOJI_DECLINE})`), createUnconfirmPlayer());
 
-bot.hears(new RegExp(`(${LINEUP_EMOJI})`), createSendLineup());
+bot.hears(new RegExp(`(${EMOJI_LINEUP})`), createSendLineup());
 
-bot.hears(new RegExp(`(!${LOTTERY_EMOJI}${LOTTERY_EMOJI}${LOTTERY_EMOJI})`), createLottery({ isForced: true }));
+bot.hears(new RegExp(`(!${EMOJI_LOTTERY}${EMOJI_LOTTERY}${EMOJI_LOTTERY})`), createLottery({ isForced: true }));
 
-bot.hears(new RegExp(`(${LOTTERY_EMOJI})`), createLottery());
+bot.hears(new RegExp(`(${EMOJI_LOTTERY})`), createLottery());
 
 bot.hears(new RegExp('hallöchen', 'i'), replyToHallochen);
 
 bot.hears(new RegExp('hallihallo', 'i'), replyToHallihallo);
 
-bot.hears('!final', createSendTableBookingEmail(bot));
+bot.hears('!cancel', createSendTableBookingCancelEmail());
 
-bot.hears('!state', sendStateCommand);
+bot.hears('!debug', sendDebugCommand);
 
-bot.hears('!reset', resetStateCommand);
+bot.hears('!final', createSendTableBookingEmail());
+
+bot.hears('!reset', createResetCurrentQuizCommand());
 
 // Error Handling
 bot.catch(async err => {
@@ -89,53 +92,61 @@ bot.catch(async err => {
 
   void bot.launch();
 
-  await bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot crashed: ⚰️ and restarted 🤖`);
-  await bot.telegram?.sendMessage(envConfig.adminUserId, `Error was:`);
-  await bot.telegram?.sendMessage(envConfig.adminUserId, fmt`${code(stringify(err as any, null, 2))}`);
+  if (isNotNullOrUndefined(envConfig.adminUserId)) {
+    await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} crashed: ⚰️ and restarted 🤖`);
+    await bot.telegram?.sendMessage(envConfig.adminUserId, `Error was:`);
+    await bot.telegram?.sendMessage(envConfig.adminUserId, fmt`${code(stringify(err as any, null, 2))}`);
+  }
 });
 
 // Main
 const main = async () => {
-  const chatId = envConfig.pubQuizGroupId;
-
-  if (!isStateDefined(chatId)) {
-    resetState(chatId);
-  }
-
   if (envConfig.isProduction) {
-    await bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot is online! 🤖`);
+    if (isNotNullOrUndefined(envConfig.adminUserId)) {
+      await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} is online! 🤖`);
+    }
 
-    await bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is online. Hallöchen 🤖`);
+    if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
+      await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is online. Hallöchen 🤖`);
+    }
   }
 
   const sendEmailReminder = createSendEmailReminder(bot);
   const sendIntro = createSendIntro(bot);
   const sendReminder = createSendReminder(bot);
 
+  // At 12:00 on Sunday.
   cron.schedule('0 12 * * 0', () => {
     void sendIntro();
   });
 
+  // At 12:00 on Monday and Tuesday.
   cron.schedule('0 12 * * 1,2', () => {
     void sendReminder();
   });
 
-  cron.schedule('0 15 * * 2', () => {
+  // At minute 0 past every hour from 15 through 18 on Tuesday.
+  cron.schedule('0 15-18 * * 2', () => {
     void sendEmailReminder();
   });
 
-  cron.schedule('0 2 * * 4', () => {
-    // eslint-disable-next-line no-console
-    console.info('Resetting state through cronjob.', new Date().toISOString());
+  // At 02:00 on Thursday.
+  cron.schedule('0 2 * * 4', async () => {
+    // If we get the current quiz on a Thursday, we will automatically create the new one.
+    await getOrCreateCurrentQuizDb();
 
-    resetState(chatId);
+    await calculateLastQuizsBenchedPlayersBenchCount();
   });
 
   process.once('SIGINT', async () => {
     if (envConfig.isProduction) {
-      await bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGINT 😵`);
+      if (isNotNullOrUndefined(envConfig.adminUserId)) {
+        await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} shutdown: SIGINT 😵`);
+      }
 
-      await bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+      if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
+        await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is offline. Goodbye cruel world 😵`);
+      }
     }
 
     bot.stop('SIGINT');
@@ -143,9 +154,13 @@ const main = async () => {
 
   process.once('SIGTERM', async () => {
     if (envConfig.isProduction) {
-      await bot.telegram?.sendMessage(envConfig.adminUserId, `KittyBot shutdown: SIGTERM 😵`);
+      if (isNotNullOrUndefined(envConfig.adminUserId)) {
+        await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} shutdown: SIGTERM 😵`);
+      }
 
-      await bot.telegram?.sendMessage(envConfig.pubQuizGroupId, `KittyBot is offline. Goodbye cruel world 😵`);
+      if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
+        await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is offline. Goodbye cruel world 😵`);
+      }
     }
 
     bot.stop('SIGTERM');
@@ -153,8 +168,7 @@ const main = async () => {
 
   void bot.launch();
 
-  // eslint-disable-next-line no-console
-  console.info('Kitty Bot is online! 🤖');
+  console.info('${envConfig.botName} is online! 🤖');
 };
 
 // Start

@@ -1,6 +1,7 @@
 import weightedRandomObject from 'weighted-random-object';
 
-import { UserWithCountBenched } from '../../db/getUsersWithCountBenched';
+// Types
+import { Player } from '@prisma/client';
 
 type CreateGetWeightInput = {
   max: number;
@@ -20,23 +21,23 @@ const createGetWeight = ({ max, min }: CreateGetWeightInput) => (value: number) 
 };
 
 // Recursive!
-const pickPlayersWeighted = (users: UserWithCountBenched[], size = 8, pickedUsers: UserWithCountBenched[] = []): UserWithCountBenched[] => {
+const pickPlayersWeighted = (players: Player[], size = 8, pickedPlayers: Player[] = []): Player[] => {
   if (size === 0) {
-    return pickedUsers;
+    return pickedPlayers;
   }
 
-  const maxBenchedCount = Math.max(...users.map(player => player.countBenched));
-  const minBenchedCount = Math.min(...users.map(player => player.countBenched));
+  const maxBenchedCount = Math.max(...players.map(player => player.countBenched));
+  const minBenchedCount = Math.min(...players.map(player => player.countBenched));
 
   const getWeight = createGetWeight({ max: maxBenchedCount, min: minBenchedCount });
 
-  const weightedUsers = users.map(user => ({ ...user, weight: getWeight(user.countBenched) }));
+  const weightedUsers = players.map(user => ({ ...user, weight: getWeight(user.countBenched) }));
 
   const pickedUser = weightedRandomObject(weightedUsers);
 
-  const nextPickedUsers = [...pickedUsers, pickedUser];
+  const nextPickedUsers = [...pickedPlayers, pickedUser];
   const nextSize = size - 1;
-  const nextUsers = users.filter(user => user.id !== pickedUser.id);
+  const nextUsers = players.filter(user => user.id !== pickedUser.id);
 
   return pickPlayersWeighted(nextUsers, nextSize, nextPickedUsers);
 };

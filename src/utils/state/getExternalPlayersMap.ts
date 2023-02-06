@@ -1,20 +1,24 @@
 import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
 
 // Types
-import { KittyBotState } from '../../middleware/stateMiddleware';
+import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
 
-const getExternalPlayersMap = (state: KittyBotState) => {
-  const externalPlayersMap = state.playersExternal.reduce((externalPlayersMap, externalPlayer) => {
-    if (!isNotNullOrUndefined(externalPlayersMap[externalPlayer.invitedBy.id])) {
+const getExternalPlayersMap = (currentQuiz: QuizWithRelations) => {
+  const externalPlayersMap = currentQuiz.playersExternal.reduce((acc, playerExternal) => {
+    if (!isNotNullOrUndefined(playerExternal.invitedById)) {
+      return acc;
+    }
+
+    if (!isNotNullOrUndefined(acc[playerExternal.invitedById.toString()])) {
       return {
-        ...externalPlayersMap,
-        [externalPlayer.invitedBy.id]: 1,
+        ...acc,
+        [playerExternal.invitedById.toString()]: 1,
       };
     }
 
     return {
-      ...externalPlayersMap,
-      [externalPlayer.invitedBy.id]: externalPlayersMap[externalPlayer.invitedBy.id] + 1,
+      ...acc,
+      [playerExternal.invitedById.toString()]: acc[playerExternal.invitedById.toString()] + 1,
     };
   }, {} as { [invitedByFirstName: string]: number });
 

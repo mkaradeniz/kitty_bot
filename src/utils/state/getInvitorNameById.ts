@@ -1,8 +1,13 @@
 // Types
-import { KittyBotState } from '../../middleware/stateMiddleware';
+import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
 
-const getInvitorNameById = (invatorId: string, state: KittyBotState) => {
-  return state.playersExternal.find(externalPlayer => externalPlayer.invitedBy.id === Number.parseInt(invatorId))?.invitedBy.first_name;
+type GetInvitorNameByIdInput = {
+  currentQuiz: QuizWithRelations;
+  invitorTelegramId: bigint | number;
+};
+
+const getInvitorNameById = ({ currentQuiz, invitorTelegramId }: GetInvitorNameByIdInput) => {
+  return currentQuiz.playersExternal.find(externalPlayer => externalPlayer.invitedById === invitorTelegramId)?.invitedBy?.firstName;
 };
 
 export default getInvitorNameById;

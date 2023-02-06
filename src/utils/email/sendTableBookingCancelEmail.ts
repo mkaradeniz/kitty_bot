@@ -1,22 +1,20 @@
 import nodemailer from 'nodemailer';
-import pluralize from 'pluralize';
 
 import envConfig from '../../config/env';
 
-const buildEmailText = (playerCount: number) => `Hallöchen ${envConfig.emailToName},
+const EMAIL_TEXT = `Hallöchen ${envConfig.emailToName},
 
-we will be ${playerCount} ${pluralize('person', playerCount)} this week.
+we sadly have to cancel for this week.
 
 
 Cheers
 
-KittyBot`;
+${envConfig.botName}`;
 
-const buildEmailSubject = (playerCount: number) => `${envConfig.emailFromName} will be ${playerCount} this week`;
+const EMAIL_SUBJECT = `${envConfig.emailFromName} will have to cancel this week`;
 
-const sendLineupEmail = (playerCount: number): Promise<void> => {
-  const subject = buildEmailSubject(playerCount);
-  const text = buildEmailText(playerCount);
+const sendTableBookingCancelEmail = (date: string): Promise<void> => {
+  const subject = `${EMAIL_SUBJECT} (${date})`;
 
   return new Promise((resolve, reject) => {
     const smtpConfig = {
@@ -34,7 +32,7 @@ const sendLineupEmail = (playerCount: number): Promise<void> => {
       cc: envConfig.emailCc,
       from: `${envConfig.emailFromName} <${envConfig.emailFrom}>`,
       subject,
-      text,
+      text: EMAIL_TEXT,
       to: envConfig.emailTo,
     };
 
@@ -47,7 +45,6 @@ const sendLineupEmail = (playerCount: number): Promise<void> => {
         return reject(err);
       }
 
-      // eslint-disable-next-line no-console
       console.info('Email sent');
 
       return resolve();
@@ -55,4 +52,4 @@ const sendLineupEmail = (playerCount: number): Promise<void> => {
   });
 };
 
-export default sendLineupEmail;
+export default sendTableBookingCancelEmail;
