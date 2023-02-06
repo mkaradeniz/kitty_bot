@@ -1,31 +1,26 @@
 import pluralize from 'pluralize';
 import { differenceBy } from 'lodash';
-import { getISODay } from 'date-fns';
 
+import benchPlayersDb from '../db/benchPlayers';
+import confirmPlayersDb from '../db/confirmPlayers';
 import createCallback from '../utils/misc/createCallback';
+import createSendGif from '../utils/message/createSendGif';
 import createSendLineup from './sendLineup';
+import createSendMessage from '../utils/message/createSendMessage';
 import envConfig from '../config/env';
 import formatListPart from '../utils/misc/formatListPart';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
+import getPlayersExternalPlayingCount from '../utils/state/getPlayersExternalPlayingCount';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
 import getRandomBenchedGif from '../utils/gifs/getRandomBenchedGif';
-import getUsersWithCountBenched from '../db/getUsersWithCountBenched';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
-import playerBenchCountIncrement from '../db/playerBenchCountIncrement';
 import wait from '../utils/misc/wait';
-import { NEGATIVE_EMOJI, POSITIVE_EMOJI } from '../config/texts';
-import {
-  getPlayerBenchedCount,
-  getPlayerCount,
-  getPlayerExternalCount,
-  getPlayers,
-  getPlayersBenched,
-  setPlayers,
-  setPlayersBenched,
-} from '../middleware/stateMiddleware';
+import { EMOJI_NEGATIVE, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
 
 // Types
-import { DayOfWeek } from '../types';
-import { KittyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
@@ -35,138 +30,111 @@ type CreateLotteryInput = {
   isForced?: boolean;
 };
 
-const createLottery = ({ isCallback = false, isForced = false }: CreateLotteryInput = {}) => async (ctx: KittyBotContext) => {
-  const callback = createCallback({ ctx, isCallback });
+const createLottery =
+  ({ isCallback = false, isForced = false }: CreateLotteryInput = {}) =>
+  async (ctx: MyBotContext) => {
+    const callback = createCallback({ ctx, isCallback });
 
-  try {
-    const dayOfWeek = getISODay(new Date());
+    try {
+      const sendGif = createSendGif(ctx);
+      const sendMessage = createSendMessage(ctx);
 
-    if (envConfig.isProduction && dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
-      return callback();
-    }
+      const currentQuiz = await getOrCreateCurrentQuizDb();
 
-    const { chatId, user } = ctx.myContext;
+      const { usernameInBold } = getUsernameFromContext(ctx);
 
-    const userId = ctx.myContext.user?.id;
+      const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
+      const playersBenchedCount = getPlayersBenchedCount(currentQuiz);
 
-    if (!isNotNullOrUndefined(chatId) || !isNotNullOrUndefined(user) || !isNotNullOrUndefined(userId)) {
-      return callback();
-    }
+      if (
+        (!isForced && playersPlayingCount <= envConfig.maxPlayers) ||
+        (isForced && playersPlayingCount + playersBenchedCount <= envConfig.maxPlayers)
+      ) {
+        if (playersPlayingCount > 0 || playersPlayingCount === envConfig.maxPlayers) {
+          if (playersPlayingCount < envConfig.maxPlayers) {
+            await sendMessage(`Now that is just cruel, ${usernameInBold}. We're not even full and you want to bench someone?`);
+          }
 
-    const playerCount = getPlayerCount(chatId);
-    const playerBenchedCount = getPlayerBenchedCount(chatId);
+          if (playersPlayingCount === envConfig.maxPlayers) {
+            await sendMessage(
+              `Now that is just cruel, ${usernameInBold}. We have exactly <b>${envConfig.maxPlayers}</b> ${pluralize(
+                'players',
+                envConfig.maxPlayers,
+              )} and you want to bench someone?`,
+            );
+          }
 
-    if ((!isForced && playerCount <= envConfig.maxPlayers) || (isForced && playerCount + playerBenchedCount <= envConfig.maxPlayers)) {
-      if (playerCount > 0 || playerCount === envConfig.maxPlayers) {
-        if (playerCount < envConfig.maxPlayers) {
-          await ctx.telegram.sendMessage(
-            chatId,
-            `Now that is just cruel, <b>${user.first_name}</b>. We're not even full and you want to bench someone?`,
-            { parse_mode: 'HTML' },
+          await sendGif(
+            'https://media1.giphy.com/media/vX9WcCiWwUF7G/giphy.gif?cid=ecf05e478ab7aldlabx5by30fqrm9zim2atg2l2lnkwjtfpw&rid=giphy.gif&ct=g',
           );
         }
 
-        if (playerCount === envConfig.maxPlayers) {
-          await ctx.telegram.sendMessage(
-            chatId,
-            `Now that is just cruel, <b>${user.first_name}</b>. We have exactly <b>${envConfig.maxPlayers}</b> ${pluralize(
-              'players',
-              envConfig.maxPlayers,
-            )} and you want to bench someone?`,
-            { parse_mode: 'HTML' },
-          );
-        }
-
-        await ctx.telegram.sendAnimation(
-          chatId,
-          'https://media1.giphy.com/media/vX9WcCiWwUF7G/giphy.gif?cid=ecf05e478ab7aldlabx5by30fqrm9zim2atg2l2lnkwjtfpw&rid=giphy.gif&ct=g',
-        );
+        return callback();
       }
 
-      return callback();
-    }
+      const playersExternalPlayingCount = getPlayersExternalPlayingCount(currentQuiz);
 
-    const playersExternalCount = getPlayerExternalCount(chatId);
+      if (playersExternalPlayingCount > 0) {
+        await sendMessage(
+          `We have <b>${playersExternalPlayingCount}</b> ${pluralize(
+            'guest',
+            playersExternalPlayingCount,
+          )}, we should uninvite them before benching ${EMOJI_TEAM}s.`,
+        );
 
-    if (playersExternalCount > 0) {
-      await ctx.telegram.sendMessage(
-        chatId,
-        `We have <b>${playersExternalCount}</b> ${pluralize(
-          'guest',
-          playersExternalCount,
-        )}, we should uninvite them before benching pickles.`,
-        {
-          parse_mode: 'HTML',
-        },
+        return callback();
+      }
+
+      await sendGif(
+        'https://media3.giphy.com/media/hzLgfw7C4sBwqSZ63I/giphy.gif?cid=790b761153a265113b8a7ced0cd24e76fd2c8fd60a44da44&rid=giphy.gif&ct=g',
       );
 
-      return callback();
-    }
+      const players = currentQuiz.players;
+      const playersBenched = currentQuiz.playersBenched;
+      const allPlayers = [...players, ...playersBenched];
 
-    await ctx.telegram.sendAnimation(
-      chatId,
-      'https://media3.giphy.com/media/hzLgfw7C4sBwqSZ63I/giphy.gif?cid=790b761153a265113b8a7ced0cd24e76fd2c8fd60a44da44&rid=giphy.gif&ct=g',
-    );
+      const pickedPlayers = pickPlayersWeighted(allPlayers, envConfig.maxPlayers);
+      const nextPlayersBenched = differenceBy(allPlayers, pickedPlayers, player => player.id);
 
-    const players = getPlayers(chatId);
-    const playersBenched = getPlayersBenched(chatId);
-    const allPlayers = [...players, ...playersBenched];
-
-    const playersWithCountBenched = await getUsersWithCountBenched(allPlayers);
-
-    const pickedPlayers = pickPlayersWeighted(playersWithCountBenched, envConfig.maxPlayers);
-    const nextPlayersBenched = differenceBy(playersWithCountBenched, pickedPlayers, player => player.id);
-
-    await playerBenchCountIncrement(nextPlayersBenched);
-
-    setPlayers({ chatId, nextPlayers: pickedPlayers });
-    setPlayersBenched({ chatId, nextPlayersBenched });
-
-    await wait(1000);
-
-    await ctx.telegram.sendMessage(chatId, `3...`);
-    await wait(1000);
-
-    await ctx.telegram.sendMessage(chatId, `2...`);
-    await wait(1000);
-
-    await ctx.telegram.sendMessage(chatId, `1...`);
-    await wait(1000);
-
-    for (const pickedPlayer of pickedPlayers) {
-      await ctx.telegram.sendMessage(chatId, `<b>${pickedPlayer.first_name}</b>, you're in! ${POSITIVE_EMOJI}.`, { parse_mode: 'HTML' });
+      await confirmPlayersDb(pickedPlayers.map(pickedPlayer => pickedPlayer.telegramId));
+      await benchPlayersDb(nextPlayersBenched.map(pickedPlayer => pickedPlayer.telegramId));
 
       await wait(1000);
+
+      await sendMessage(`3...`);
+      await wait(1000);
+
+      await sendMessage(`2...`);
+      await wait(1000);
+
+      await sendMessage(`1...`);
+      await wait(1000);
+
+      for (const pickedPlayer of pickedPlayers) {
+        await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${EMOJI_POSITIVE}.`);
+
+        await wait(1000);
+      }
+
+      const nextPlayersBenchedList = nextPlayersBenched
+        .slice()
+        .sort((a, b) => a.firstName.localeCompare(b.firstName))
+        .map(player => `${player.firstName}`);
+
+      const nextPlayersBenchedText = listFormatter.formatToParts(nextPlayersBenchedList).map(formatListPart).join('');
+
+      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText} ${EMOJI_NEGATIVE}.`);
+
+      await sendGif(getRandomBenchedGif(), message.message_id);
+
+      await createSendLineup(isCallback)(ctx);
+
+      return callback();
+    } catch (err) {
+      console.error(err);
+
+      return callback();
     }
-
-    const nextPlayersBenchedList = nextPlayersBenched
-      .slice()
-      .sort((a, b) => a.first_name.localeCompare(b.first_name))
-      .map(player => `${player.first_name}`);
-
-    const nextPlayersBenchedText = listFormatter
-      .formatToParts(nextPlayersBenchedList)
-      .map(formatListPart)
-      .join('');
-
-    const message = await ctx.telegram.sendMessage(chatId, `I'm so sorry ${nextPlayersBenchedText} ${NEGATIVE_EMOJI}.`, {
-      parse_mode: 'HTML',
-    });
-
-    await ctx.telegram.sendAnimation(chatId, getRandomBenchedGif(), { reply_to_message_id: message.message_id });
-
-    await createSendLineup(isCallback)(ctx);
-
-    // await ctx.telegram.sendMessage(chatId, BENCH_YOURSELF, {
-    //   parse_mode: 'HTML',
-    //   ...Markup.inlineKeyboard([Markup.button.callback(PLAYER_BENCHED_EMOJI, CALLBACK_TYPE_BENCH)]),
-    // });
-    return callback();
-  } catch (err) {
-    console.error(err);
-
-    return callback();
-  }
-};
+  };
 
 export default createLottery;

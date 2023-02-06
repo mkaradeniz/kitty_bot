@@ -24,8 +24,7 @@ module.exports = {
   root: true,
   rules: {
     'import/no-anonymous-default-export': 'off',
-    'no-console': ['warn', { allow: ['error'] }],
-    'no-console': ['warn', { allow: ['error'] }],
+    'no-console': ['warn', { allow: ['error', 'info', 'warn'] }],
     'no-extra-boolean-cast': ['error', { enforceForLogicalOperands: true }],
     'no-extra-boolean-cast': ['error', { enforceForLogicalOperands: true }],
     'no-implicit-coercion': ['error', {}],

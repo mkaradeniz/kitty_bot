@@ -1,10 +1,11 @@
 {
   "name": "kitty_bot",
-  "version": "1.0.0",
-  "description": "A Telegram bot to replace Kitty organizing our pub quiz participation.",
+  "version": "2.0.0",
+  "description": "A Telegram bot to replace Kitty organizing our pubquiz participation.",
   "keywords": [
     "nodejs",
     "prisma",
+    "pubquiz",
     "sqlite",
     "telegrafjs",
     "telegram",
@@ -22,55 +23,43 @@
     "db:push": "dotenv -e .env prisma db push",
     "db:studio": "prisma studio",
     "dev": "nodemon src/index.ts",
-    "lint": "eslint . --ext .js --ext .ts --fix",
+    "format": "prettier --loglevel warn --write .",
     "start": "node ./dist/src",
-    "test": "yarn test:types && yarn lint",
+    "test": "yarn test:types && yarn test:lint",
+    "test:lint": "eslint . --ext .js --ext .ts --fix && clear",
     "test:types": "tsc --project tsconfig.json --pretty --noEmit && clear"
   },
   "dependencies": {
     "@mrboolean/envconfig": "^3.0.0",
-    "@prisma/client": "4.1.1",
-    "date-fns": "^2.28.0",
-    "dotenv": "^16.0.0",
+    "@prisma/client": "^4.9.0",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "lodash": "^4.17.21",
-    "node-cron": "^3.0.0",
-    "nodemailer": "^6.7.3",
-    "nodemon": "^2.0.15",
+    "node-cron": "^3.0.2",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.20",
     "pluralize": "^8.0.0",
     "safe-json-stringify": "^1.2.0",
     "telegraf": "^4.11.2",
     "weighted-random-object": "^1.0.8"
   },
   "devDependencies": {
-    "@mkaradeniz/prettier-config": "^3.0.0",
     "@types/dotenv": "^8.2.0",
-    "@types/lodash": "^4.14.179",
-    "@types/node": "^17.0.23",
-    "@types/node-cron": "^3.0.1",
-    "@types/nodemailer": "^6.4.4",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.19",
+    "@types/node-cron": "^3.0.7",
+    "@types/nodemailer": "^6.4.7",
     "@types/pluralize": "^0.0.29",
     "@types/safe-json-stringify": "^1.1.2",
     "@types/weighted-random-object": "^1.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
-    "@typescript-eslint/parser": "^5.40.1",
-    "dotenv-cli": "^6.0.0",
-    "eslint": "^8.25.0",
-    "eslint-config-jk": "*",
-    "eslint-plugin-import": "^2.26.0",
-    "prettier": "^1.13.7",
-    "prisma": "^4.1.1",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.7.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": "eslint"
-  },
-  "eslintConfig": {
-    "extends": "jk"
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "dotenv-cli": "^7.0.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-import": "^2.27.5",
+    "prettier": "^2.8.3",
+    "prisma": "^4.9.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   }
 }

@@ -17,5 +17,43 @@ model Player {
   updatedAt  DateTime @updatedAt
 
   // Fields
-  countBenched Int @default(0)
+  countBenched Int    @default(0)
+  firstName    String
+
+  // Relations
+  playersInvited  PlayerExternal[]
+  statesAsBenched Quiz[]           @relation("state_benched")
+  statesAsOut     Quiz[]           @relation("state_out")
+  statesAsPlayer  Quiz[]           @relation("state_player")
+}
+
+model PlayerExternal {
+  // Meta
+  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  invitedBy   Player? @relation(fields: [invitedById], references: [telegramId])
+  invitedById BigInt?
+  quiz        Quiz?   @relation(fields: [quizId], references: [id])
+  quizId      Int?
+}
+
+model Quiz {
+  // Meta
+  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  updatedAt DateTime @updatedAt
+
+  // Fields
+  benchesCounted Boolean  @default(false)
+  date           DateTime @unique
+  isEmailSent    Boolean  @default(false)
+
+  // Relations
+  players         Player[]         @relation("state_player")
+  playersBenched  Player[]         @relation("state_benched")
+  playersExternal PlayerExternal[]
+  playersOut      Player[]         @relation("state_out")
 }

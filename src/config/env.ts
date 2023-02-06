@@ -1,7 +1,8 @@
 import { describe, Type } from '@mrboolean/envconfig';
 
 export interface EnvConfig {
-  adminUserId: number;
+  adminUserId: number | null;
+  botName: string;
   botToken: string;
   databaseUrl: string;
   emailAuthHost: string;
@@ -16,14 +17,20 @@ export interface EnvConfig {
   isDev: boolean;
   isProduction: boolean;
   maxPlayers: number;
-  pubQuizGroupId: number;
+  pubquizChatId: number | null;
 }
 
 const envConfig: EnvConfig = describe({
   adminUserId: {
-    isRequired: true,
+    isRequired: false,
     name: 'ADMIN_USER_ID',
+    standard: null,
     type: Type.NUMBER,
+  },
+  botName: {
+    isRequired: true,
+    name: 'BOT_NAME',
+    type: Type.STRING,
   },
   botToken: {
     isRequired: true,
@@ -81,13 +88,13 @@ const envConfig: EnvConfig = describe({
     type: Type.STRING,
   },
   isDev: {
-    name: 'NODE_ENV',
     isRequired: true,
+    name: 'NODE_ENV',
     sanitize: (value: any): boolean => value !== 'production',
   },
   isProduction: {
-    name: 'NODE_ENV',
     isRequired: true,
+    name: 'NODE_ENV',
     sanitize: (value: any): boolean => value === 'production',
   },
   maxPlayers: {
@@ -96,9 +103,10 @@ const envConfig: EnvConfig = describe({
     standard: 8,
     type: Type.NUMBER,
   },
-  pubQuizGroupId: {
-    isRequired: true,
-    name: 'PUB_QUIZ_GROUP_ID',
+  pubquizChatId: {
+    isRequired: false,
+    name: 'PUBQUIZ_CHAT_ID',
+    standard: null,
     type: Type.NUMBER,
   },
 });

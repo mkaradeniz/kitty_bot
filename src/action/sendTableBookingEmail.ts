@@ -1,51 +1,66 @@
-import { getISODay } from 'date-fns';
+import stringify from 'safe-json-stringify';
+import { fmt, code } from 'telegraf/format';
 
+import createCallback from '../utils/misc/createCallback';
+import createSendAdminMessage from '../utils/message/createSendAdminMessage';
+import createSendMessage from '../utils/message/createSendMessage';
 import envConfig from '../config/env';
-import sendLineupEmail from '../utils/misc/sendLineupEmail';
-import { getPlayerCount, isEmailSent, setEmailSent } from '../middleware/stateMiddleware';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import sendTableBookingEmail from '../utils/email/sendTableBookingEmail';
+import setEmailSentDb from '../db/setEmailSent';
+import { EMOJI_EMAIL } from '../config/texts';
 
 // Types
-import { DayOfWeek } from '../types';
-import { KittyBotContext } from '../middleware/contextMiddleware';
-import { Telegraf } from 'telegraf';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
-const createSendTableBookingEmail = (bot: Telegraf<KittyBotContext>) => async (ctx: KittyBotContext) => {
-  try {
-    const { chatId } = ctx.myContext;
+const createSendTableBookingEmail =
+  (isCallback = false) =>
+  async (ctx: MyBotContext) => {
+    const callback = createCallback({ ctx, isCallback });
 
-    const dayOfWeek = getISODay(new Date());
-    const playerCount = getPlayerCount(chatId);
+    try {
+      const sendMessage = createSendMessage(ctx);
+      const sendAdminMessage = createSendAdminMessage(ctx);
 
-    if (envConfig.isProduction && dayOfWeek !== DayOfWeek.Sunday && dayOfWeek !== DayOfWeek.Monday && dayOfWeek !== DayOfWeek.Tuesday) {
-      await ctx.telegram.sendMessage(chatId, `We start forming the lineup for next week on Sunday.`);
+      const currentQuiz = await getOrCreateCurrentQuizDb();
+      const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
 
-      return;
-    }
+      if (currentQuiz.isEmailSent) {
+        await sendMessage(`We alreadyt sent an email to ${envConfig.emailToName}. If you want to cancel, type <code>!cancel</code>.`);
 
-    if (playerCount === 0) {
-      await ctx.telegram.sendMessage(chatId, `Are you sure? We have no players yet.`);
+        return callback();
+      }
 
-      return;
-    }
+      if (playersPlayingCount === 0) {
+        await sendMessage(`Are you sure? We have no players yet. If you want to cancel, type <code>!cancel</code>.`);
 
-    if (!isEmailSent(chatId)) {
+        return callback();
+      }
+
       try {
-        await sendLineupEmail(playerCount);
+        await sendTableBookingEmail({ date: currentQuiz.dateFormatted, playersPlayingCount });
 
-        setEmailSent(chatId);
+        await setEmailSentDb();
 
-        await ctx.telegram.sendMessage(chatId, `💌 I just sent ${envConfig.emailToName} a (love-)letter.`);
+        await sendMessage(`${EMOJI_EMAIL} I just sent ${envConfig.emailToName} a (love-)letter.`);
+
+        return callback();
       } catch (err) {
         console.error(err);
 
-        await bot.telegram?.sendMessage(envConfig.adminUserId, `Mail sending failed. Check logs.`);
+        // ! This only works if we have the `adminUserId` defined in the ENVs.
+        await sendAdminMessage(`Sending table booking email failed.`);
+        await sendAdminMessage(`Error was:`);
+        await sendAdminMessage(fmt`${code(stringify(err as any, null, 2))}`);
 
-        await ctx.telegram.sendMessage(chatId, `Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
+        await sendMessage(`Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
       }
+    } catch (err) {
+      console.error(err);
+
+      return callback();
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
 export default createSendTableBookingEmail;

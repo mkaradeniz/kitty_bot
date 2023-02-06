@@ -1,18 +1,19 @@
-import { resetState } from '../middleware/stateMiddleware';
+import createSendMessage from '../utils/message/createSendMessage';
+import resetCurrentQuizDb from '../db/resetCurrentQuiz';
 
 // Types
-import { KittyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
-const resetStateCommand = async (ctx: KittyBotContext) => {
+const createResetCurrentQuizCommand = () => async (ctx: MyBotContext) => {
   try {
-    const { chatId } = ctx.myContext;
+    const sendMessage = createSendMessage(ctx);
 
-    resetState(chatId);
+    await resetCurrentQuizDb();
 
-    await ctx.telegram.sendMessage(chatId, `State was reset.`);
+    await sendMessage(`State was reset.`, { reply_to_message_id: ctx.message?.message_id });
   } catch (err) {
     console.error(err);
   }
 };
 
-export default resetStateCommand;
+export default createResetCurrentQuizCommand;

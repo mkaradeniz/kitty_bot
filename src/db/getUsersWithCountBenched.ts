@@ -11,7 +11,7 @@ const getUsersWithCountBenched = async (users: User[]) => {
   const userIds = users.map(user => user.id);
 
   const playersWithCountBenched = await prisma.player.findMany({
-    select: { countBenched: true, telegramId: true },
+    select: { countBenched: true, firstName: true, telegramId: true },
     where: { telegramId: { in: userIds } },
   });
 

@@ -4,7 +4,7 @@ import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import { Context } from 'telegraf';
 import { Message, Update, User } from 'telegraf/typings/core/types/typegram';
 
-export interface KittyBotContext extends Context {
+export interface MyBotContext extends Context {
   myContext: {
     chatId: number;
     message?: Update.New & Update.NonChannel & Message.TextMessage;
@@ -12,7 +12,7 @@ export interface KittyBotContext extends Context {
   };
 }
 
-const contextMiddleware = (ctx: KittyBotContext, next: () => Promise<void>) => {
+const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
   try {
     if (!isNotNullOrUndefined(ctx.myContext)) {
       // @ts-expect-error
