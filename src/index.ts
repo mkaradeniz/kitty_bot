@@ -168,7 +168,7 @@ const main = async () => {
 
   void bot.launch();
 
-  console.info('${envConfig.botName} is online! 🤖');
+  console.info(`${envConfig.botName} is online! 🤖`);
 };
 
 // Start
