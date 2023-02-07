@@ -12,6 +12,7 @@ export interface EnvConfig {
   emailCc: string;
   emailFrom: string;
   emailFromName: string;
+  emailReplyTo?: string;
   emailTo: string;
   emailToName: string;
   isDev: boolean;
@@ -75,6 +76,11 @@ const envConfig: EnvConfig = describe({
   emailFromName: {
     isRequired: true,
     name: 'EMAIL_FROM_NAME',
+    type: Type.STRING,
+  },
+  emailReplyTo: {
+    isRequired: false,
+    name: 'EMAIL_REPLY_TO',
     type: Type.STRING,
   },
   emailTo: {
