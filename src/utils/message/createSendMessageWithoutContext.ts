@@ -9,7 +9,7 @@ const DEFAULT_MESSAGE_OPTIONS: ExtraReplyMessage = { parse_mode: 'HTML' };
 
 // ! This only works if we have the `pubquizChatId` defined in the ENVs.
 const createSendMessageWithoutContext =
-  (bot: Telegraf) =>
+  (bot: Telegraf<any>) =>
   async (message: string, additionalMessageOptions: ExtraReplyMessage = {}) => {
     const chatId = envConfig.pubquizChatId;
 
