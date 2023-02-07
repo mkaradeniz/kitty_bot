@@ -1,5 +1,5 @@
 import stringify from 'safe-json-stringify';
-import { fmt, code } from 'telegraf/format';
+import { code, fmt } from 'telegraf/format';
 
 import createCallback from '../utils/misc/createCallback';
 import createSendAdminMessage from '../utils/message/createSendAdminMessage';

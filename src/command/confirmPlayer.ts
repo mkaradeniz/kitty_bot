@@ -1,20 +1,20 @@
+import confirmPlayerDb from '../db/confirmPlayers';
 import createCallback from '../utils/misc/createCallback';
 import createSendMessage from '../utils/message/createSendMessage';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import isPlayerOut from '../utils/state/isPlayerOut';
-import pickPlayerFromBench from '../utils/state/pickPlayerFromBench';
-import sendCurrentPlayerCount from './sendCurrentPlayerCount';
-import sendOverbookedWarningIfTrue from './sendOverbookedWarningIfTrue';
-import unconfirmPlayerDb from '../db/unconfirmPlayer';
-import { EMOJI_PLAYER_OUT, EMOJI_REPEAT, EMOJI_TEAM } from '../config/texts';
+import isPlayerBenched from '../utils/state/isPlayerBenched';
+import isPlayerPlaying from '../utils/state/isPlayerRegistered';
+import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
+import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_REPEAT, EMOJI_TEAM } from '../config/texts';
 
 // Types
 import { MyBotContext } from '../middleware/contextMiddleware';
 
-const createUnconfirmPlayer =
+const createConfirmPlayer =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -31,21 +31,21 @@ const createUnconfirmPlayer =
 
       const currentQuiz = await getOrCreateCurrentQuizDb();
 
-      if (isPlayerOut({ currentQuiz, telegramId })) {
-        await sendMessage(
-          `We get it, ${usernameInBold}, you really don't want to play with us this week. No need to repeat yourself. ${EMOJI_REPEAT}`,
-        );
+      if (isPlayerPlaying({ currentQuiz, telegramId })) {
+        await sendMessage(`Thanks for letting us know, <i>again</i>, that you want to play this week, ${usernameInBold}. ${EMOJI_REPEAT}`);
 
         return callback();
       }
 
-      await unconfirmPlayerDb(telegramId);
+      if (isPlayerBenched({ currentQuiz, telegramId })) {
+        await sendMessage(`Sorry ${usernameInBold}, you're benched this week. ${EMOJI_PLAYER_BENCHED}`);
 
-      await sendMessage(`${EMOJI_TEAM} ${usernameInBold} is out! ${EMOJI_PLAYER_OUT}`);
-
-      if (currentQuiz._count.playersBenched > 0) {
-        await pickPlayerFromBench(ctx);
+        return callback();
       }
+
+      await confirmPlayerDb(telegramId);
+
+      await sendMessage(`${EMOJI_TEAM} ${usernameInBold} is in! ${EMOJI_POSITIVE}`);
 
       await sendCurrentPlayerCount(ctx);
 
@@ -59,4 +59,4 @@ const createUnconfirmPlayer =
     }
   };
 
-export default createUnconfirmPlayer;
+export default createConfirmPlayer;

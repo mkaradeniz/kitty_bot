@@ -3,30 +3,30 @@ require('dotenv').config();
 import cron from 'node-cron';
 import stringify from 'safe-json-stringify';
 import { Telegraf } from 'telegraf';
-import { fmt, code } from 'telegraf/format';
+import { code, fmt } from 'telegraf/format';
 
-import calculateLastQuizsBenchedPlayersBenchCount from './action/calculateLastQuizsBenchedPlayersBenchCount';
+import calculateLastQuizsBenchedPlayersBenchCount from './db/calculateLastQuizsBenchedPlayersBenchCount';
 import contextMiddleware from './middleware/contextMiddleware';
-import createBenchPlayer from './action/benchPlayer';
-import createConfirmGuests from './action/confirmGuests';
-import createConfirmPlayer from './action/confirmPlayer';
-import createLottery from './action/lottery';
-import createResetCurrentQuizCommand from './action/resetState';
+import createBenchPlayer from './command/benchPlayer';
+import createConfirmGuests from './command/confirmGuests';
+import createConfirmPlayer from './command/confirmPlayer';
+import createLottery from './command/lottery';
+import createResetCurrentQuizCommand from './command/resetState';
 import createSendAdminMessage from './utils/message/createSendAdminMessage';
-import createSendEmailReminder from './action/contextless/sendEmailReminder';
-import createSendIntro from './action/contextless/sendIntro';
-import createSendLineup from './action/sendLineup';
-import createSendReminder from './action/contextless/sendReminder';
-import createSendTableBookingCancelEmail from './action/sendTableBookingCancelEmail';
-import createSendTableBookingEmail from './action/sendTableBookingEmail';
-import createUnconfirmPlayer from './action/unconfirmPlayer';
+import createSendEmailReminder from './message/sendEmailReminder';
+import createSendIntro from './message/sendIntro';
+import createSendLineup from './command/sendLineup';
+import createSendReminder from './message/sendReminder';
+import createSendTableBookingCancelEmail from './command/sendTableBookingCancelEmail';
+import createSendTableBookingEmail from './command/sendTableBookingEmail';
+import createUnconfirmPlayer from './command/unconfirmPlayer';
 import dbMiddleware from './middleware/dbMiddleware';
 import envConfig from './config/env';
 import getOrCreateCurrentQuizDb from './db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
-import replyToHallihallo from './action/replyToHallihallo';
-import replyToHallochen from './action/replyToHallochen';
-import sendDebugCommand from './action/sendDebug';
+import replyToHallihallo from './command/replyToHallihallo';
+import replyToHallochen from './command/replyToHallochen';
+import sendDebugCommand from './command/sendDebug';
 import {
   CALLBACK_TYPE_BENCH,
   CALLBACK_TYPE_CONFIRM,
@@ -102,12 +102,24 @@ bot.catch(async err => {
   }
 });
 
-// Main
-const main = async () => {
+process.once('SIGINT', async () => {
   if (envConfig.isProduction) {
-    await sendAdminMessage(`${envConfig.botName} is online! 🤖`);
+    await sendAdminMessage(`${envConfig.botName} shutdown: SIGINT 😵`);
   }
 
+  bot.stop('SIGINT');
+});
+
+process.once('SIGTERM', async () => {
+  if (envConfig.isProduction) {
+    await sendAdminMessage(`${envConfig.botName} shutdown: SIGTERM 😵`);
+  }
+
+  bot.stop('SIGTERM');
+});
+
+// Main
+const main = async () => {
   const sendEmailReminder = createSendEmailReminder(bot);
   const sendIntro = createSendIntro(bot);
   const sendReminder = createSendReminder(bot);
@@ -135,25 +147,13 @@ const main = async () => {
     await calculateLastQuizsBenchedPlayersBenchCount();
   });
 
-  process.once('SIGINT', async () => {
-    if (envConfig.isProduction) {
-      await sendAdminMessage(`${envConfig.botName} shutdown: SIGINT 😵`);
-    }
-
-    bot.stop('SIGINT');
-  });
-
-  process.once('SIGTERM', async () => {
-    if (envConfig.isProduction) {
-      await sendAdminMessage(`${envConfig.botName} shutdown: SIGTERM 😵`);
-    }
-
-    bot.stop('SIGTERM');
-  });
-
   void bot.launch();
 
   console.info(`${envConfig.botName} is online! 🤖`);
+
+  if (envConfig.isProduction) {
+    await sendAdminMessage(`${envConfig.botName} is online! 🤖`);
+  }
 };
 
 void main();
