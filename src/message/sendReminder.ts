@@ -1,12 +1,12 @@
 import pluralize from 'pluralize';
 
-import createSendMessageWithoutContext from '../../utils/message/createSendMessageWithoutContext';
-import envConfig from '../../config/env';
-import getOrCreateCurrentQuizDb from '../../db/getOrCreateCurrentQuiz';
-import getPlayersPlayingCount from '../../utils/state/getPlayersPlayingCount';
-import isNotNullOrUndefined from '../../utils/misc/isNotNullOrUndefined';
-import { BUTTONS_TUTORIAL } from '../../config/constants';
-import { EMOJI_QUIZ, TEXT_TUTORIAL } from '../../config/texts';
+import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
+import envConfig from '../config/env';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import { BUTTONS_TUTORIAL } from '../config/constants';
+import { EMOJI_QUIZ, TEXT_TUTORIAL } from '../config/texts';
 
 // Types
 import { Telegraf } from 'telegraf';

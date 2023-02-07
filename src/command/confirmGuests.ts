@@ -11,7 +11,7 @@ import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import removePlayersExternalDb from '../db/removePlayersExternal';
-import sendOverbookedWarningIfTrue from './sendOverbookedWarningIfTrue';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 import { EMOJI_PLAYER_OUT, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
 
 // Types

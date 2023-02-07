@@ -7,7 +7,7 @@ import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
 import getPlayersOutCount from '../utils/state/getPlayersOutCount';
 import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import sendOverbookedWarningIfTrue from './sendOverbookedWarningIfTrue';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 import { CALLBACK_TYPE_BENCH } from '../config/constants';
 import { EMOJI_PLAYER_BENCHED } from '../config/texts';
 
