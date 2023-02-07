@@ -3,6 +3,9 @@ import pluralize from 'pluralize';
 
 import envConfig from '../../config/env';
 
+// Types
+import Mail from 'nodemailer/lib/mailer';
+
 type SendTableBookingEmailInput = {
   date: string;
   playersPlayingCount: number;
@@ -32,9 +35,10 @@ const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEm
       ignoreTLS: true,
     };
 
-    const mailConfig = {
+    const mailConfig: Mail.Options = {
       cc: envConfig.emailCc,
       from: `${envConfig.emailFromName} <${envConfig.emailFrom}>`,
+      replyTo: envConfig.emailReplyTo,
       subject,
       text,
       to: envConfig.emailTo,
