@@ -2,6 +2,9 @@ import nodemailer from 'nodemailer';
 
 import envConfig from '../../config/env';
 
+// Types
+import Mail from 'nodemailer/lib/mailer';
+
 const EMAIL_TEXT = `Hallöchen ${envConfig.emailToName},
 
 we sadly have to cancel for this week.
@@ -28,9 +31,10 @@ const sendTableBookingCancelEmail = (date: string): Promise<void> => {
       ignoreTLS: true,
     };
 
-    const mailConfig = {
+    const mailConfig: Mail.Options = {
       cc: envConfig.emailCc,
       from: `${envConfig.emailFromName} <${envConfig.emailFrom}>`,
+      replyTo: envConfig.emailReplyTo,
       subject,
       text: EMAIL_TEXT,
       to: envConfig.emailTo,
