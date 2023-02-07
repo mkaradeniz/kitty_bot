@@ -12,6 +12,7 @@ import createConfirmGuests from './action/confirmGuests';
 import createConfirmPlayer from './action/confirmPlayer';
 import createLottery from './action/lottery';
 import createResetCurrentQuizCommand from './action/resetState';
+import createSendAdminMessage from './utils/message/createSendAdminMessage';
 import createSendEmailReminder from './action/contextless/sendEmailReminder';
 import createSendIntro from './action/contextless/sendIntro';
 import createSendLineup from './action/sendLineup';
@@ -40,6 +41,8 @@ import { EMOJI_CONFIRM, EMOJI_DECLINE, EMOJI_LINEUP, EMOJI_LOTTERY, EMOJI_PLAYER
 import { MyBotContext } from './middleware/contextMiddleware';
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
+
+const sendAdminMessage = createSendAdminMessage(bot);
 
 // Middlewares
 bot.use(contextMiddleware);
@@ -74,9 +77,9 @@ bot.hears(new RegExp(`(!${EMOJI_LOTTERY}${EMOJI_LOTTERY}${EMOJI_LOTTERY})`), cre
 
 bot.hears(new RegExp(`(${EMOJI_LOTTERY})`), createLottery());
 
-bot.hears(new RegExp('hallöchen', 'i'), replyToHallochen);
-
 bot.hears(new RegExp('hallihallo', 'i'), replyToHallihallo);
+
+bot.hears(new RegExp('hallöchen', 'i'), replyToHallochen);
 
 bot.hears('!cancel', createSendTableBookingCancelEmail());
 
@@ -93,22 +96,16 @@ bot.catch(async err => {
   void bot.launch();
 
   if (isNotNullOrUndefined(envConfig.adminUserId)) {
-    await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} crashed: ⚰️ and restarted 🤖`);
-    await bot.telegram?.sendMessage(envConfig.adminUserId, `Error was:`);
-    await bot.telegram?.sendMessage(envConfig.adminUserId, fmt`${code(stringify(err as any, null, 2))}`);
+    await sendAdminMessage(`${envConfig.botName} crashed ⚰️ and restarted 🤖`);
+    await sendAdminMessage(`Error was:`);
+    await sendAdminMessage(fmt`${code(stringify(err as any, null, 2))}`);
   }
 });
 
 // Main
 const main = async () => {
   if (envConfig.isProduction) {
-    if (isNotNullOrUndefined(envConfig.adminUserId)) {
-      await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} is online! 🤖`);
-    }
-
-    if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
-      await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is online. Hallöchen 🤖`);
-    }
+    await sendAdminMessage(`${envConfig.botName} is online! 🤖`);
   }
 
   const sendEmailReminder = createSendEmailReminder(bot);
@@ -140,13 +137,7 @@ const main = async () => {
 
   process.once('SIGINT', async () => {
     if (envConfig.isProduction) {
-      if (isNotNullOrUndefined(envConfig.adminUserId)) {
-        await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} shutdown: SIGINT 😵`);
-      }
-
-      if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
-        await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is offline. Goodbye cruel world 😵`);
-      }
+      await sendAdminMessage(`${envConfig.botName} shutdown: SIGINT 😵`);
     }
 
     bot.stop('SIGINT');
@@ -154,13 +145,7 @@ const main = async () => {
 
   process.once('SIGTERM', async () => {
     if (envConfig.isProduction) {
-      if (isNotNullOrUndefined(envConfig.adminUserId)) {
-        await bot.telegram?.sendMessage(envConfig.adminUserId, `${envConfig.botName} shutdown: SIGTERM 😵`);
-      }
-
-      if (isNotNullOrUndefined(envConfig.pubquizChatId)) {
-        await bot.telegram?.sendMessage(envConfig.pubquizChatId, `${envConfig.botName} is offline. Goodbye cruel world 😵`);
-      }
+      await sendAdminMessage(`${envConfig.botName} shutdown: SIGTERM 😵`);
     }
 
     bot.stop('SIGTERM');
@@ -171,5 +156,4 @@ const main = async () => {
   console.info(`${envConfig.botName} is online! 🤖`);
 };
 
-// Start
 void main();

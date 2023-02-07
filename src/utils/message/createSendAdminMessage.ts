@@ -11,7 +11,7 @@ const DEFAULT_MESSAGE_OPTIONS: ExtraReplyMessage = { parse_mode: 'HTML' };
 
 // ! This only works if we have the `adminUserId` defined in the ENVs.
 const createSendAdminMessage =
-  (bot: Telegraf | MyBotContext) =>
+  (bot: Telegraf<any> | MyBotContext) =>
   async (message: FmtString | string, additionalMessageOptions: ExtraReplyMessage = {}) => {
     const chatId = envConfig.adminUserId;
 
