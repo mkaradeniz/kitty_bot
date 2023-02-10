@@ -1,6 +1,6 @@
 import { addDays, endOfDay, getISODay } from 'date-fns';
 
-export enum DayOfWeek {
+enum DayOfWeek {
   Monday = 1,
   Tuesday = 2,
   Wednesday = 3,
