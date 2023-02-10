@@ -1,4 +1,3 @@
-import stringify from 'safe-json-stringify';
 import { code, fmt } from 'telegraf/format';
 
 import createSendAdminMessage from '../utils/message/createSendAdminMessage';
@@ -6,6 +5,7 @@ import createSendGif from '../utils/message/createSendGif';
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import stringify from '../utils/misc/stringify';
 
 // Types
 import { MyBotContext } from '../middleware/contextMiddleware';

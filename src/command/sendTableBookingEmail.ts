@@ -1,4 +1,3 @@
-import stringify from 'safe-json-stringify';
 import { code, fmt } from 'telegraf/format';
 
 import createCallback from '../utils/misc/createCallback';
@@ -9,6 +8,7 @@ import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
 import sendTableBookingEmail from '../utils/email/sendTableBookingEmail';
 import setEmailSentDb from '../db/setEmailSent';
+import stringify from '../utils/misc/stringify';
 import { EMOJI_EMAIL } from '../config/texts';
 
 // Types
