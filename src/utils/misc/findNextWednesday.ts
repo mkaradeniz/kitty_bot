@@ -10,7 +10,7 @@ enum DayOfWeek {
   Sunday = 7,
 }
 
-// Recursive!
+// ! Recursive
 const findNextWednesday = (date: Date): Date => {
   const isoDayOfWeek = getISODay(date);
 

@@ -8,19 +8,21 @@ type CreateGetWeightInput = {
   min: number;
 };
 
-const createGetWeight = ({ max, min }: CreateGetWeightInput) => (value: number) => {
-  const delta = max - min;
+const createGetWeight =
+  ({ max, min }: CreateGetWeightInput) =>
+  (value: number) => {
+    const delta = max - min;
 
-  if (delta === 0) {
-    return 0;
-  }
+    if (delta === 0) {
+      return 0;
+    }
 
-  const weight = (value - min) / delta;
+    const weight = (value - min) / delta;
 
-  return weight;
-};
+    return weight;
+  };
 
-// Recursive!
+// ! Recursive
 const pickPlayersWeighted = (players: Player[], size = 8, pickedPlayers: Player[] = []): Player[] => {
   if (size === 0) {
     return pickedPlayers;
