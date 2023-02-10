@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
 import envConfig from '../../config/env';
+import stringify from '../misc/stringify';
 
 // Types
 import Mail from 'nodemailer/lib/mailer';
@@ -44,12 +45,12 @@ const sendTableBookingCancelEmail = (date: string): Promise<void> => {
 
     transporter.sendMail(mailConfig, err => {
       if (err) {
-        console.error('Error while sending mail.', err);
+        console.error('Error sending cancelation email.', stringify(err, null, 2));
 
         return reject(err);
       }
 
-      console.info('Email sent');
+      console.info('Cancelation email sent.');
 
       return resolve();
     });

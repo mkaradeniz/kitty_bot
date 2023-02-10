@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 import cron from 'node-cron';
-import stringify from 'safe-json-stringify';
 import { Telegraf } from 'telegraf';
 import { code, fmt } from 'telegraf/format';
 
@@ -27,6 +26,7 @@ import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 import replyToHallihallo from './command/replyToHallihallo';
 import replyToHallochen from './command/replyToHallochen';
 import sendDebugCommand from './command/sendDebug';
+import stringify from './utils/misc/stringify';
 import {
   CALLBACK_TYPE_BENCH,
   CALLBACK_TYPE_CONFIRM,

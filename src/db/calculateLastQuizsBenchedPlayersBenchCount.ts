@@ -6,7 +6,7 @@ const calculateLastQuizsBenchedPlayersBenchCount = async () => {
     const quizzesWithBenchesUncounted = await prisma.quiz.findMany({
       orderBy: [{ date: 'desc' }],
       select: { benchesCounted: true, id: true, playersBenched: true },
-      // We only want to count the benched on past events, so we'll always skip the first.
+      // We only want to count the benched players on past quizzes, so we'll always skip the first.
       skip: 1,
       where: { benchesCounted: false },
     });
@@ -20,6 +20,8 @@ const calculateLastQuizsBenchedPlayersBenchCount = async () => {
         }
 
         await prisma.player.update({ data: { countBenched: player.countBenched + 1 }, where: { id: playerBenched.id } });
+
+        console.info(`Incremented bench count for \`${playerBenched.id}\`.`);
       }
 
       await prisma.quiz.update({ data: { benchesCounted: true }, where: { id: quizWithBenchesUncounted.id } });

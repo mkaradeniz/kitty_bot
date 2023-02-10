@@ -1,4 +1,3 @@
-import stringify from 'safe-json-stringify';
 import { code, fmt } from 'telegraf/format';
 
 import createSendAdminMessage from '../utils/message/createSendAdminMessage';
@@ -7,6 +6,7 @@ import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import sendTableBookingCancelEmail from '../utils/email/sendTableBookingCancelEmail';
 import setEmailSentDb from '../db/setEmailSent';
+import stringify from '../utils/misc/stringify';
 import { EMOJI_NEGATIVE } from '../config/texts';
 
 // Types

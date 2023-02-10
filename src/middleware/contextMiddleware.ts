@@ -1,4 +1,5 @@
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import stringify from '../utils/misc/stringify';
 
 // Types
 import { Context } from 'telegraf';
@@ -22,6 +23,8 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
     if (!isNotNullOrUndefined(chatId)) {
+      console.warn(`Couldn't get \`userId\``, stringify(ctx.message, null, 2));
+
       return;
     }
 
