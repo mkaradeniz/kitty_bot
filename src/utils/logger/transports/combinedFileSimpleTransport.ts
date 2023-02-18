@@ -1,16 +1,24 @@
 import winston, { format as winstonFormat } from 'winston';
 
 import envConfig from '../../../config/env';
+import isNotNullOrUndefined from '../../misc/isNotNullOrUndefined';
+import stringify from '../../misc/stringify';
 
 const { combine, printf, timestamp } = winstonFormat;
 
-const customFormatter = printf(formatters => {
-  const formattedDate = formatters.timestamp;
+const customFormatter = printf(info => {
+  const formattedDate = info.timestamp;
 
-  return `${formattedDate} |${formatters.level}| ${formatters.message}`;
+  if (typeof info.message === 'object') {
+    info.message = stringify(info.message, null, 2);
+  }
+
+  const label = isNotNullOrUndefined(info.label) ? `[${info.label}]` : undefined;
+
+  return [`${formattedDate}`, `|${info.level}|`, label, `${info.message}`].filter(isNotNullOrUndefined).join(' ');
 });
 
-const format = combine(timestamp(), customFormatter);
+const format = combine(timestamp(), winstonFormat.splat(), customFormatter);
 
 const combinedFileSimpleTransport = new winston.transports.File({
   format,
