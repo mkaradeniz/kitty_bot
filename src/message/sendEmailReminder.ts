@@ -27,7 +27,7 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
     }
 
     await sendMessageWithoutContext(
-      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with table size. ⚠️\n\nSend a ${EMOJI_EMAIL} or click the button below to send it now. `,
+      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with our table size. ⚠️\n\nSend a ${EMOJI_EMAIL} or click the button below to send it now. `,
       {
         ...Markup.inlineKeyboard([Markup.button.callback(EMOJI_EMAIL, CALLBACK_TYPE_SEND_EMAIL)]),
       },
