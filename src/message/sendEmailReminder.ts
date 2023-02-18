@@ -32,6 +32,8 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
         ...Markup.inlineKeyboard([Markup.button.callback(EMOJI_EMAIL, CALLBACK_TYPE_SEND_EMAIL)]),
       },
     );
+
+    logger.silly(`Email reminder sent.`, { label: 'src/message/sendEmailReminder.ts' });
   } catch (err) {
     logger.error(err);
   }

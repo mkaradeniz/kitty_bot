@@ -1,4 +1,5 @@
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 const resetCurrentQuizDb = async () => {
@@ -14,6 +15,8 @@ const resetCurrentQuizDb = async () => {
     },
     where: { id: currentQuiz.id },
   });
+
+  logger.silly(`Reset quiz for the ${currentQuiz.dateFormatted}.`, { label: 'src/db/resetCurrentQuiz.ts' });
 };
 
 export default resetCurrentQuizDb;

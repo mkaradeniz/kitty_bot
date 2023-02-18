@@ -24,7 +24,7 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
     if (!isNotNullOrUndefined(chatId)) {
-      logger.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2));
+      logger.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2), { label: 'src/middleware/contextMiddleware.ts' });
 
       return;
     }

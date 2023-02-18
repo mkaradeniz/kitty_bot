@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 import findNextWednesday from '../utils/misc/findNextWednesday';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 // Types
@@ -43,6 +44,8 @@ const getOrCreateCurrentQuizDb = async () => {
   });
 
   const dateFormatted = format(createdQuiz.date, `do 'of' MMMM`);
+
+  logger.silly(`Created quiz for the ${dateFormatted}`, { label: 'src/db/getOrCreateCurrentQuiz.ts' });
 
   return { ...createdQuiz, dateFormatted };
 };

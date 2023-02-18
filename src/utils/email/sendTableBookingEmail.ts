@@ -55,7 +55,9 @@ const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEm
         return reject(err);
       }
 
-      logger.info('Booking email sent.');
+      logger.info('Booking email sent.', {
+        label: 'src/utils/email/sendTableBookingEmail.ts',
+      });
 
       return resolve();
     });

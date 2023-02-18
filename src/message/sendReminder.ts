@@ -51,6 +51,8 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
         ...BUTTONS_TUTORIAL,
       },
     );
+
+    logger.silly(`Reminder sent.`, { label: 'src/message/sendReminder.ts' });
   } catch (err) {
     logger.error(err);
   }

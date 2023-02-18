@@ -22,7 +22,9 @@ const calculateLastQuizsBenchedPlayersBenchCount = async () => {
 
         await prisma.player.update({ data: { countBenched: player.countBenched + 1 }, where: { id: playerBenched.id } });
 
-        logger.info(`Incremented bench count for \`${playerBenched.id}\`.`);
+        logger.info(`Incremented bench count for \`${playerBenched.id}\`.`, {
+          label: 'src/db/calculateLastQuizsBenchedPlayersBenchCount.ts',
+        });
       }
 
       await prisma.quiz.update({ data: { benchesCounted: true }, where: { id: quizWithBenchesUncounted.id } });

@@ -1,5 +1,10 @@
 require('dotenv').config();
 
+// @ts-expect-error
+BigInt.prototype['toJSON'] = function () {
+  return this.toString();
+};
+
 import cron from 'node-cron';
 import { Telegraf } from 'telegraf';
 import { code, fmt } from 'telegraf/format';
@@ -150,7 +155,7 @@ const main = async () => {
 
   void bot.launch();
 
-  logger.info(`${envConfig.botName} is online! 🤖`);
+  logger.info(`${envConfig.botName} is online! 🤖`, { label: 'src/index.ts' });
 
   if (envConfig.isProduction) {
     await sendAdminMessage(`${envConfig.botName} is online! 🤖`);

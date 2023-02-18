@@ -1,4 +1,7 @@
+import pluralize from 'pluralize';
+
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => {
@@ -12,6 +15,14 @@ const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => 
           .map(playerExternal => playerExternal.id),
       },
     },
+  });
+
+  const removedPlayersExternalCount = currentQuiz.playersExternal.filter(
+    playerExternal => playerExternal.invitedById === invitedByTelegramId,
+  ).length;
+
+  logger.silly(`Removed ${removedPlayersExternalCount} external ${pluralize('player', removedPlayersExternalCount)}.`, {
+    label: 'src/db/removePlayersExternal.ts',
   });
 };
 

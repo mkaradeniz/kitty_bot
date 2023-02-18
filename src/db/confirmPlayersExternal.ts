@@ -1,4 +1,7 @@
+import pluralize from 'pluralize';
+
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 type ConfirmPlayersExternalDbInput = {
@@ -16,6 +19,10 @@ const confirmPlayersExternalDb = async ({ invitedByTelegramId, numberOfInvitees 
       data: { invitedById: playerExternalToCreate, quizId: currentQuiz.id },
     });
   }
+
+  logger.silly(`Confirmed ${numberOfInvitees} external ${pluralize('player', numberOfInvitees)}.`, {
+    label: 'src/db/confirmPlayersExternal.ts',
+  });
 };
 
 export default confirmPlayersExternalDb;

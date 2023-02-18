@@ -1,5 +1,8 @@
+import pluralize from 'pluralize';
+
 import arrayify from '../utils/misc/arrayify';
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 const benchPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
@@ -16,6 +19,13 @@ const benchPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
     include: { playersBenched: true },
     where: { id: currentQuiz.id },
   });
+
+  logger.silly(
+    `Benched ${telegramIds.length} ${pluralize('player', telegramIds.length)}: ${telegramIds
+      .map(telegramId => `\`${telegramId}\``)
+      .join(', ')}.`,
+    { label: 'src/db/benchPlayers.ts' },
+  );
 
   return updatedQuiz;
 };

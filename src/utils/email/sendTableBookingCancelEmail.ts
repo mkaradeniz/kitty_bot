@@ -51,7 +51,9 @@ const sendTableBookingCancelEmail = (date: string): Promise<void> => {
         return reject(err);
       }
 
-      logger.info('Cancelation email sent.');
+      logger.info('Cancelation email sent.', {
+        label: 'src/utils/email/sendTableBookingCancelEmail.ts',
+      });
 
       return resolve();
     });

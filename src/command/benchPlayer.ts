@@ -77,7 +77,7 @@ const createBenchPlayer =
 
       await benchPlayersDb(telegramId);
 
-      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrifices themselves selflessly to the bench!`);
+      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrified themselves selflessly to the bench!`);
 
       await createSendLineup(isCallback)(ctx);
 
