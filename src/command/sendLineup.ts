@@ -7,6 +7,7 @@ import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
 import getPlayersOutCount from '../utils/state/getPlayersOutCount';
 import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import logger from '../utils/logger';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 import { CALLBACK_TYPE_BENCH } from '../config/constants';
 import { EMOJI_PLAYER_BENCHED } from '../config/texts';
@@ -45,7 +46,7 @@ const createSendLineup =
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

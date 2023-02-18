@@ -5,6 +5,7 @@ import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import { BUTTONS_TUTORIAL } from '../config/constants';
 import { EMOJI_QUIZ, TEXT_TUTORIAL } from '../config/texts';
 
@@ -51,7 +52,7 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
       },
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

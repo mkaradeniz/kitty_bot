@@ -2,6 +2,7 @@ import createPlayer from '../db/createPlayer';
 import doesPlayerExist from '../db/doesPlayerExist';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import stringify from '../utils/misc/stringify';
 
 // Types
@@ -12,7 +13,7 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
     if (!isNotNullOrUndefined(chatId)) {
-      console.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2));
+      logger.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2));
 
       return next();
     }
@@ -23,7 +24,7 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
     const userFirstName = ctx?.message?.from?.first_name ?? ctx.callbackQuery?.from?.first_name ?? '👻';
 
     if (!isNotNullOrUndefined(userId)) {
-      console.warn(`Couldn't get \`userId\``, stringify(ctx.message, null, 2));
+      logger.warn(`Couldn't get \`userId\``, stringify(ctx.message, null, 2));
 
       return next();
     }
@@ -34,11 +35,11 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
 
     await createPlayer({ firstName: userFirstName, telegramId: userId });
 
-    console.info(`Created new player: \`firstName\`: ${userFirstName}, \`telegramId\`: ${userId}.`);
+    logger.info(`Created new player: \`firstName\`: ${userFirstName}, \`telegramId\`: ${userId}.`);
 
     return next();
   } catch (err) {
-    console.error(err);
+    logger.error(err);
 
     return next();
   }

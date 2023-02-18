@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import pluralize from 'pluralize';
 
 import envConfig from '../../config/env';
+import logger from '../logger';
 import stringify from '../misc/stringify';
 
 // Types
@@ -49,12 +50,12 @@ const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEm
 
     transporter.sendMail(mailConfig, err => {
       if (err) {
-        console.error('Error sending booking email.', stringify(err, null, 2));
+        logger.error('Error sending booking email.', stringify(err, null, 2));
 
         return reject(err);
       }
 
-      console.info('Booking email sent.');
+      logger.info('Booking email sent.');
 
       return resolve();
     });

@@ -5,6 +5,7 @@ import createSendGif from '../utils/message/createSendGif';
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import stringify from '../utils/misc/stringify';
 
 // Types
@@ -31,7 +32,7 @@ const sendDebugCommand = async (ctx: MyBotContext) => {
       ctx.message?.message_id,
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

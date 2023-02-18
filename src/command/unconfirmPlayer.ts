@@ -5,6 +5,7 @@ import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext'
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import isPlayerOut from '../utils/state/isPlayerOut';
+import logger from '../utils/logger';
 import pickPlayerFromBench from '../utils/state/pickPlayerFromBench';
 import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
@@ -53,7 +54,7 @@ const createUnconfirmPlayer =
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

@@ -7,6 +7,7 @@ import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import isPlayerBenched from '../utils/state/isPlayerBenched';
 import isPlayerPlaying from '../utils/state/isPlayerRegistered';
+import logger from '../utils/logger';
 import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_REPEAT, EMOJI_TEAM } from '../config/texts';
@@ -53,7 +54,7 @@ const createConfirmPlayer =
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

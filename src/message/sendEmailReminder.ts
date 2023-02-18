@@ -4,6 +4,7 @@ import createSendMessageWithoutContext from '../utils/message/createSendMessageW
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import { CALLBACK_TYPE_SEND_EMAIL } from '../config/constants';
 import { EMOJI_EMAIL } from '../config/texts';
 
@@ -32,7 +33,7 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
       },
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

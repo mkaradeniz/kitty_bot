@@ -1,4 +1,5 @@
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import stringify from '../utils/misc/stringify';
 
 // Types
@@ -23,7 +24,7 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
     if (!isNotNullOrUndefined(chatId)) {
-      console.warn(`Couldn't get \`userId\``, stringify(ctx.message, null, 2));
+      logger.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2));
 
       return;
     }
@@ -43,7 +44,7 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
 
     return next();
   } catch (err) {
-    console.error(err);
+    logger.error(err);
 
     return next();
   }

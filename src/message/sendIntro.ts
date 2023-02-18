@@ -2,6 +2,7 @@ import createSendMessageWithoutContext from '../utils/message/createSendMessageW
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import { BUTTONS_TUTORIAL } from '../config/constants';
 import { EMOJI_QUIZ, TEXT_TUTORIAL } from '../config/texts';
 
@@ -26,7 +27,7 @@ const createSendIntro = (bot: Telegraf<any>) => async () => {
       },
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 
