@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-// @ts-expect-error
-BigInt.prototype['toJSON'] = function () {
+(BigInt.prototype as any)['toJSON'] = function () {
   return this.toString();
 };
 
