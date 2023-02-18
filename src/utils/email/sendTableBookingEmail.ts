@@ -18,10 +18,10 @@ const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEm
 
   const text = `Hallöchen ${envConfig.emailToName},
 
-  we will be ${playersPlayingCount} ${pluralize('person', playersPlayingCount)} this week.
-  
-  
-  Cheers
+we will be ${playersPlayingCount} ${pluralize('person', playersPlayingCount)} this week.
+
+
+Cheers
   
   ${envConfig.botName}`;
 
