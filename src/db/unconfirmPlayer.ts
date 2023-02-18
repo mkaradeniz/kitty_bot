@@ -1,5 +1,5 @@
-import logger from '@utils/logger';
-import prisma from '@prisma/prisma';
+import logger from '../utils/logger';
+import prisma from '../../prisma/prisma';
 
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
 

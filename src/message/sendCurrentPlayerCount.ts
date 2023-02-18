@@ -1,10 +1,10 @@
 import pluralize from 'pluralize';
 
-import createSendMessage from '@utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import createSendMessage from '../utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 
 // Types
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const sendCurrentPlayerCount = async (ctx: MyBotContext) => {
   const sendMessage = createSendMessage(ctx);

@@ -1,6 +1,6 @@
 import winston from 'winston';
 
-import envConfig from '@config/env';
+import envConfig from '../../config/env';
 
 import combinedFileSimpleTransport from './transports/combinedFileSimpleTransport';
 import combinedFileTransport from './transports/combinedFileTransport';

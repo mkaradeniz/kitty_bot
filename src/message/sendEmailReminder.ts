@@ -1,14 +1,14 @@
 import { Markup } from 'telegraf';
 
-import createSendMessageWithoutContext from '@utils/message/createSendMessageWithoutContext';
-import envConfig from '@config/env';
-import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import logger from '@utils/logger';
+import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
+import envConfig from '../config/env';
+import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 
 // Types
-import { CallbackType, Emoji } from '@types';
+import { CallbackType, Emoji } from '../types';
 import { Telegraf } from 'telegraf';
 
 const createSendEmailReminder = (bot: Telegraf<any>) => async () => {

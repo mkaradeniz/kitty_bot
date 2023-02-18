@@ -1,26 +1,26 @@
 import { differenceBy } from 'lodash';
 
-import benchPlayersDb from '@db/benchPlayers';
-import confirmPlayersDb from '@db/confirmPlayers';
-import createCallback from '@utils/misc/createCallback';
-import createSendGif from '@utils/message/createSendGif';
-import createSendMessage from '@utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
-import getRandomUnbenchedGif from '@utils/gifs/getRandomUnbenchedGif';
-import getTelegramIdFromContext from '@utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '@utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import isPlayerBenched from '@utils/state/isPlayerBenched';
-import isPlayerOut from '@utils/state/isPlayerOut';
-import logger from '@utils/logger';
-import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
+import benchPlayersDb from '../db/benchPlayers';
+import confirmPlayersDb from '../db/confirmPlayers';
+import createCallback from '../utils/misc/createCallback';
+import createSendGif from '../utils/message/createSendGif';
+import createSendMessage from '../utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
+import getRandomUnbenchedGif from '../utils/gifs/getRandomUnbenchedGif';
+import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '../utils/context/getUsernameFromContext';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import isPlayerBenched from '../utils/state/isPlayerBenched';
+import isPlayerOut from '../utils/state/isPlayerOut';
+import logger from '../utils/logger';
+import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
 
 import createSendLineup from './sendLineup';
 
 // Types
-import { Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { Emoji } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const createBenchPlayer =
   (isCallback = false) =>

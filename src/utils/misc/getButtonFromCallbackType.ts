@@ -1,5 +1,5 @@
 // Types
-import { CallbackType, Emoji } from '@types';
+import { CallbackType, Emoji } from '../../types';
 
 const getButtonFromCallbackType = (callbackType: CallbackType): string => {
   switch (callbackType) {

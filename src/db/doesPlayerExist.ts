@@ -1,4 +1,4 @@
-import prisma from '@prisma/prisma';
+import prisma from '../../prisma/prisma';
 
 const doesPlayerExist = async (telegramId: number) => {
   const count = await prisma.player.count({ where: { telegramId } });

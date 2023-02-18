@@ -1,13 +1,13 @@
-import confirmPlayerDb from '@db/confirmPlayers';
-import createSendGif from '@utils/message/createSendGif';
-import createSendMessage from '@utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getRandomUnbenchedGif from '@utils/gifs/getRandomUnbenchedGif';
-import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
+import confirmPlayerDb from '../../db/confirmPlayers';
+import createSendGif from '../message/createSendGif';
+import createSendMessage from '../message/createSendMessage';
+import getOrCreateCurrentQuizDb from '../../db/getOrCreateCurrentQuiz';
+import getRandomUnbenchedGif from '../gifs/getRandomUnbenchedGif';
+import pickPlayersWeighted from '../misc/pickPlayersWeighted';
 
 // Types
-import { Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { Emoji } from '../../types';
+import { MyBotContext } from '../../middleware/contextMiddleware';
 
 const pickPlayerFromBench = async (ctx: MyBotContext) => {
   const sendGif = createSendGif(ctx);

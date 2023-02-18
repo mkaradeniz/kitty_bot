@@ -1,13 +1,13 @@
-import createSendMessageWithoutContext from '@utils/message/createSendMessageWithoutContext';
-import envConfig from '@config/env';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import logger from '@utils/logger';
-import { BUTTONS_TUTORIAL } from '@config/constants';
-import { TEXT_TUTORIAL } from '@config/texts';
+import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
+import envConfig from '../config/env';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
+import { BUTTONS_TUTORIAL } from '../config/constants';
+import { TEXT_TUTORIAL } from '../config/texts';
 
 // Types
-import { Emoji } from '@types';
+import { Emoji } from '../types';
 import { Telegraf } from 'telegraf';
 
 const createSendIntro = (bot: Telegraf<any>) => async () => {

@@ -1,11 +1,11 @@
-import createSendGif from '@utils/message/createSendGif';
-import getRandomFuckYouGif from '@utils/gifs/getRandomFuckYouGif';
-import getRandomHelloGif from '@utils/gifs/getRandomHelloGif';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import logger from '@utils/logger';
+import createSendGif from '../utils/message/createSendGif';
+import getRandomFuckYouGif from '../utils/gifs/getRandomFuckYouGif';
+import getRandomHelloGif from '../utils/gifs/getRandomHelloGif';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 
 // Types
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const replyToHallochen = async (ctx: MyBotContext) => {
   try {

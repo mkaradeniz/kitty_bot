@@ -1,14 +1,14 @@
 import pluralize from 'pluralize';
 import { Markup } from 'telegraf';
 
-import createSendMessage from '@utils/message/createSendMessage';
-import envConfig from '@config/env';
-import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
-import getPlayerCountDb from '@db/getPlayerCount';
+import createSendMessage from '../utils/message/createSendMessage';
+import envConfig from '../config/env';
+import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
+import getPlayerCountDb from '../db/getPlayerCount';
 
 // Types
-import { CallbackType, Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { CallbackType, Emoji } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const sendOverbookedWarningIfTrue = async (ctx: MyBotContext) => {
   const sendMessage = createSendMessage(ctx);

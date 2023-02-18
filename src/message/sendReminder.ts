@@ -1,16 +1,16 @@
 import pluralize from 'pluralize';
 
-import createSendMessageWithoutContext from '@utils/message/createSendMessageWithoutContext';
-import envConfig from '@config/env';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import logger from '@utils/logger';
-import { BUTTONS_TUTORIAL } from '@config/constants';
-import { TEXT_TUTORIAL } from '@config/texts';
+import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
+import envConfig from '../config/env';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
+import { BUTTONS_TUTORIAL } from '../config/constants';
+import { TEXT_TUTORIAL } from '../config/texts';
 
 // Types
-import { Emoji } from '@types';
+import { Emoji } from '../types';
 import { Telegraf } from 'telegraf';
 
 const createSendReminder = (bot: Telegraf<any>) => async () => {
