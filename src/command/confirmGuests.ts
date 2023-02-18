@@ -13,9 +13,9 @@ import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 import logger from '@utils/logger';
 import removePlayersExternalDb from '@db/removePlayersExternal';
 import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
-import { EMOJI_PLAYER_OUT, EMOJI_POSITIVE, EMOJI_TEAM } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 type CreateConfirmGuestsInput = {
@@ -55,17 +55,16 @@ const createConfirmGuests =
         }
 
         await removePlayersExternalDb(telegramId);
-        await sendMessage(`${usernameInBold} revoked their previous invitations! ${EMOJI_PLAYER_OUT}`);
+        await sendMessage(`${usernameInBold} revoked their previous invitations! ${Emoji.PlayerOut}`);
 
         return callback();
       }
 
       if (playersBenchedCount > 0) {
         await sendMessage(
-          `${usernameInBold}, you can't invite ${pluralize(
-            'player',
-            numberOfInvitees,
-          )} if we still have ${EMOJI_TEAM}s on the bench. Please unbench them before inviting guests.`,
+          `${usernameInBold}, you can't invite ${pluralize('player', numberOfInvitees)} if we still have ${
+            Emoji.Team
+          }s on the bench. Please unbench them before inviting guests.`,
         );
 
         return callback();
@@ -75,7 +74,7 @@ const createConfirmGuests =
         await removePlayersExternalDb(telegramId);
       }
 
-      await sendMessage(`${usernameInBold} invited <b>${numberOfInvitees}</b> ${pluralize('player', numberOfInvitees)}! ${EMOJI_POSITIVE}`);
+      await sendMessage(`${usernameInBold} invited <b>${numberOfInvitees}</b> ${pluralize('player', numberOfInvitees)}! ${Emoji.Positive}`);
 
       await confirmPlayersExternalDb({ invitedByTelegramId: telegramId, numberOfInvitees });
 

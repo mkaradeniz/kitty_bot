@@ -4,9 +4,9 @@ import createSendMessage from '@utils/message/createSendMessage';
 import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
 import getRandomUnbenchedGif from '@utils/gifs/getRandomUnbenchedGif';
 import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
-import { EMOJI_POSITIVE } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 const pickPlayerFromBench = async (ctx: MyBotContext) => {
@@ -23,7 +23,7 @@ const pickPlayerFromBench = async (ctx: MyBotContext) => {
 
   await confirmPlayerDb(pickedPlayer.telegramId);
 
-  const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${EMOJI_POSITIVE}.`);
+  const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${Emoji.Positive}.`);
 
   await sendGif(getRandomUnbenchedGif(), sentMessage.message_id);
 };

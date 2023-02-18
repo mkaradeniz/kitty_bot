@@ -2,7 +2,6 @@ import pluralize from 'pluralize';
 
 import formatListPart from '@utils/misc/formatListPart';
 import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import { EMOJI_LINEUP, EMOJI_PLAYER_BENCHED, EMOJI_PLAYER_OUT, EMOJI_TEAM } from '@config/texts';
 
 import getExternalPlayersMap from './getExternalPlayersMap';
 import getInvitorNameById from './getInvitorNameById';
@@ -12,6 +11,7 @@ import getPlayersPlayingCount from './getPlayersPlayingCount';
 
 // Types
 import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
+import { Emoji } from '@types';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
@@ -26,7 +26,7 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
   const players = currentQuiz.players
     .slice()
     .sort((a, b) => a.firstName.localeCompare(b.firstName))
-    .map(player => `${EMOJI_TEAM} <b>${player.firstName}</b>`)
+    .map(player => `${Emoji.Team} <b>${player.firstName}</b>`)
     .join('\n');
 
   const playersOutList = currentQuiz.playersOut
@@ -44,11 +44,11 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
   const playersBenched = listFormatter.formatToParts(playersBenchedList).map(formatListPart).join('');
 
   const playersOutText =
-    playersOutCount > 0 ? `\n${EMOJI_PLAYER_OUT} ${playersOut} ${pluralize('is', playersOutCount)} out this week.` : null;
+    playersOutCount > 0 ? `\n${Emoji.PlayerOut} ${playersOut} ${pluralize('is', playersOutCount)} out this week.` : null;
 
   const playersBenchedText =
     playersBenchedCount > 0
-      ? `\n${EMOJI_PLAYER_BENCHED} ${playersBenched} ${pluralize('is', playersBenchedCount)} benched this week.`
+      ? `\n${Emoji.PlayerBenched} ${playersBenched} ${pluralize('is', playersBenchedCount)} benched this week.`
       : null;
 
   const externalPlayers =
@@ -74,7 +74,7 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
 
   const benchCta =
     playersBenchedCount > 0
-      ? `\nIf you're one of the lucky ones who got picked this week, but want to bench yourself in favor of a another player. Send a ${EMOJI_PLAYER_BENCHED} or click on the button below.`
+      ? `\nIf you're one of the lucky ones who got picked this week, but want to bench yourself in favor of a another player. Send a ${Emoji.PlayerBenched} or click on the button below.`
       : null;
 
   const lineup = [players, externalPlayers, playersBenchedText, playersOutText, total, benchCta]
@@ -82,7 +82,7 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
     .join('\n')
     .trim();
 
-  return `${EMOJI_LINEUP} Our lineup for the <b>${currentQuiz.dateFormatted}</b> ${EMOJI_LINEUP}\n\n${lineup}`;
+  return `${Emoji.Lineup} Our lineup for the <b>${currentQuiz.dateFormatted}</b> ${Emoji.Lineup}\n\n${lineup}`;
 };
 
 export default getLineup;

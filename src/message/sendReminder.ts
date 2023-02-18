@@ -7,9 +7,10 @@ import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
 import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 import logger from '@utils/logger';
 import { BUTTONS_TUTORIAL } from '@config/constants';
-import { EMOJI_QUIZ, TEXT_TUTORIAL } from '@config/texts';
+import { TEXT_TUTORIAL } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { Telegraf } from 'telegraf';
 
 const createSendReminder = (bot: Telegraf<any>) => async () => {
@@ -43,10 +44,9 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
       notRespondedCount > 0 ? `<b>${notRespondedCount}</b> ${pluralize('player', notRespondedCount)} did not respond yet.\n\n` : '';
 
     await sendMessageWithoutContext(
-      `${EMOJI_QUIZ} We still have <b>${emptySpotsCount}</b> empty ${pluralize(
-        'spot',
-        emptySpotsCount,
-      )}! ${EMOJI_QUIZ}\n\n${notRespondedMessage}${TEXT_TUTORIAL}`,
+      `${Emoji.Quiz} We still have <b>${emptySpotsCount}</b> empty ${pluralize('spot', emptySpotsCount)}! ${
+        Emoji.Quiz
+      }\n\n${notRespondedMessage}${TEXT_TUTORIAL}`,
       {
         ...BUTTONS_TUTORIAL,
       },

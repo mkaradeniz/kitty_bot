@@ -1,5 +1,6 @@
 import { code, fmt } from 'telegraf/format';
 
+import createCallback from '@utils/misc/createCallback';
 import createSendAdminMessage from '@utils/message/createSendAdminMessage';
 import createSendMessage from '@utils/message/createSendMessage';
 import envConfig from '@config/env';
@@ -8,11 +9,10 @@ import logger from '@utils/logger';
 import sendTableBookingCancelEmail from '@utils/email/sendTableBookingCancelEmail';
 import setEmailSentDb from '@db/setEmailSent';
 import stringify from '@utils/misc/stringify';
-import { EMOJI_NEGATIVE } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
-import createCallback from '@utils/misc/createCallback';
 
 const createSendTableBookingCancelEmail =
   (isCallback = false) =>
@@ -30,7 +30,7 @@ const createSendTableBookingCancelEmail =
 
         await setEmailSentDb();
 
-        await sendMessage(`${EMOJI_NEGATIVE} I just sent ${envConfig.emailToName} a breakup letter (for this week).`);
+        await sendMessage(`${Emoji.Negative} I just sent ${envConfig.emailToName} a breakup letter (for this week).`);
       } catch (err) {
         logger.error(err);
 

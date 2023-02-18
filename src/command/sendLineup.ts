@@ -2,6 +2,7 @@ import { Markup } from 'telegraf';
 
 import createCallback from '@utils/misc/createCallback';
 import createSendMessage from '@utils/message/createSendMessage';
+import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
 import getLineup from '@utils/state/getLineup';
 import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
 import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
@@ -9,10 +10,9 @@ import getPlayersOutCount from '@utils/state/getPlayersOutCount';
 import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
 import logger from '@utils/logger';
 import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
-import { CALLBACK_TYPE_BENCH } from '@config/constants';
-import { EMOJI_PLAYER_BENCHED } from '@config/texts';
 
 // Types
+import { CallbackType } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createSendLineup =
@@ -38,7 +38,9 @@ const createSendLineup =
       const lineup = getLineup(currentQuiz);
 
       const benchCtaButton =
-        playersBenchedCount > 0 ? { ...Markup.inlineKeyboard([Markup.button.callback(EMOJI_PLAYER_BENCHED, CALLBACK_TYPE_BENCH)]) } : {};
+        playersBenchedCount > 0
+          ? { ...Markup.inlineKeyboard([Markup.button.callback(getButtonFromCallbackType(CallbackType.Bench), CallbackType.Bench)]) }
+          : {};
 
       await sendMessage(lineup, { ...benchCtaButton });
 

@@ -2,13 +2,13 @@ import { Markup } from 'telegraf';
 
 import createSendMessageWithoutContext from '@utils/message/createSendMessageWithoutContext';
 import envConfig from '@config/env';
+import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
 import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 import logger from '@utils/logger';
-import { CALLBACK_TYPE_SEND_EMAIL } from '@config/constants';
-import { EMOJI_EMAIL } from '@config/texts';
 
 // Types
+import { CallbackType, Emoji } from '@types';
 import { Telegraf } from 'telegraf';
 
 const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
@@ -27,9 +27,11 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
     }
 
     await sendMessageWithoutContext(
-      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with our table size. ⚠️\n\nSend a ${EMOJI_EMAIL} or click the button below to send it now. `,
+      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with our table size. ⚠️\n\nSend a ${Emoji.EmailBook} or click the button below to send it now. `,
       {
-        ...Markup.inlineKeyboard([Markup.button.callback(EMOJI_EMAIL, CALLBACK_TYPE_SEND_EMAIL)]),
+        ...Markup.inlineKeyboard([
+          Markup.button.callback(getButtonFromCallbackType(CallbackType.SendBookingEmail), CallbackType.SendBookingEmail),
+        ]),
       },
     );
 

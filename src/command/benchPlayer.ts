@@ -16,9 +16,9 @@ import isPlayerBenched from '@utils/state/isPlayerBenched';
 import isPlayerOut from '@utils/state/isPlayerOut';
 import logger from '@utils/logger';
 import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
-import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_DECLINE, EMOJI_REPEAT } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createBenchPlayer =
@@ -41,7 +41,7 @@ const createBenchPlayer =
 
       if (isPlayerOut({ currentQuiz, telegramId })) {
         await sendMessage(
-          `You can't bench yourself, ${usernameInBold}, if you're were never going to participate in the first place. ${EMOJI_REPEAT}`,
+          `You can't bench yourself, ${usernameInBold}, if you're were never going to participate in the first place. ${Emoji.Repeat}`,
         );
 
         return callback();
@@ -51,7 +51,7 @@ const createBenchPlayer =
 
       if (playersBenchedCount === 0) {
         await sendMessage(
-          `${usernameInBold}, you can't bench yourself if we don't have anyone on the bench waiting. If you want to cancel your registration, type ${EMOJI_DECLINE}.`,
+          `${usernameInBold}, you can't bench yourself if we don't have anyone on the bench waiting. If you want to cancel your registration, type ${Emoji.Decline}.`,
         );
 
         return callback();
@@ -71,13 +71,13 @@ const createBenchPlayer =
       await confirmPlayersDb(pickedPlayer.telegramId);
       await benchPlayersDb(nextPlayersBenched.map(pickedPlayer => pickedPlayer.telegramId));
 
-      const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${EMOJI_POSITIVE}.`);
+      const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${Emoji.Positive}.`);
 
       await sendGif(getRandomUnbenchedGif(), sentMessage.message_id);
 
       await benchPlayersDb(telegramId);
 
-      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrified themselves selflessly to the bench!`);
+      await sendMessage(`${Emoji.PlayerBenched} ${usernameInBold} sacrified themselves selflessly to the bench!`);
 
       await createSendLineup(isCallback)(ctx);
 
