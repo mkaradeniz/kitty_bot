@@ -4,9 +4,10 @@ import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 import logger from '@utils/logger';
 import { BUTTONS_TUTORIAL } from '@config/constants';
-import { EMOJI_QUIZ, TEXT_TUTORIAL } from '@config/texts';
+import { TEXT_TUTORIAL } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { Telegraf } from 'telegraf';
 
 const createSendIntro = (bot: Telegraf<any>) => async () => {
@@ -21,7 +22,7 @@ const createSendIntro = (bot: Telegraf<any>) => async () => {
     const currentQuiz = await getOrCreateCurrentQuizDb();
 
     await sendMessageWithoutContext(
-      `${EMOJI_QUIZ} PUBBY QUIZZY PICKLE TIME ${EMOJI_QUIZ}\n\nWho's in for quizzy on the <b>${currentQuiz.dateFormatted}</B>?\n\n${TEXT_TUTORIAL}`,
+      `${Emoji.Quiz} PUBBY QUIZZY PICKLE TIME ${Emoji.Quiz}\n\nWho's in for quizzy on the <b>${currentQuiz.dateFormatted}</B>?\n\n${TEXT_TUTORIAL}`,
       { ...BUTTONS_TUTORIAL },
     );
 

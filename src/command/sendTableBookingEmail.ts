@@ -10,9 +10,9 @@ import logger from '@utils/logger';
 import sendTableBookingEmail from '@utils/email/sendTableBookingEmail';
 import setEmailSentDb from '@db/setEmailSent';
 import stringify from '@utils/misc/stringify';
-import { EMOJI_EMAIL_BOOK } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createSendTableBookingEmail =
@@ -44,7 +44,7 @@ const createSendTableBookingEmail =
 
         await setEmailSentDb();
 
-        await sendMessage(`${EMOJI_EMAIL_BOOK} I just sent ${envConfig.emailToName} a (love-)letter.`);
+        await sendMessage(`${Emoji.EmailBook} I just sent ${envConfig.emailToName} a (love-)letter.`);
       } catch (err) {
         logger.error(err);
 

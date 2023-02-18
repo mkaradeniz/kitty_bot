@@ -1,64 +1,50 @@
-import {
-  EMOJI_CONFIRM,
-  EMOJI_DECLINE,
-  EMOJI_EMAIL_BOOK,
-  EMOJI_EMAIL_CANCEL,
-  EMOJI_GUESTS_0,
-  EMOJI_GUESTS_1,
-  EMOJI_GUESTS_2,
-  EMOJI_LINEUP,
-  EMOJI_LOTTERY,
-  EMOJI_PLAYER_BENCHED,
-  EMOJI_RESET_STATE,
-} from '@config/texts';
-
 // Types
-import { CallbackType } from '@types';
+import { CallbackType, Emoji } from '@types';
 
 const getButtonFromCallbackType = (callbackType: CallbackType): string => {
   switch (callbackType) {
     case CallbackType.Bench: {
-      return EMOJI_PLAYER_BENCHED;
+      return Emoji.PlayerBenched;
     }
 
     case CallbackType.Confirm: {
-      return EMOJI_CONFIRM;
+      return Emoji.Confirm;
     }
 
     case CallbackType.ConfirmGuests0: {
-      return EMOJI_GUESTS_0;
+      return Emoji.Guests0;
     }
 
     case CallbackType.ConfirmGuests1: {
-      return EMOJI_GUESTS_1;
+      return Emoji.Guests1;
     }
 
     case CallbackType.ConfirmGuests2: {
-      return EMOJI_GUESTS_2;
+      return Emoji.Guests2;
     }
 
     case CallbackType.Lineup: {
-      return EMOJI_LINEUP;
+      return Emoji.Lineup;
     }
 
     case CallbackType.Lottery: {
-      return EMOJI_LOTTERY;
+      return Emoji.Lottery;
     }
 
     case CallbackType.ResetState: {
-      return EMOJI_RESET_STATE;
+      return Emoji.ResetState;
     }
 
     case CallbackType.SendBookingEmail: {
-      return EMOJI_EMAIL_BOOK;
+      return Emoji.EmailBook;
     }
 
     case CallbackType.SendCancelEmail: {
-      return EMOJI_EMAIL_CANCEL;
+      return Emoji.EmailCancel;
     }
 
     case CallbackType.Unconfirm: {
-      return EMOJI_DECLINE;
+      return Emoji.Decline;
     }
   }
 };

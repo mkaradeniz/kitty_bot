@@ -18,9 +18,9 @@ import getUsernameFromContext from '@utils/context/getUsernameFromContext';
 import logger from '@utils/logger';
 import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
 import wait from '@utils/misc/wait';
-import { EMOJI_NEGATIVE, EMOJI_POSITIVE, EMOJI_TEAM } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
@@ -80,7 +80,7 @@ const createLottery =
           `We have <b>${playersExternalPlayingCount}</b> ${pluralize(
             'guest',
             playersExternalPlayingCount,
-          )}, we should uninvite them before benching ${EMOJI_TEAM}s.`,
+          )}, we should uninvite them before benching ${Emoji.Team}s.`,
         );
 
         return callback();
@@ -112,7 +112,7 @@ const createLottery =
       await wait(1000);
 
       for (const pickedPlayer of pickedPlayers) {
-        await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${EMOJI_POSITIVE}.`);
+        await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${Emoji.Positive}.`);
 
         await wait(1000);
       }
@@ -124,7 +124,7 @@ const createLottery =
 
       const nextPlayersBenchedText = listFormatter.formatToParts(nextPlayersBenchedList).map(formatListPart).join('');
 
-      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText} ${EMOJI_NEGATIVE}.`);
+      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText} ${Emoji.Negative}.`);
 
       await sendGif(getRandomBenchedGif(), message.message_id);
 

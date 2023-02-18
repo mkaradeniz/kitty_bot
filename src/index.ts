@@ -33,10 +33,9 @@ import replyToHallihallo from '@command/replyToHallihallo';
 import replyToHallochen from '@command/replyToHallochen';
 import sendDebugCommand from '@command/sendDebug';
 import stringify from '@utils/misc/stringify';
-import { EMOJI_CONFIRM, EMOJI_DECLINE, EMOJI_LINEUP, EMOJI_LOTTERY, EMOJI_PLAYER_BENCHED } from './config/texts';
 
 // Types
-import { CallbackType } from '@types';
+import { CallbackType, Emoji } from '@types';
 import { MyBotContext } from './middleware/contextMiddleware';
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
@@ -71,17 +70,17 @@ bot.action(CallbackType.Unconfirm, createUnconfirmPlayer(true));
 // Hears
 bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), createConfirmGuests());
 
-bot.hears(new RegExp(`(${EMOJI_PLAYER_BENCHED})`), createBenchPlayer());
+bot.hears(new RegExp(`(${Emoji.PlayerBenched})`), createBenchPlayer());
 
-bot.hears(new RegExp(`(${EMOJI_CONFIRM})`), createConfirmPlayer());
+bot.hears(new RegExp(`(${Emoji.Confirm})`), createConfirmPlayer());
 
-bot.hears(new RegExp(`(${EMOJI_DECLINE})`), createUnconfirmPlayer());
+bot.hears(new RegExp(`(${Emoji.Decline})`), createUnconfirmPlayer());
 
-bot.hears(new RegExp(`(${EMOJI_LINEUP})`), createSendLineup());
+bot.hears(new RegExp(`(${Emoji.Lineup})`), createSendLineup());
 
-bot.hears(new RegExp(`(!${EMOJI_LOTTERY}${EMOJI_LOTTERY}${EMOJI_LOTTERY})`), createLottery({ isForced: true }));
+bot.hears(new RegExp(`(!${Emoji.Lottery}${Emoji.Lottery}${Emoji.Lottery})`), createLottery({ isForced: true }));
 
-bot.hears(new RegExp(`(${EMOJI_LOTTERY})`), createLottery());
+bot.hears(new RegExp(`(${Emoji.Lottery})`), createLottery());
 
 bot.hears(new RegExp('hallihallo', 'i'), replyToHallihallo);
 

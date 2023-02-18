@@ -11,3 +11,23 @@ export enum CallbackType {
   SendCancelEmail = 'CALLBACK_TYPE_SEND_EMAIL_CANCEL',
   Unconfirm = 'CALLBACK_TYPE_UNCONFIRM',
 }
+
+export enum Emoji {
+  Confirm = '👍',
+  Decline = '👎',
+  EmailBook = '💌',
+  EmailCancel = '📧',
+  Guests0 = '0️⃣',
+  Guests1 = '1️⃣',
+  Guests2 = '2️⃣',
+  Lineup = '📜',
+  Lottery = '🍀',
+  Negative = '😪',
+  PlayerBenched = '🪑',
+  PlayerOut = '🧂',
+  Positive = '🍺',
+  Quiz = '🍻',
+  Repeat = '🫠',
+  ResetState = '🗑',
+  Team = '🥒',
+}

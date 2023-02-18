@@ -10,9 +10,9 @@ import pickPlayerFromBench from '@utils/state/pickPlayerFromBench';
 import sendCurrentPlayerCount from '@message/sendCurrentPlayerCount';
 import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
 import unconfirmPlayerDb from '@db/unconfirmPlayer';
-import { EMOJI_PLAYER_OUT, EMOJI_REPEAT, EMOJI_TEAM } from '@config/texts';
 
 // Types
+import { Emoji } from '@types';
 import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createUnconfirmPlayer =
@@ -34,7 +34,7 @@ const createUnconfirmPlayer =
 
       if (isPlayerOut({ currentQuiz, telegramId })) {
         await sendMessage(
-          `We get it, ${usernameInBold}, you really don't want to play with us this week. No need to repeat yourself. ${EMOJI_REPEAT}`,
+          `We get it, ${usernameInBold}, you really don't want to play with us this week. No need to repeat yourself. ${Emoji.Repeat}`,
         );
 
         return callback();
@@ -42,7 +42,7 @@ const createUnconfirmPlayer =
 
       await unconfirmPlayerDb(telegramId);
 
-      await sendMessage(`${EMOJI_TEAM} ${usernameInBold} is out! ${EMOJI_PLAYER_OUT}`);
+      await sendMessage(`${Emoji.Team} ${usernameInBold} is out! ${Emoji.PlayerOut}`);
 
       if (currentQuiz._count.playersBenched > 0) {
         await pickPlayerFromBench(ctx);
