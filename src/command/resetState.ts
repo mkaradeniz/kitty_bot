@@ -1,3 +1,4 @@
+import createCallback from '../utils/misc/createCallback';
 import createSendMessage from '../utils/message/createSendMessage';
 import logger from '../utils/logger';
 import resetCurrentQuizDb from '../db/resetCurrentQuiz';
@@ -5,16 +6,24 @@ import resetCurrentQuizDb from '../db/resetCurrentQuiz';
 // Types
 import { MyBotContext } from '../middleware/contextMiddleware';
 
-const createResetCurrentQuizCommand = () => async (ctx: MyBotContext) => {
-  try {
-    const sendMessage = createSendMessage(ctx);
+const createResetCurrentQuizCommand =
+  (isCallback = false) =>
+  async (ctx: MyBotContext) => {
+    const callback = createCallback({ ctx, isCallback });
 
-    await resetCurrentQuizDb();
+    try {
+      const sendMessage = createSendMessage(ctx);
 
-    await sendMessage(`State was reset.`, { reply_to_message_id: ctx.message?.message_id });
-  } catch (err) {
-    logger.error(err);
-  }
-};
+      await resetCurrentQuizDb();
+
+      await sendMessage(`State was reset.`, { reply_to_message_id: ctx.message?.message_id });
+
+      return callback();
+    } catch (err) {
+      logger.error(err);
+
+      return callback();
+    }
+  };
 
 export default createResetCurrentQuizCommand;

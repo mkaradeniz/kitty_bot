@@ -45,8 +45,6 @@ const createSendTableBookingEmail =
         await setEmailSentDb();
 
         await sendMessage(`${EMOJI_EMAIL} I just sent ${envConfig.emailToName} a (love-)letter.`);
-
-        return callback();
       } catch (err) {
         logger.error(err);
 
@@ -57,6 +55,8 @@ const createSendTableBookingEmail =
 
         await sendMessage(`Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
       }
+
+      return callback();
     } catch (err) {
       logger.error(err);
 
