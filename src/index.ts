@@ -35,8 +35,12 @@ import stringify from './utils/misc/stringify';
 import {
   CALLBACK_TYPE_BENCH,
   CALLBACK_TYPE_CONFIRM,
+  CALLBACK_TYPE_CONFIRM_GUESTS_0,
+  CALLBACK_TYPE_CONFIRM_GUESTS_1,
+  CALLBACK_TYPE_CONFIRM_GUESTS_2,
   CALLBACK_TYPE_LINEUP,
   CALLBACK_TYPE_LOTTERY,
+  CALLBACK_TYPE_RESET_STATE,
   CALLBACK_TYPE_SEND_EMAIL,
   CALLBACK_TYPE_UNCONFIRM,
 } from './config/constants';
@@ -44,6 +48,7 @@ import { EMOJI_CONFIRM, EMOJI_DECLINE, EMOJI_LINEUP, EMOJI_LOTTERY, EMOJI_PLAYER
 
 // Types
 import { MyBotContext } from './middleware/contextMiddleware';
+import createSendIntroDev from './message/sendIntroDev';
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 
@@ -59,9 +64,15 @@ bot.action(CALLBACK_TYPE_BENCH, createBenchPlayer(true));
 
 bot.action(CALLBACK_TYPE_CONFIRM, createConfirmPlayer(true));
 
+bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_0, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 0 }));
+bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_1, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 1 }));
+bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_2, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 2 }));
+
 bot.action(CALLBACK_TYPE_LINEUP, createSendLineup(true));
 
 bot.action(CALLBACK_TYPE_LOTTERY, createLottery({ isCallback: true }));
+
+bot.action(CALLBACK_TYPE_RESET_STATE, createResetCurrentQuizCommand(true));
 
 bot.action(CALLBACK_TYPE_SEND_EMAIL, createSendTableBookingEmail(true));
 
@@ -155,6 +166,8 @@ const main = async () => {
   void bot.launch();
 
   logger.info(`${envConfig.botName} is online! 🤖`, { label: 'src/index.ts' });
+
+  await createSendIntroDev(bot)();
 
   if (envConfig.isProduction) {
     await sendAdminMessage(`${envConfig.botName} is online! 🤖`);

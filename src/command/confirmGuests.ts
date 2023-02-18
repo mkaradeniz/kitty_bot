@@ -18,8 +18,13 @@ import { EMOJI_PLAYER_OUT, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
 // Types
 import { MyBotContext } from '../middleware/contextMiddleware';
 
+type CreateConfirmGuestsInput = {
+  isCallback?: boolean;
+  numberOfInviteesFromCallback?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+};
+
 const createConfirmGuests =
-  (isCallback = false) =>
+  ({ isCallback = false, numberOfInviteesFromCallback }: CreateConfirmGuestsInput = {}) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
 
@@ -37,7 +42,7 @@ const createConfirmGuests =
         return callback();
       }
 
-      const numberOfInvitees = getNumberOfInviteesFromEmoji(message?.text);
+      const numberOfInvitees = numberOfInviteesFromCallback ?? getNumberOfInviteesFromEmoji(message?.text);
       const playersBenchedCount = getPlayersBenchedCount(currentQuiz);
 
       if (numberOfInvitees === -1) {

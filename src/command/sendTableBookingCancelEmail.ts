@@ -12,33 +12,42 @@ import { EMOJI_NEGATIVE } from '../config/texts';
 
 // Types
 import { MyBotContext } from '../middleware/contextMiddleware';
+import createCallback from '../utils/misc/createCallback';
 
-const createSendTableBookingCancelEmail = () => async (ctx: MyBotContext) => {
-  try {
-    const sendMessage = createSendMessage(ctx);
-    const sendAdminMessage = createSendAdminMessage(ctx);
-
-    const currentQuiz = await getOrCreateCurrentQuizDb();
+const createSendTableBookingCancelEmail =
+  (isCallback = false) =>
+  async (ctx: MyBotContext) => {
+    const callback = createCallback({ ctx, isCallback });
 
     try {
-      await sendTableBookingCancelEmail(currentQuiz.dateFormatted);
+      const sendMessage = createSendMessage(ctx);
+      const sendAdminMessage = createSendAdminMessage(ctx);
 
-      await setEmailSentDb();
+      const currentQuiz = await getOrCreateCurrentQuizDb();
 
-      await sendMessage(`${EMOJI_NEGATIVE} I just sent ${envConfig.emailToName} a breakup letter (for this week).`);
+      try {
+        await sendTableBookingCancelEmail(currentQuiz.dateFormatted);
+
+        await setEmailSentDb();
+
+        await sendMessage(`${EMOJI_NEGATIVE} I just sent ${envConfig.emailToName} a breakup letter (for this week).`);
+      } catch (err) {
+        logger.error(err);
+
+        // ! This only works if we have the `adminUserId` defined in the ENVs.
+        await sendAdminMessage(`Sending table booking cancel email failed.`);
+        await sendAdminMessage(`Error was:`);
+        await sendAdminMessage(fmt`${code(stringify(err as any, null, 2))}`);
+
+        await sendMessage(`Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
+      }
+
+      return callback();
     } catch (err) {
       logger.error(err);
 
-      // ! This only works if we have the `adminUserId` defined in the ENVs.
-      await sendAdminMessage(`Sending table booking cancel email failed.`);
-      await sendAdminMessage(`Error was:`);
-      await sendAdminMessage(fmt`${code(stringify(err as any, null, 2))}`);
-
-      await sendMessage(`Mail sending failed. Please contact ${envConfig.emailToName} manually.`);
+      return callback();
     }
-  } catch (err) {
-    logger.error(err);
-  }
-};
+  };
 
 export default createSendTableBookingCancelEmail;

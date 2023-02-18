@@ -22,9 +22,7 @@ const createSendIntro = (bot: Telegraf<any>) => async () => {
 
     await sendMessageWithoutContext(
       `${EMOJI_QUIZ} PUBBY QUIZZY PICKLE TIME ${EMOJI_QUIZ}\n\nWho's in for quizzy on the <b>${currentQuiz.dateFormatted}</B>?\n\n${TEXT_TUTORIAL}`,
-      {
-        ...BUTTONS_TUTORIAL,
-      },
+      { ...BUTTONS_TUTORIAL },
     );
 
     logger.silly(`Intro sent.`, { label: 'src/message/sendIntro.ts' });

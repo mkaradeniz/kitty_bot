@@ -1,6 +1,10 @@
 export const EMOJI_CONFIRM = '👍';
 export const EMOJI_DECLINE = '👎';
 export const EMOJI_EMAIL = '💌';
+export const EMOJI_EMAIL_CANCEL = '📧';
+export const EMOJI_GUESTS_0 = '0️⃣';
+export const EMOJI_GUESTS_1 = '1️⃣';
+export const EMOJI_GUESTS_2 = '2️⃣';
 export const EMOJI_LINEUP = '📜';
 export const EMOJI_LOTTERY = '🍀';
 export const EMOJI_NEGATIVE = '😪';
