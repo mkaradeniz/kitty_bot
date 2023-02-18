@@ -1,8 +1,8 @@
-import getChatIdFromContext from '../context/getChatIdFromContext';
+import getChatIdFromContext from '@utils/context/getChatIdFromContext';
 
 // Types
 import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const DEFAULT_MESSAGE_OPTIONS: ExtraReplyMessage = { parse_mode: 'HTML' };
 

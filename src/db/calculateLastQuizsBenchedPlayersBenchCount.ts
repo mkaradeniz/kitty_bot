@@ -1,6 +1,6 @@
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import prisma from '@prisma/prisma';
 
 const calculateLastQuizsBenchedPlayersBenchCount = async () => {
   try {

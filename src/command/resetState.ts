@@ -1,10 +1,10 @@
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import logger from '../utils/logger';
-import resetCurrentQuizDb from '../db/resetCurrentQuiz';
+import createCallback from '@utils/misc/createCallback';
+import createSendMessage from '@utils/message/createSendMessage';
+import logger from '@utils/logger';
+import resetCurrentQuizDb from '@db/resetCurrentQuiz';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createResetCurrentQuizCommand =
   (isCallback = false) =>

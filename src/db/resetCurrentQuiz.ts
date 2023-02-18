@@ -1,6 +1,7 @@
+import logger from '@utils/logger';
+import prisma from '@prisma/prisma';
+
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
 
 const resetCurrentQuizDb = async () => {
   const currentQuiz = await getOrCreateCurrentQuizDb();

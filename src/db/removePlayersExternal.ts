@@ -1,8 +1,9 @@
 import pluralize from 'pluralize';
 
+import logger from '@utils/logger';
+import prisma from '@prisma/prisma';
+
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
 
 const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => {
   const currentQuiz = await getOrCreateCurrentQuizDb();

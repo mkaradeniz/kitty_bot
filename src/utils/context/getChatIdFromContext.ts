@@ -1,7 +1,7 @@
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 
 // Types
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const getChatIdFromContext = (ctx: MyBotContext) => {
   const chatId = ctx.myContext.chatId;

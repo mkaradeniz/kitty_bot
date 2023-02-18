@@ -1,12 +1,14 @@
-import formatListPart from '../misc/formatListPart';
+import pluralize from 'pluralize';
+
+import formatListPart from '@utils/misc/formatListPart';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import { EMOJI_LINEUP, EMOJI_PLAYER_BENCHED, EMOJI_PLAYER_OUT, EMOJI_TEAM } from '@config/texts';
+
 import getExternalPlayersMap from './getExternalPlayersMap';
 import getInvitorNameById from './getInvitorNameById';
 import getPlayersBenchedCount from './getPlayersBenchedCount';
 import getPlayersOutCount from './getPlayersOutCount';
 import getPlayersPlayingCount from './getPlayersPlayingCount';
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
-import pluralize from 'pluralize';
-import { EMOJI_LINEUP, EMOJI_PLAYER_BENCHED, EMOJI_PLAYER_OUT, EMOJI_TEAM } from '../../config/texts';
 
 // Types
 import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';

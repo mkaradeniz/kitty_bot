@@ -1,7 +1,7 @@
 import winston, { format as winstonFormat } from 'winston';
 
-import envConfig from '../../../config/env';
-import stringify from '../../misc/stringify';
+import envConfig from '@config/env';
+import stringify from '@utils/misc/stringify';
 
 const { metadata, combine, json, printf, timestamp } = winstonFormat;
 

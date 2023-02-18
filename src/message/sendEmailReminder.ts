@@ -1,12 +1,12 @@
 import { Markup } from 'telegraf';
 
-import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import { CALLBACK_TYPE_SEND_EMAIL } from '../config/constants';
-import { EMOJI_EMAIL } from '../config/texts';
+import createSendMessageWithoutContext from '@utils/message/createSendMessageWithoutContext';
+import envConfig from '@config/env';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import { CALLBACK_TYPE_SEND_EMAIL } from '@config/constants';
+import { EMOJI_EMAIL } from '@config/texts';
 
 // Types
 import { Telegraf } from 'telegraf';

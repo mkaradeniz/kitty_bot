@@ -1,9 +1,9 @@
 import pluralize from 'pluralize';
 
-import arrayify from '../utils/misc/arrayify';
+import arrayify from '@utils/misc/arrayify';
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import logger from '@utils/logger';
+import prisma from '@prisma/prisma';
 
 const benchPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
   const telegramIds = arrayify(input);

@@ -1,7 +1,7 @@
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
 
 // Types
-import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
+import { QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
 
 const getExternalPlayersMap = (currentQuiz: QuizWithRelations) => {
   const externalPlayersMap = currentQuiz.playersExternal.reduce((acc, playerExternal) => {
