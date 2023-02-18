@@ -1,5 +1,6 @@
+import prisma from '@prisma/prisma';
+
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
-import prisma from '../../prisma/prisma';
 
 const setEmailSentDb = async () => {
   const currentQuiz = await getOrCreateCurrentQuizDb();

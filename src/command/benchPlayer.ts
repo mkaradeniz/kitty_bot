@@ -1,25 +1,25 @@
 import { differenceBy } from 'lodash';
 
-import benchPlayersDb from '../db/benchPlayers';
-import confirmPlayersDb from '../db/confirmPlayers';
-import createCallback from '../utils/misc/createCallback';
-import createSendGif from '../utils/message/createSendGif';
+import benchPlayersDb from '@db/benchPlayers';
+import confirmPlayersDb from '@db/confirmPlayers';
+import createCallback from '@utils/misc/createCallback';
+import createSendGif from '@utils/message/createSendGif';
 import createSendLineup from './sendLineup';
-import createSendMessage from '../utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getRandomUnbenchedGif from '../utils/gifs/getRandomUnbenchedGif';
-import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import isPlayerBenched from '../utils/state/isPlayerBenched';
-import isPlayerOut from '../utils/state/isPlayerOut';
-import logger from '../utils/logger';
-import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
-import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_DECLINE, EMOJI_REPEAT } from '../config/texts';
+import createSendMessage from '@utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
+import getRandomUnbenchedGif from '@utils/gifs/getRandomUnbenchedGif';
+import getTelegramIdFromContext from '@utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '@utils/context/getUsernameFromContext';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import isPlayerBenched from '@utils/state/isPlayerBenched';
+import isPlayerOut from '@utils/state/isPlayerOut';
+import logger from '@utils/logger';
+import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
+import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_DECLINE, EMOJI_REPEAT } from '@config/texts';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createBenchPlayer =
   (isCallback = false) =>

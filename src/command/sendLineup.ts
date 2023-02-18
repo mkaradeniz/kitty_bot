@@ -1,19 +1,19 @@
 import { Markup } from 'telegraf';
 
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import getLineup from '../utils/state/getLineup';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getPlayersOutCount from '../utils/state/getPlayersOutCount';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import logger from '../utils/logger';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
-import { CALLBACK_TYPE_BENCH } from '../config/constants';
-import { EMOJI_PLAYER_BENCHED } from '../config/texts';
+import createCallback from '@utils/misc/createCallback';
+import createSendMessage from '@utils/message/createSendMessage';
+import getLineup from '@utils/state/getLineup';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
+import getPlayersOutCount from '@utils/state/getPlayersOutCount';
+import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
+import logger from '@utils/logger';
+import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
+import { CALLBACK_TYPE_BENCH } from '@config/constants';
+import { EMOJI_PLAYER_BENCHED } from '@config/texts';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createSendLineup =
   (isCallback = false) =>

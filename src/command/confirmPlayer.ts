@@ -1,19 +1,19 @@
-import confirmPlayerDb from '../db/confirmPlayers';
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import isPlayerBenched from '../utils/state/isPlayerBenched';
-import isPlayerPlaying from '../utils/state/isPlayerRegistered';
-import logger from '../utils/logger';
-import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
-import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_REPEAT, EMOJI_TEAM } from '../config/texts';
+import confirmPlayerDb from '@db/confirmPlayers';
+import createCallback from '@utils/misc/createCallback';
+import createSendMessage from '@utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import getTelegramIdFromContext from '@utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '@utils/context/getUsernameFromContext';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import isPlayerBenched from '@utils/state/isPlayerBenched';
+import isPlayerPlaying from '@utils/state/isPlayerRegistered';
+import logger from '@utils/logger';
+import sendCurrentPlayerCount from '@message/sendCurrentPlayerCount';
+import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
+import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_REPEAT, EMOJI_TEAM } from '@config/texts';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const createConfirmPlayer =
   (isCallback = false) =>

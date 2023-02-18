@@ -1,6 +1,6 @@
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import stringify from '@utils/misc/stringify';
 
 // Types
 import { Context } from 'telegraf';

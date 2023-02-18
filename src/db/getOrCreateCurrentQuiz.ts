@@ -1,9 +1,9 @@
 import { format } from 'date-fns';
 
-import findNextWednesday from '../utils/misc/findNextWednesday';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import findNextWednesday from '@utils/misc/findNextWednesday';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import prisma from '@prisma/prisma';
 
 // Types
 import { Prisma } from '.prisma/client';

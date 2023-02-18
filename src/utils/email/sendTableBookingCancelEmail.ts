@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 
-import envConfig from '../../config/env';
-import logger from '../logger';
-import stringify from '../misc/stringify';
+import envConfig from '@config/env';
+import logger from '@utils/logger';
+import stringify from '@utils/misc/stringify';
 
 // Types
 import Mail from 'nodemailer/lib/mailer';

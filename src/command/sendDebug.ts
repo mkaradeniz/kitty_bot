@@ -1,15 +1,15 @@
 import { code, fmt } from 'telegraf/format';
 
-import createSendAdminMessage from '../utils/message/createSendAdminMessage';
-import createSendGif from '../utils/message/createSendGif';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import createSendAdminMessage from '@utils/message/createSendAdminMessage';
+import createSendGif from '@utils/message/createSendGif';
+import envConfig from '@config/env';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import stringify from '@utils/misc/stringify';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const sendDebugCommand = async (ctx: MyBotContext) => {
   // ! This only works if we have the `adminUserId` defined in the ENVs.

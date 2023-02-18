@@ -1,5 +1,5 @@
 // Types
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 type CreateCallbackInput = {
   ctx: MyBotContext;

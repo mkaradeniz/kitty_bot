@@ -1,9 +1,9 @@
-import createPlayer from '../db/createPlayer';
-import doesPlayerExist from '../db/doesPlayerExist';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import createPlayer from '@db/createPlayer';
+import doesPlayerExist from '@db/doesPlayerExist';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import logger from '@utils/logger';
+import stringify from '@utils/misc/stringify';
 
 // Types
 import { MyBotContext } from './contextMiddleware';

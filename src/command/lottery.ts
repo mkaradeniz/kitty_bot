@@ -1,27 +1,27 @@
 import pluralize from 'pluralize';
 import { differenceBy } from 'lodash';
 
-import benchPlayersDb from '../db/benchPlayers';
-import confirmPlayersDb from '../db/confirmPlayers';
-import createCallback from '../utils/misc/createCallback';
-import createSendGif from '../utils/message/createSendGif';
+import benchPlayersDb from '@db/benchPlayers';
+import confirmPlayersDb from '@db/confirmPlayers';
+import createCallback from '@utils/misc/createCallback';
+import createSendGif from '@utils/message/createSendGif';
 import createSendLineup from './sendLineup';
-import createSendMessage from '../utils/message/createSendMessage';
-import envConfig from '../config/env';
-import formatListPart from '../utils/misc/formatListPart';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getPlayersExternalPlayingCount from '../utils/state/getPlayersExternalPlayingCount';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import getRandomBenchedGif from '../utils/gifs/getRandomBenchedGif';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import logger from '../utils/logger';
-import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
-import wait from '../utils/misc/wait';
-import { EMOJI_NEGATIVE, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
+import createSendMessage from '@utils/message/createSendMessage';
+import envConfig from '@config/env';
+import formatListPart from '@utils/misc/formatListPart';
+import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
+import getPlayersExternalPlayingCount from '@utils/state/getPlayersExternalPlayingCount';
+import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
+import getRandomBenchedGif from '@utils/gifs/getRandomBenchedGif';
+import getUsernameFromContext from '@utils/context/getUsernameFromContext';
+import logger from '@utils/logger';
+import pickPlayersWeighted from '@utils/misc/pickPlayersWeighted';
+import wait from '@utils/misc/wait';
+import { EMOJI_NEGATIVE, EMOJI_POSITIVE, EMOJI_TEAM } from '@config/texts';
 
 // Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
