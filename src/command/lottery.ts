@@ -15,6 +15,7 @@ import getPlayersExternalPlayingCount from '../utils/state/getPlayersExternalPla
 import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
 import getRandomBenchedGif from '../utils/gifs/getRandomBenchedGif';
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
+import logger from '../utils/logger';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
 import wait from '../utils/misc/wait';
 import { EMOJI_NEGATIVE, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
@@ -131,7 +132,7 @@ const createLottery =
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

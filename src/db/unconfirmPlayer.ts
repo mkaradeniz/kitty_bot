@@ -1,4 +1,5 @@
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 const unconfirmPlayerDb = async (telegramId: bigint | number) => {
@@ -12,6 +13,8 @@ const unconfirmPlayerDb = async (telegramId: bigint | number) => {
     },
     where: { id: currentQuiz.id },
   });
+
+  logger.silly(`Unconfirmed player: \`${telegramId}\`.`, { label: 'src/db/unconfirmPlayer.ts' });
 
   return updatedQuiz;
 };

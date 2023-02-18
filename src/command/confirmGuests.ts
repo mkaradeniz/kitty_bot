@@ -10,6 +10,7 @@ import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext'
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import removePlayersExternalDb from '../db/removePlayersExternal';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 import { EMOJI_PLAYER_OUT, EMOJI_POSITIVE, EMOJI_TEAM } from '../config/texts';
@@ -77,7 +78,7 @@ const createConfirmGuests =
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

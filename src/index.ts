@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+(BigInt.prototype as any)['toJSON'] = function () {
+  return this.toString();
+};
+
 import cron from 'node-cron';
 import { Telegraf } from 'telegraf';
 import { code, fmt } from 'telegraf/format';
@@ -23,6 +27,7 @@ import dbMiddleware from './middleware/dbMiddleware';
 import envConfig from './config/env';
 import getOrCreateCurrentQuizDb from './db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
+import logger from './utils/logger';
 import replyToHallihallo from './command/replyToHallihallo';
 import replyToHallochen from './command/replyToHallochen';
 import sendDebugCommand from './command/sendDebug';
@@ -91,7 +96,7 @@ bot.hears('!reset', createResetCurrentQuizCommand());
 
 // Error Handling
 bot.catch(async err => {
-  console.error(err);
+  logger.error(err);
 
   void bot.launch();
 
@@ -149,7 +154,7 @@ const main = async () => {
 
   void bot.launch();
 
-  console.info(`${envConfig.botName} is online! 🤖`);
+  logger.info(`${envConfig.botName} is online! 🤖`, { label: 'src/index.ts' });
 
   if (envConfig.isProduction) {
     await sendAdminMessage(`${envConfig.botName} is online! 🤖`);

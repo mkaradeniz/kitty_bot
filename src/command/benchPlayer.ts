@@ -14,6 +14,7 @@ import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import isPlayerBenched from '../utils/state/isPlayerBenched';
 import isPlayerOut from '../utils/state/isPlayerOut';
+import logger from '../utils/logger';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
 import { EMOJI_PLAYER_BENCHED, EMOJI_POSITIVE, EMOJI_DECLINE, EMOJI_REPEAT } from '../config/texts';
 
@@ -76,13 +77,13 @@ const createBenchPlayer =
 
       await benchPlayersDb(telegramId);
 
-      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrifices themselves selflessly to the bench!`);
+      await sendMessage(`${EMOJI_PLAYER_BENCHED} ${usernameInBold} sacrified themselves selflessly to the bench!`);
 
       await createSendLineup(isCallback)(ctx);
 
       return callback();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
 
       return callback();
     }

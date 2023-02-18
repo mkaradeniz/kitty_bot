@@ -4,6 +4,7 @@ import createSendMessageWithoutContext from '../utils/message/createSendMessageW
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import { CALLBACK_TYPE_SEND_EMAIL } from '../config/constants';
 import { EMOJI_EMAIL } from '../config/texts';
 
@@ -26,13 +27,15 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
     }
 
     await sendMessageWithoutContext(
-      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with table size. ⚠️\n\nSend a ${EMOJI_EMAIL} or click the button below to send it now. `,
+      `⚠️ We still haven't sent ${envConfig.emailToName} the mail with our table size. ⚠️\n\nSend a ${EMOJI_EMAIL} or click the button below to send it now. `,
       {
         ...Markup.inlineKeyboard([Markup.button.callback(EMOJI_EMAIL, CALLBACK_TYPE_SEND_EMAIL)]),
       },
     );
+
+    logger.silly(`Email reminder sent.`, { label: 'src/message/sendEmailReminder.ts' });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

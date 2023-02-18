@@ -1,4 +1,5 @@
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
 import prisma from '../../prisma/prisma';
 
 const calculateLastQuizsBenchedPlayersBenchCount = async () => {
@@ -21,13 +22,15 @@ const calculateLastQuizsBenchedPlayersBenchCount = async () => {
 
         await prisma.player.update({ data: { countBenched: player.countBenched + 1 }, where: { id: playerBenched.id } });
 
-        console.info(`Incremented bench count for \`${playerBenched.id}\`.`);
+        logger.info(`Incremented bench count for \`${playerBenched.id}\`.`, {
+          label: 'src/db/calculateLastQuizsBenchedPlayersBenchCount.ts',
+        });
       }
 
       await prisma.quiz.update({ data: { benchesCounted: true }, where: { id: quizWithBenchesUncounted.id } });
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

@@ -1,4 +1,5 @@
 import createSendMessage from '../utils/message/createSendMessage';
+import logger from '../utils/logger';
 import resetCurrentQuizDb from '../db/resetCurrentQuiz';
 
 // Types
@@ -12,7 +13,7 @@ const createResetCurrentQuizCommand = () => async (ctx: MyBotContext) => {
 
     await sendMessage(`State was reset.`, { reply_to_message_id: ctx.message?.message_id });
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 };
 

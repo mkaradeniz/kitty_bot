@@ -19,6 +19,9 @@ export interface EnvConfig {
   isProduction: boolean;
   maxPlayers: number;
   pubquizChatId: number | null;
+  settingLogFilePath: string;
+  settingLogLevel: string;
+  settingLogLevelDev: string;
 }
 
 const envConfig: EnvConfig = describe({
@@ -114,6 +117,24 @@ const envConfig: EnvConfig = describe({
     name: 'PUBQUIZ_CHAT_ID',
     standard: null,
     type: Type.NUMBER,
+  },
+  settingLogFilePath: {
+    name: 'SETTING_LOG_FILE_PATH',
+    type: Type.STRING,
+    isRequired: false,
+    standard: './logs',
+  },
+  settingLogLevel: {
+    name: 'SETTING_LOG_LEVEL',
+    type: Type.STRING,
+    isRequired: false,
+    standard: 'silly',
+  },
+  settingLogLevelDev: {
+    name: 'SETTING_LOG_LEVEL_DEV',
+    type: Type.STRING,
+    isRequired: false,
+    standard: 'silly',
   },
 });
 
