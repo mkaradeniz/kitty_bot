@@ -1,3 +1,4 @@
+// Types
 import { QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
 
 const getPlayersOutCount = (quiz: QuizWithRelations) => {

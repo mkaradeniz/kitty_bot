@@ -36,7 +36,7 @@ import stringify from '@utils/misc/stringify';
 
 // Types
 import { CallbackType, Emoji } from '@types';
-import { MyBotContext } from './middleware/contextMiddleware';
+import { MyBotContext } from '@middleware/contextMiddleware';
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 

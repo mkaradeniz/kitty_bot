@@ -10,8 +10,8 @@ import getPlayersOutCount from './getPlayersOutCount';
 import getPlayersPlayingCount from './getPlayersPlayingCount';
 
 // Types
-import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
 import { Emoji } from '@types';
+import { QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
