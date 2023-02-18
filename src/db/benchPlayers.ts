@@ -1,8 +1,8 @@
 import pluralize from 'pluralize';
 
-import arrayify from '@utils/misc/arrayify';
-import logger from '@utils/logger';
-import prisma from '@prisma/prisma';
+import arrayify from '../utils/misc/arrayify';
+import logger from '../utils/logger';
+import prisma from '../../prisma/prisma';
 
 import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
 

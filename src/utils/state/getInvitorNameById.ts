@@ -1,5 +1,5 @@
 // Types
-import { QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
+import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
 
 type GetInvitorNameByIdInput = {
   currentQuiz: QuizWithRelations;

@@ -1,19 +1,19 @@
 import { Markup } from 'telegraf';
 
-import createCallback from '@utils/misc/createCallback';
-import createSendMessage from '@utils/message/createSendMessage';
-import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
-import getLineup from '@utils/state/getLineup';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
-import getPlayersOutCount from '@utils/state/getPlayersOutCount';
-import getPlayersPlayingCount from '@utils/state/getPlayersPlayingCount';
-import logger from '@utils/logger';
-import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
+import createCallback from '../utils/misc/createCallback';
+import createSendMessage from '../utils/message/createSendMessage';
+import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
+import getLineup from '../utils/state/getLineup';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
+import getPlayersOutCount from '../utils/state/getPlayersOutCount';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import logger from '../utils/logger';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 
 // Types
-import { CallbackType } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { CallbackType } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const createSendLineup =
   (isCallback = false) =>

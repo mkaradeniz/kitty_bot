@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import envConfig from '@config/env';
+import envConfig from '../src/config/env';
 
 const prisma: PrismaClient = (global as any).prisma ?? new PrismaClient();
 

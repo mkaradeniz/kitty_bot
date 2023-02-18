@@ -1,5 +1,5 @@
 // Types
-import { Emoji } from '@types';
+import { Emoji } from '../types';
 
 export const TEXT_TUTORIAL = `Send a ${Emoji.Confirm} if you're in\n
 Send a ${Emoji.Decline} if you're out.\n

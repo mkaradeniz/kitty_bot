@@ -1,22 +1,22 @@
 import pluralize from 'pluralize';
 
-import confirmPlayersExternalDb from '@db/confirmPlayersExternal';
-import createCallback from '@utils/misc/createCallback';
-import createSendMessage from '@utils/message/createSendMessage';
-import getNumberOfInviteesFromEmoji from '@utils/state/getNumberOfInviteesFromEmoji';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '@utils/state/getPlayersBenchedCount';
-import getTelegramIdFromContext from '@utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '@utils/context/getUsernameFromContext';
-import hasPlayerInvitations from '@utils/state/hasPlayerInvitations';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import logger from '@utils/logger';
-import removePlayersExternalDb from '@db/removePlayersExternal';
-import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
+import confirmPlayersExternalDb from '../db/confirmPlayersExternal';
+import createCallback from '../utils/misc/createCallback';
+import createSendMessage from '../utils/message/createSendMessage';
+import getNumberOfInviteesFromEmoji from '../utils/state/getNumberOfInviteesFromEmoji';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
+import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '../utils/context/getUsernameFromContext';
+import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import logger from '../utils/logger';
+import removePlayersExternalDb from '../db/removePlayersExternal';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 
 // Types
-import { Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { Emoji } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 type CreateConfirmGuestsInput = {
   isCallback?: boolean;

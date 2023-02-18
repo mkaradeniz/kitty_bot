@@ -1,7 +1,7 @@
 import pluralize from 'pluralize';
 
-import formatListPart from '@utils/misc/formatListPart';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import formatListPart from '../misc/formatListPart';
+import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
 
 import getExternalPlayersMap from './getExternalPlayersMap';
 import getInvitorNameById from './getInvitorNameById';
@@ -10,8 +10,8 @@ import getPlayersOutCount from './getPlayersOutCount';
 import getPlayersPlayingCount from './getPlayersPlayingCount';
 
 // Types
-import { Emoji } from '@types';
-import { QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
+import { Emoji } from '../../types';
+import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');

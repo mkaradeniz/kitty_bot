@@ -1,5 +1,5 @@
-import envConfig from '@config/env';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
+import envConfig from '../../config/env';
+import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
 
 // Types
 import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';

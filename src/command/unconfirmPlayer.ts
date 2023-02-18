@@ -1,19 +1,19 @@
-import createCallback from '@utils/misc/createCallback';
-import createSendMessage from '@utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import getTelegramIdFromContext from '@utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '@utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '@utils/misc/isNotNullOrUndefined';
-import isPlayerOut from '@utils/state/isPlayerOut';
-import logger from '@utils/logger';
-import pickPlayerFromBench from '@utils/state/pickPlayerFromBench';
-import sendCurrentPlayerCount from '@message/sendCurrentPlayerCount';
-import sendOverbookedWarningIfTrue from '@message/sendOverbookedWarningIfTrue';
-import unconfirmPlayerDb from '@db/unconfirmPlayer';
+import createCallback from '../utils/misc/createCallback';
+import createSendMessage from '../utils/message/createSendMessage';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
+import getUsernameFromContext from '../utils/context/getUsernameFromContext';
+import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
+import isPlayerOut from '../utils/state/isPlayerOut';
+import logger from '../utils/logger';
+import pickPlayerFromBench from '../utils/state/pickPlayerFromBench';
+import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
+import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
+import unconfirmPlayerDb from '../db/unconfirmPlayer';
 
 // Types
-import { Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { Emoji } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const createUnconfirmPlayer =
   (isCallback = false) =>

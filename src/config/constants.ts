@@ -1,9 +1,9 @@
 import { Markup } from 'telegraf';
 
-import getButtonFromCallbackType from '@utils/misc/getButtonFromCallbackType';
+import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
 
 // Types
-import { CallbackType } from '@types';
+import { CallbackType } from '../types';
 import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 
 export const BUTTONS_TUTORIAL: ExtraReplyMessage = {

@@ -1,26 +1,15 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "outDir": "dist",
-    "paths": {
-      "@command/*": ["./src/command/*"],
-      "@config/*": ["./src/config/*"],
-      "@db/*": ["./src/db/*"],
-      "@message/*": ["./src/message/*"],
-      "@middleware/*": ["./src/middleware/*"],
-      "@prisma/*": ["./prisma/*"],
-      "@types": ["./src/types"],
-      "@utils/*": ["./src/utils/*"]
-    },
     "skipLibCheck": true,
     "strict": true
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }

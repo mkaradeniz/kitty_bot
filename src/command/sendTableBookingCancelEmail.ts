@@ -1,18 +1,18 @@
 import { code, fmt } from 'telegraf/format';
 
-import createCallback from '@utils/misc/createCallback';
-import createSendAdminMessage from '@utils/message/createSendAdminMessage';
-import createSendMessage from '@utils/message/createSendMessage';
-import envConfig from '@config/env';
-import getOrCreateCurrentQuizDb from '@db/getOrCreateCurrentQuiz';
-import logger from '@utils/logger';
-import sendTableBookingCancelEmail from '@utils/email/sendTableBookingCancelEmail';
-import setEmailSentDb from '@db/setEmailSent';
-import stringify from '@utils/misc/stringify';
+import createCallback from '../utils/misc/createCallback';
+import createSendAdminMessage from '../utils/message/createSendAdminMessage';
+import createSendMessage from '../utils/message/createSendMessage';
+import envConfig from '../config/env';
+import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import logger from '../utils/logger';
+import sendTableBookingCancelEmail from '../utils/email/sendTableBookingCancelEmail';
+import setEmailSentDb from '../db/setEmailSent';
+import stringify from '../utils/misc/stringify';
 
 // Types
-import { Emoji } from '@types';
-import { MyBotContext } from '@middleware/contextMiddleware';
+import { Emoji } from '../types';
+import { MyBotContext } from '../middleware/contextMiddleware';
 
 const createSendTableBookingCancelEmail =
   (isCallback = false) =>
