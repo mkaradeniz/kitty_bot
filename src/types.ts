@@ -1,0 +1,13 @@
+export enum CallbackType {
+  Bench = 'CALLBACK_TYPE_BENCH',
+  Confirm = 'CALLBACK_TYPE_CONFIRM',
+  ConfirmGuests0 = 'CALLBACK_TYPE_CONFIRM_GUESTS_0',
+  ConfirmGuests1 = 'CALLBACK_TYPE_CONFIRM_GUESTS_1',
+  ConfirmGuests2 = 'CALLBACK_TYPE_CONFIRM_GUESTS_2',
+  Lineup = 'CALLBACK_TYPE_LINEUP',
+  Lottery = 'CALLBACK_TYPE_LOTTERY',
+  ResetState = 'CALLBACK_TYPE_RESET_STATE',
+  SendBookingEmail = 'CALLBACK_TYPE_SEND_EMAIL',
+  SendCancelEmail = 'CALLBACK_TYPE_SEND_EMAIL_CANCEL',
+  Unconfirm = 'CALLBACK_TYPE_UNCONFIRM',
+}

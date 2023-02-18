@@ -18,6 +18,7 @@ import createResetCurrentQuizCommand from '@command/resetState';
 import createSendAdminMessage from '@utils/message/createSendAdminMessage';
 import createSendEmailReminder from '@message/sendEmailReminder';
 import createSendIntro from '@message/sendIntro';
+import createSendIntroDev from './message/sendIntroDev';
 import createSendLineup from '@command/sendLineup';
 import createSendReminder from '@message/sendReminder';
 import createSendTableBookingCancelEmail from '@command/sendTableBookingCancelEmail';
@@ -32,23 +33,11 @@ import replyToHallihallo from '@command/replyToHallihallo';
 import replyToHallochen from '@command/replyToHallochen';
 import sendDebugCommand from '@command/sendDebug';
 import stringify from '@utils/misc/stringify';
-import {
-  CALLBACK_TYPE_BENCH,
-  CALLBACK_TYPE_CONFIRM,
-  CALLBACK_TYPE_CONFIRM_GUESTS_0,
-  CALLBACK_TYPE_CONFIRM_GUESTS_1,
-  CALLBACK_TYPE_CONFIRM_GUESTS_2,
-  CALLBACK_TYPE_LINEUP,
-  CALLBACK_TYPE_LOTTERY,
-  CALLBACK_TYPE_RESET_STATE,
-  CALLBACK_TYPE_SEND_EMAIL,
-  CALLBACK_TYPE_UNCONFIRM,
-} from './config/constants';
 import { EMOJI_CONFIRM, EMOJI_DECLINE, EMOJI_LINEUP, EMOJI_LOTTERY, EMOJI_PLAYER_BENCHED } from './config/texts';
 
 // Types
+import { CallbackType } from '@types';
 import { MyBotContext } from './middleware/contextMiddleware';
-import createSendIntroDev from './message/sendIntroDev';
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 
@@ -60,23 +49,24 @@ bot.use(contextMiddleware);
 bot.use(dbMiddleware);
 
 // Callback Actions
-bot.action(CALLBACK_TYPE_BENCH, createBenchPlayer(true));
+bot.action(CallbackType.Bench, createBenchPlayer(true));
 
-bot.action(CALLBACK_TYPE_CONFIRM, createConfirmPlayer(true));
+bot.action(CallbackType.Confirm, createConfirmPlayer(true));
 
-bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_0, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 0 }));
-bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_1, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 1 }));
-bot.action(CALLBACK_TYPE_CONFIRM_GUESTS_2, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 2 }));
+bot.action(CallbackType.ConfirmGuests0, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 0 }));
+bot.action(CallbackType.ConfirmGuests1, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 1 }));
+bot.action(CallbackType.ConfirmGuests2, createConfirmGuests({ isCallback: true, numberOfInviteesFromCallback: 2 }));
 
-bot.action(CALLBACK_TYPE_LINEUP, createSendLineup(true));
+bot.action(CallbackType.Lineup, createSendLineup(true));
 
-bot.action(CALLBACK_TYPE_LOTTERY, createLottery({ isCallback: true }));
+bot.action(CallbackType.Lottery, createLottery({ isCallback: true }));
 
-bot.action(CALLBACK_TYPE_RESET_STATE, createResetCurrentQuizCommand(true));
+bot.action(CallbackType.ResetState, createResetCurrentQuizCommand(true));
 
-bot.action(CALLBACK_TYPE_SEND_EMAIL, createSendTableBookingEmail(true));
+bot.action(CallbackType.SendBookingEmail, createSendTableBookingEmail(true));
+bot.action(CallbackType.SendCancelEmail, createSendTableBookingCancelEmail(true));
 
-bot.action(CALLBACK_TYPE_UNCONFIRM, createUnconfirmPlayer(true));
+bot.action(CallbackType.Unconfirm, createUnconfirmPlayer(true));
 
 // Hears
 bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), createConfirmGuests());

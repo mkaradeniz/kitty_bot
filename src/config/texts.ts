@@ -1,6 +1,6 @@
 export const EMOJI_CONFIRM = '👍';
 export const EMOJI_DECLINE = '👎';
-export const EMOJI_EMAIL = '💌';
+export const EMOJI_EMAIL_BOOK = '💌';
 export const EMOJI_EMAIL_CANCEL = '📧';
 export const EMOJI_GUESTS_0 = '0️⃣';
 export const EMOJI_GUESTS_1 = '1️⃣';
@@ -13,6 +13,7 @@ export const EMOJI_PLAYER_OUT = '🧂';
 export const EMOJI_POSITIVE = '🍺';
 export const EMOJI_QUIZ = '🍻';
 export const EMOJI_REPEAT = '🫠';
+export const EMOJI_RESET_STATE = '🗑';
 export const EMOJI_TEAM = '🥒';
 
 export const TEXT_TUTORIAL = `Send a ${EMOJI_CONFIRM} if you're in\n
