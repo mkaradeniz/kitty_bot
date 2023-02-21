@@ -26,7 +26,7 @@ const createSendIntro = (bot: Telegraf<any>) => async () => {
       { ...BUTTONS_TUTORIAL },
     );
 
-    logger.silly(`Intro sent.`, { label: 'src/message/sendIntro.ts' });
+    logger.silly(`Intro sent.`, { label: 'src/message/sendIntro.ts:29' });
   } catch (err) {
     logger.error(err);
   }

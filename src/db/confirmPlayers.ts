@@ -25,7 +25,7 @@ const confirmPlayersDb = async (input: bigint | number | (bigint | number)[]) =>
     `Confirmed ${telegramIds.length} ${pluralize('player', telegramIds.length)}: ${telegramIds
       .map(telegramId => `\`${telegramId}\``)
       .join(', ')}.`,
-    { label: 'src/db/confirmPlayers.ts' },
+    { label: 'src/db/confirmPlayers.ts:28' },
   );
 
   return updatedQuiz;

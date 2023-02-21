@@ -23,7 +23,7 @@ const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => 
   ).length;
 
   logger.silly(`Removed ${removedPlayersExternalCount} external ${pluralize('player', removedPlayersExternalCount)}.`, {
-    label: 'src/db/removePlayersExternal.ts',
+    label: 'src/db/removePlayersExternal.ts:26',
   });
 };
 

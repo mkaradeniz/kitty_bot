@@ -22,7 +22,7 @@ const confirmPlayersExternalDb = async ({ invitedByTelegramId, numberOfInvitees 
   }
 
   logger.silly(`Confirmed ${numberOfInvitees} external ${pluralize('player', numberOfInvitees)}.`, {
-    label: 'src/db/confirmPlayersExternal.ts',
+    label: 'src/db/confirmPlayersExternal.ts:25',
   });
 };
 

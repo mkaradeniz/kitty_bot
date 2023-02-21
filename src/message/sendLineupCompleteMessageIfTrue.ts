@@ -19,7 +19,7 @@ const sendLineupCompleteMessageIfTrue = async (ctx: MyBotContext) => {
 
   if (playersPlayingCount !== envConfig.maxPlayers) {
     logger.silly(`Lineup complete message not sent because lineup isn't complete.`, {
-      label: 'src/message/sendLineupCompleteMessageIfTrue.ts',
+      label: 'src/message/sendLineupCompleteMessageIfTrue.ts:22',
     });
 
     return;

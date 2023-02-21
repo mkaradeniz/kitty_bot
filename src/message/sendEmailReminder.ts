@@ -23,7 +23,7 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
     const currentQuiz = await getOrCreateCurrentQuizDb();
 
     if (currentQuiz.isEmailSent) {
-      logger.silly(`Email reminder not sent because email is already sent.`, { label: 'src/message/sendEmailReminder.ts' });
+      logger.silly(`Email reminder not sent because email is already sent.`, { label: 'src/message/sendEmailReminder.ts:26' });
 
       return;
     }
@@ -38,7 +38,7 @@ Send a ${Emoji.EmailBook} or click the button below to send it now. `,
       },
     );
 
-    logger.silly(`Email reminder sent.`, { label: 'src/message/sendEmailReminder.ts' });
+    logger.silly(`Email reminder sent.`, { label: 'src/message/sendEmailReminder.ts:41' });
   } catch (err) {
     logger.error(err);
   }

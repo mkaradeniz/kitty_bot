@@ -45,7 +45,7 @@ const getOrCreateCurrentQuizDb = async () => {
 
   const dateFormatted = format(createdQuiz.date, `do 'of' MMMM`);
 
-  logger.silly(`Created quiz for the ${dateFormatted}`, { label: 'src/db/getOrCreateCurrentQuiz.ts' });
+  logger.silly(`Created quiz for the ${dateFormatted}`, { label: 'src/db/getOrCreateCurrentQuiz.ts:48' });
 
   return { ...createdQuiz, dateFormatted };
 };

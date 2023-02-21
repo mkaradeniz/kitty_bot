@@ -154,7 +154,7 @@ const main = async () => {
 
   void bot.launch();
 
-  logger.info(`${envConfig.botName} is online! 🤖`, { label: 'src/index.ts' });
+  logger.info(`${envConfig.botName} is online! 🤖`, { label: 'src/index.ts:157' });
 
   await createSendIntroDev(bot)();
 
