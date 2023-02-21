@@ -9,7 +9,7 @@ const customFormatter = printf(info => {
   return stringify({ ...info }, null, 2);
 });
 
-const format = combine(json(), metadata(), timestamp(), winstonFormat.splat(), customFormatter);
+const format = combine(json(), metadata(), timestamp(), customFormatter);
 
 const combinedFileTransport = new winston.transports.File({
   format,
