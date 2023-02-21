@@ -36,7 +36,7 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
       return;
     }
 
-    if (playersPlayingCount >= envConfig.maxPlayers) {
+    if (playersPlayingCount > envConfig.maxPlayers) {
       logger.silly(`Reminder not sent because players playing count is higher than max players.`, {
         label: 'src/message/sendReminder.ts:41',
       });
