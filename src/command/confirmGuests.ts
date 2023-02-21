@@ -12,6 +12,7 @@ import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import logger from '../utils/logger';
 import removePlayersExternalDb from '../db/removePlayersExternal';
+import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 
 // Types
@@ -78,6 +79,7 @@ const createConfirmGuests =
 
       await confirmPlayersExternalDb({ invitedByTelegramId: telegramId, numberOfInvitees });
 
+      await sendLineupCompleteMessageIfTrue(ctx);
       await sendOverbookedWarningIfTrue(ctx);
 
       return callback();

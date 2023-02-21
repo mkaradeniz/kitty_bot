@@ -9,6 +9,7 @@ import isPlayerBenched from '../utils/state/isPlayerBenched';
 import isPlayerPlaying from '../utils/state/isPlayerRegistered';
 import logger from '../utils/logger';
 import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
+import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 
 // Types
@@ -50,6 +51,7 @@ const createConfirmPlayer =
 
       await sendCurrentPlayerCount(ctx);
 
+      await sendLineupCompleteMessageIfTrue(ctx);
       await sendOverbookedWarningIfTrue(ctx);
 
       return callback();
