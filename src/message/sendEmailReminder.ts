@@ -23,6 +23,8 @@ const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
     const currentQuiz = await getOrCreateCurrentQuizDb();
 
     if (currentQuiz.isEmailSent) {
+      logger.silly(`Email reminder not sent because email is already sent.`, { label: 'src/message/sendEmailReminder.ts' });
+
       return;
     }
 
