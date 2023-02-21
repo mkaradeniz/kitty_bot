@@ -19,7 +19,7 @@ const customFormatter = printf(info => {
   return [`${formattedDate}`, `|${info.level}|`, label, `${info.message}`].filter(isNotNullOrUndefined).join(' ');
 });
 
-const format = combine(timestamp(), winstonFormat.splat(), customFormatter);
+const format = combine(timestamp(), customFormatter);
 
 const errorFileSimpleTransport = new winston.transports.File({
   format,

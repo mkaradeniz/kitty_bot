@@ -19,7 +19,7 @@ const customFormatter = printf(info => {
   return [`${formattedDate}`, `${info.level}`, label, `${info.message}`].filter(isNotNullOrUndefined).join(' ');
 });
 
-const format = combine(colorize(), timestamp(), winstonFormat.splat(), customFormatter);
+const format = combine(colorize(), timestamp(), customFormatter);
 const level = envConfig.isDev ? envConfig.settingLogLevelDev : envConfig.settingLogLevel;
 
 const consoleTransport = new winston.transports.Console({ format, level });

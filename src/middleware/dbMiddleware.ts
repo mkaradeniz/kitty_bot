@@ -13,7 +13,7 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
     if (!isNotNullOrUndefined(chatId)) {
-      logger.warn(`Couldn't get \`chatId\``, stringify(ctx.message, null, 2), { label: 'src/middleware/dbMiddleware.ts' });
+      logger.warn(`Couldn't get \`chatId\`: ${stringify(ctx.message, null, 2)}`, { label: 'src/middleware/dbMiddleware.ts' });
 
       return next();
     }
@@ -24,7 +24,7 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
     const userFirstName = ctx?.message?.from?.first_name ?? ctx.callbackQuery?.from?.first_name ?? '👻';
 
     if (!isNotNullOrUndefined(userId)) {
-      logger.warn(`Couldn't get \`userId\``, stringify(ctx.message, null, 2), { label: 'src/middleware/dbMiddleware.ts' });
+      logger.warn(`Couldn't get \`userId\`: ${stringify(ctx.message, null, 2)}`, { label: 'src/middleware/dbMiddleware.ts' });
 
       return next();
     }
