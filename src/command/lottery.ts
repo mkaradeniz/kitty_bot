@@ -113,7 +113,7 @@ const createLottery =
       await wait(1000);
 
       for (const pickedPlayer of pickedPlayers) {
-        await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${Emoji.Positive}.`);
+        await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${Emoji.Positive}`);
 
         await wait(1000);
       }
@@ -125,7 +125,7 @@ const createLottery =
 
       const nextPlayersBenchedText = listFormatter.formatToParts(nextPlayersBenchedList).map(formatListPart).join('');
 
-      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText} ${Emoji.Negative}.`);
+      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText}. ${Emoji.Negative}`);
 
       await sendGif(getRandomBenchedGif(), message.message_id);
 
