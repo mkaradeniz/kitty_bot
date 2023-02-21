@@ -15,7 +15,7 @@ const unconfirmPlayerDb = async (telegramId: bigint | number) => {
     where: { id: currentQuiz.id },
   });
 
-  logger.silly(`Unconfirmed player: \`${telegramId}\`.`, { label: 'src/db/unconfirmPlayer.ts' });
+  logger.silly(`Unconfirmed player: \`${telegramId}\`.`, { label: 'src/db/unconfirmPlayer.ts:18' });
 
   return updatedQuiz;
 };

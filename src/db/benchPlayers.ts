@@ -25,7 +25,7 @@ const benchPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
     `Benched ${telegramIds.length} ${pluralize('player', telegramIds.length)}: ${telegramIds
       .map(telegramId => `\`${telegramId}\``)
       .join(', ')}.`,
-    { label: 'src/db/benchPlayers.ts' },
+    { label: 'src/db/benchPlayers.ts:28' },
   );
 
   return updatedQuiz;

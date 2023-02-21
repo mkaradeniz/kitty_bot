@@ -52,7 +52,7 @@ const sendTableBookingCancelEmail = (date: string): Promise<void> => {
       }
 
       logger.info('Cancelation email sent.', {
-        label: 'src/utils/email/sendTableBookingCancelEmail.ts',
+        label: 'src/utils/email/sendTableBookingCancelEmail.ts:55',
       });
 
       return resolve();

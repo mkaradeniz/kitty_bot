@@ -56,7 +56,7 @@ Cheers
       }
 
       logger.info('Booking email sent.', {
-        label: 'src/utils/email/sendTableBookingEmail.ts',
+        label: 'src/utils/email/sendTableBookingEmail.ts:59',
       });
 
       return resolve();

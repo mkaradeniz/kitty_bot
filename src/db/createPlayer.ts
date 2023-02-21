@@ -9,7 +9,7 @@ type CreatePlayerInput = {
 const createPlayer = async ({ firstName, telegramId }: CreatePlayerInput) => {
   const createdPlayer = await prisma.player.create({ data: { firstName, telegramId } });
 
-  logger.silly(`Created player: \`${telegramId}\`.`, { label: 'src/db/createPlayer.ts' });
+  logger.silly(`Created player: \`${telegramId}\`.`, { label: 'src/db/createPlayer.ts:12' });
 
   return createdPlayer;
 };

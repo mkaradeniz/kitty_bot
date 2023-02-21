@@ -17,7 +17,7 @@ const resetCurrentQuizDb = async () => {
     where: { id: currentQuiz.id },
   });
 
-  logger.silly(`Reset quiz for the ${currentQuiz.dateFormatted}.`, { label: 'src/db/resetCurrentQuiz.ts' });
+  logger.silly(`Reset quiz for the ${currentQuiz.dateFormatted}.`, { label: 'src/db/resetCurrentQuiz.ts:20' });
 };
 
 export default resetCurrentQuizDb;
