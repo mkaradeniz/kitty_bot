@@ -21,10 +21,18 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
       ctx.myContext = {};
     }
 
-    const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
+    const message = ctx?.message ?? ctx.callbackQuery?.message;
+
+    if (!isNotNullOrUndefined(message) || Object.keys(message).length === 0) {
+      logger.silly(`Message was \`undefined\` or empty.`, { label: 'src/middleware/contextMiddleware.ts:27' });
+
+      return;
+    }
+
+    const chatId = message.chat.id;
 
     if (!isNotNullOrUndefined(chatId)) {
-      logger.warn(`Couldn't get \`chatId\`: ${stringify(ctx.message, null, 2)}`, { label: 'src/middleware/contextMiddleware.ts:27' });
+      logger.warn(`Couldn't get \`chatId\`: ${stringify(message, null, 2)}`, { label: 'src/middleware/contextMiddleware.ts:35' });
 
       return;
     }
