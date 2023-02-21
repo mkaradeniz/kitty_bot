@@ -17,6 +17,7 @@ import getRandomBenchedGif from '../utils/gifs/getRandomBenchedGif';
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import logger from '../utils/logger';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
+import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
 import wait from '../utils/misc/wait';
 
 // Types
@@ -129,6 +130,8 @@ const createLottery =
       await sendGif(getRandomBenchedGif(), message.message_id);
 
       await createSendLineup(isCallback)(ctx);
+
+      await sendLineupCompleteMessageIfTrue(ctx);
 
       return callback();
     } catch (err) {

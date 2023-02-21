@@ -1,5 +1,6 @@
 import pluralize from 'pluralize';
 
+import createSendEmailReminder from './sendEmailReminder';
 import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
 import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
@@ -33,6 +34,12 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
     }
 
     if (playersPlayingCount >= envConfig.maxPlayers) {
+      return;
+    }
+
+    if (playersPlayingCount === envConfig.maxPlayers) {
+      await createSendEmailReminder(bot)();
+
       return;
     }
 
