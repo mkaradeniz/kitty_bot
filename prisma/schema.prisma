@@ -50,6 +50,7 @@ model Quiz {
   benchesCounted Boolean  @default(false)
   date           DateTime @unique
   isEmailSent    Boolean  @default(false)
+  isLotteryDone  Boolean  @default(false)
 
   // Relations
   players         Player[]         @relation("state_player")

@@ -18,6 +18,7 @@ import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import logger from '../utils/logger';
 import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
 import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
+import setLotteryDone from '../db/setLotteryDone';
 import wait from '../utils/misc/wait';
 
 // Types
@@ -47,6 +48,12 @@ const createLottery =
 
       const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
       const playersBenchedCount = getPlayersBenchedCount(currentQuiz);
+
+      if (currentQuiz.isLotteryDone && !isForced) {
+        await sendMessage(`${usernameInBold}, we already had the lottery. Isn't one enough for this week?`);
+
+        return callback();
+      }
 
       if (
         (!isForced && playersPlayingCount <= envConfig.maxPlayers) ||
@@ -87,10 +94,6 @@ const createLottery =
         return callback();
       }
 
-      await sendGif(
-        'https://media3.giphy.com/media/hzLgfw7C4sBwqSZ63I/giphy.gif?cid=790b761153a265113b8a7ced0cd24e76fd2c8fd60a44da44&rid=giphy.gif&ct=g',
-      );
-
       const players = currentQuiz.players;
       const playersBenched = currentQuiz.playersBenched;
       const allPlayers = [...players, ...playersBenched];
@@ -101,16 +104,22 @@ const createLottery =
       await confirmPlayersDb(pickedPlayers.map(pickedPlayer => pickedPlayer.telegramId));
       await benchPlayersDb(nextPlayersBenched.map(pickedPlayer => pickedPlayer.telegramId));
 
-      await wait(1000);
+      if (envConfig.isProduction) {
+        await sendGif(
+          'https://media3.giphy.com/media/hzLgfw7C4sBwqSZ63I/giphy.gif?cid=790b761153a265113b8a7ced0cd24e76fd2c8fd60a44da44&rid=giphy.gif&ct=g',
+        );
 
-      await sendMessage(`3...`);
-      await wait(1000);
+        await wait(1000);
 
-      await sendMessage(`2...`);
-      await wait(1000);
+        await sendMessage(`3...`);
+        await wait(1000);
 
-      await sendMessage(`1...`);
-      await wait(1000);
+        await sendMessage(`2...`);
+        await wait(1000);
+
+        await sendMessage(`1...`);
+        await wait(1000);
+      }
 
       for (const pickedPlayer of pickedPlayers) {
         await sendMessage(`<b>${pickedPlayer.firstName}</b>, you're in! ${Emoji.Positive}`);
@@ -125,13 +134,17 @@ const createLottery =
 
       const nextPlayersBenchedText = listFormatter.formatToParts(nextPlayersBenchedList).map(formatListPart).join('');
 
-      const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText}. ${Emoji.Negative}`);
+      if (envConfig.isProduction) {
+        const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText}. ${Emoji.Negative}`);
 
-      await sendGif(getRandomBenchedGif(), message.message_id);
+        await sendGif(getRandomBenchedGif(), message.message_id);
+      }
 
       await createSendLineup(isCallback)(ctx);
 
       await sendLineupCompleteMessageIfTrue(ctx);
+
+      await setLotteryDone();
 
       return callback();
     } catch (err) {

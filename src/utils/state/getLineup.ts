@@ -74,7 +74,7 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
 
   const benchCta =
     playersBenchedCount > 0
-      ? `\nIf you're one of the lucky ones who got picked this week, but want to bench yourself in favor of a another player. Send a ${Emoji.PlayerBenched} or click on the button below.`
+      ? `\nIf you're one of the lucky ones who got picked this week, but want to bench yourself in favor of a another player, send a ${Emoji.PlayerBenched}. If you are benched and make other plans, send a ${Emoji.Decline}. Same if you were picked and need to cancel. If you’re neither in the lineup nor on the bench you can get on the bench by sending a ${Emoji.Confirm}.`
       : null;
 
   const lineup = [players, externalPlayers, playersBenchedText, playersOutText, total, benchCta]

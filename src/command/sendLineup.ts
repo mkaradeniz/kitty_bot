@@ -39,7 +39,13 @@ const createSendLineup =
 
       const benchCtaButton =
         playersBenchedCount > 0
-          ? { ...Markup.inlineKeyboard([Markup.button.callback(getButtonFromCallbackType(CallbackType.Bench), CallbackType.Bench)]) }
+          ? {
+              ...Markup.inlineKeyboard([
+                Markup.button.callback(getButtonFromCallbackType(CallbackType.Confirm), CallbackType.Confirm),
+                Markup.button.callback(getButtonFromCallbackType(CallbackType.Unconfirm), CallbackType.Unconfirm),
+                Markup.button.callback(getButtonFromCallbackType(CallbackType.Bench), CallbackType.Bench),
+              ]),
+            }
           : {};
 
       await sendMessage(lineup, { ...benchCtaButton });

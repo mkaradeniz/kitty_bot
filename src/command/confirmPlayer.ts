@@ -1,7 +1,10 @@
+import benchPlayersDb from '../db/benchPlayers';
 import confirmPlayerDb from '../db/confirmPlayers';
 import createCallback from '../utils/misc/createCallback';
 import createSendMessage from '../utils/message/createSendMessage';
+import envConfig from '../config/env';
 import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
+import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
 import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
 import getUsernameFromContext from '../utils/context/getUsernameFromContext';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
@@ -32,6 +35,16 @@ const createConfirmPlayer =
       }
 
       const currentQuiz = await getOrCreateCurrentQuizDb();
+
+      const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
+
+      if (currentQuiz.isLotteryDone && playersPlayingCount === envConfig.maxPlayers) {
+        await benchPlayersDb(telegramId);
+
+        await sendMessage(`${usernameInBold} went straight to the bench. ${Emoji.PlayerBenched}`);
+
+        return callback();
+      }
 
       if (isPlayerPlaying({ currentQuiz, telegramId })) {
         await sendMessage(`Thanks for letting us know, <i>again</i>, that you want to play this week, ${usernameInBold}. ${Emoji.Repeat}`);
