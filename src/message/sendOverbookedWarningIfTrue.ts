@@ -19,19 +19,22 @@ const sendOverbookedWarningIfTrue = async (ctx: MyBotContext) => {
   const playerCount = getPlayersPlayingCount(currentQuiz);
 
   if (playerCount <= envConfig.maxPlayers) {
-    logger.silly(`Overbooked warning not sent because quiz is not overbooked.`, { label: 'src/message/sendOverbookedWarningIfTrue.ts' });
+    logger.silly(`Overbooked warning not sent because quiz is not overbooked.`, { label: 'src/message/sendOverbookedWarningIfTrue.ts:22' });
 
     return;
   }
 
   try {
-    await sendMessage(
-      `⚠️ We're overbooked! ⚠️
-We have to pick <b>${envConfig.maxPlayers}</b> ${pluralize('player', envConfig.maxPlayers)} from everyone who confirmed.
+    await sendMessage(`⚠️ We're overbooked! ⚠️`);
+
+    if (!currentQuiz.isLotteryDone) {
+      await sendMessage(
+        `We have to pick <b>${envConfig.maxPlayers}</b> ${pluralize('player', envConfig.maxPlayers)} from everyone who confirmed.
 Send a ${Emoji.Lottery} or click the button below to peform the lottery.
 Please be sure that everyone who wants to join did register before starting the lottery.`,
-      { ...Markup.inlineKeyboard([Markup.button.callback(getButtonFromCallbackType(CallbackType.Lottery), CallbackType.Lottery)]) },
-    );
+        { ...Markup.inlineKeyboard([Markup.button.callback(getButtonFromCallbackType(CallbackType.Lottery), CallbackType.Lottery)]) },
+      );
+    }
   } catch (err) {
     logger.error(err);
   }

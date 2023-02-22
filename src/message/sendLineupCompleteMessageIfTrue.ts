@@ -27,9 +27,12 @@ const sendLineupCompleteMessageIfTrue = async (ctx: MyBotContext) => {
 
   try {
     await sendMessage(
-      `Our lineup for the ${currentQuiz.dateFormatted} is complete!
-  Send a ${Emoji.EmailBook} or click the button below to send the mail with our table size now.`,
-      { ...Markup.inlineKeyboard([Markup.button.callback(getButtonFromCallbackType(CallbackType.Lottery), CallbackType.Lottery)]) },
+      `Our lineup for the ${currentQuiz.dateFormatted} is complete!\nSend a ${Emoji.EmailBook} or click the button below to send the mail with our table size now.`,
+      {
+        ...Markup.inlineKeyboard([
+          Markup.button.callback(getButtonFromCallbackType(CallbackType.SendBookingEmail), CallbackType.SendBookingEmail),
+        ]),
+      },
     );
   } catch (err) {
     logger.error(err);
