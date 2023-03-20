@@ -14,6 +14,7 @@ import unconfirmPlayerDb from '../db/unconfirmPlayer';
 // Types
 import { Emoji } from '../types';
 import { MyBotContext } from '../middleware/contextMiddleware';
+import isPlayerRegistered from '../utils/state/isPlayerRegistered';
 
 const createUnconfirmPlayer =
   (isCallback = false) =>
@@ -40,11 +41,13 @@ const createUnconfirmPlayer =
         return callback();
       }
 
+      const wasPlayerRegisteredBefore = isPlayerRegistered({ currentQuiz, telegramId });
+
       await unconfirmPlayerDb(telegramId);
 
       await sendMessage(`${Emoji.Team} ${usernameInBold} is out! ${Emoji.PlayerOut}`);
 
-      if (currentQuiz._count.playersBenched > 0) {
+      if (wasPlayerRegisteredBefore && currentQuiz._count.playersBenched > 0) {
         await pickPlayerFromBench(ctx);
       }
 
