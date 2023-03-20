@@ -135,9 +135,9 @@ const createLottery =
       const nextPlayersBenchedText = listFormatter.formatToParts(nextPlayersBenchedList).map(formatListPart).join('');
 
       if (envConfig.isProduction) {
-        const message = await sendMessage(`I'm so sorry ${nextPlayersBenchedText}. ${Emoji.Negative}`);
+        const sentMessage = await sendMessage(`I'm so sorry ${nextPlayersBenchedText}. ${Emoji.Negative}`);
 
-        await sendGif(getRandomBenchedGif(), message.message_id);
+        await sendGif(getRandomBenchedGif(), sentMessage?.message_id);
       }
 
       await createSendLineup(isCallback)(ctx);

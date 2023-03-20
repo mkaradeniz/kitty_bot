@@ -27,6 +27,7 @@ import createUnconfirmPlayer from './command/unconfirmPlayer';
 import dbMiddleware from './middleware/dbMiddleware';
 import envConfig from './config/env';
 import getOrCreateCurrentQuizDb from './db/getOrCreateCurrentQuiz';
+import ignoreUnknownGroupsMiddleware from './middleware/ignoreUnknownGroupsMiddleware';
 import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
 import logger from './utils/logger';
 import replyToHallihallo from './command/replyToHallihallo';
@@ -43,6 +44,8 @@ const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 const sendAdminMessage = createSendAdminMessage(bot);
 
 // Middlewares
+bot.use(ignoreUnknownGroupsMiddleware);
+
 bot.use(contextMiddleware);
 
 bot.use(dbMiddleware);

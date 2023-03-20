@@ -74,7 +74,7 @@ const createBenchPlayer =
 
       const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${Emoji.Positive}.`);
 
-      await sendGif(getRandomUnbenchedGif(), sentMessage.message_id);
+      await sendGif(getRandomUnbenchedGif(), sentMessage?.message_id);
 
       await benchPlayersDb(telegramId);
 
