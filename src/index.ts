@@ -143,7 +143,7 @@ const main = async () => {
   });
 
   // At minute 0 past every hour from 15 through 18 on Tuesday.
-  cron.schedule('0 13-19 * * 0', () => {
+  cron.schedule('0 14-19 * * 0', () => {
     void sendEmailReminder();
   });
 
