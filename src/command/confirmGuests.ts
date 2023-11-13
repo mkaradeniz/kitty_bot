@@ -12,6 +12,7 @@ import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
 import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
 import logger from '../utils/logger';
 import removePlayersExternalDb from '../db/removePlayersExternal';
+import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
 import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
 import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
 
@@ -78,6 +79,8 @@ const createConfirmGuests =
       await sendMessage(`${usernameInBold} invited <b>${numberOfInvitees}</b> ${pluralize('player', numberOfInvitees)}! ${Emoji.Positive}`);
 
       await confirmPlayersExternalDb({ invitedByTelegramId: telegramId, numberOfInvitees });
+
+      await sendCurrentPlayerCount(ctx);
 
       await sendLineupCompleteMessageIfTrue(ctx);
       await sendOverbookedWarningIfTrue(ctx);
