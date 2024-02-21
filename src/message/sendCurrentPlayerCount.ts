@@ -1,14 +1,14 @@
 import pluralize from 'pluralize';
 
-import createSendMessage from '../utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import logger from '../utils/logger';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-// Types
-import { MyBotContext } from '../middleware/contextMiddleware';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-const sendCurrentPlayerCount = async (ctx: MyBotContext) => {
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+export const sendCurrentPlayerCount = async (ctx: MyBotContext) => {
   const sendMessage = createSendMessage(ctx);
 
   const currentQuiz = await getOrCreateCurrentQuizDb();
@@ -22,5 +22,3 @@ const sendCurrentPlayerCount = async (ctx: MyBotContext) => {
     logger.error(err);
   }
 };
-
-export default sendCurrentPlayerCount;

@@ -1,9 +1,10 @@
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import { logger } from '@utils/logger/logger';
 
-const unconfirmPlayerDb = async (telegramId: bigint | number) => {
+import { getOrCreateCurrentQuizDb } from './getOrCreateCurrentQuiz';
+
+export const unconfirmPlayerDb = async (telegramId: bigint | number) => {
   const currentQuiz = await getOrCreateCurrentQuizDb();
 
   const updatedQuiz = await prisma.quiz.update({
@@ -19,5 +20,3 @@ const unconfirmPlayerDb = async (telegramId: bigint | number) => {
 
   return updatedQuiz;
 };
-
-export default unconfirmPlayerDb;

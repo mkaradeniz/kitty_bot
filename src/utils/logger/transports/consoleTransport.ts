@@ -1,9 +1,10 @@
 import formatDate from 'date-fns/format';
 import winston, { format as winstonFormat } from 'winston';
 
-import envConfig from '../../../config/env';
-import isNotNullOrUndefined from '../../misc/isNotNullOrUndefined';
-import stringify from '../../misc/stringify';
+import { envConfig } from '@config/env';
+
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { stringify } from '@utils/misc/stringify';
 
 const { colorize, combine, printf, timestamp } = winstonFormat;
 
@@ -22,6 +23,4 @@ const customFormatter = printf(info => {
 const format = combine(colorize(), timestamp(), customFormatter);
 const level = envConfig.isDev ? envConfig.settingLogLevelDev : envConfig.settingLogLevel;
 
-const consoleTransport = new winston.transports.Console({ format, level });
-
-export default consoleTransport;
+export const consoleTransport = new winston.transports.Console({ format, level });

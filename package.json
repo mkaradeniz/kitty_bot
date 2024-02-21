@@ -17,7 +17,7 @@
   "main": "dist/index.js",
   "bin": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "build:watch": "tsc --watch",
     "db:generate": "prisma generate",
     "db:push": "dotenv -e .env prisma db push",
@@ -25,9 +25,9 @@
     "deploy": "git pull && yarn build && yarn pm2:restart",
     "dev": "nodemon src/index.ts",
     "format": "prettier --loglevel warn --write .",
-    "pm2:restart": "pm2 restart 0 && pm2 reset 0",
-    "pm2:start": "pm2 start 0",
-    "pm2:stop": "pm2 stop 0",
+    "pm2:restart": "pm2 restart ecosystem.config.js && pm2 reset ecosystem.config.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
     "start": "node ./dist/src",
     "test": "yarn test:types && yarn test:lint",
     "test:lint": "eslint . --ext .js --ext .ts --fix && clear",
@@ -49,6 +49,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@types/dotenv": "^8.2.0",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.14.0",
@@ -57,15 +58,16 @@
     "@types/pluralize": "^0.0.29",
     "@types/safe-json-stringify": "^1.1.2",
     "@types/weighted-random-object": "^1.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
     "dotenv-cli": "^7.0.0",
-    "eslint": "^8.34.0",
-    "eslint-plugin-import": "^2.27.5",
-    "prettier": "^2.8.4",
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.2.5",
     "prisma": "^4.10.1",
     "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "^4.9.5"
+    "typescript": "^5.3.3"
   }
 }

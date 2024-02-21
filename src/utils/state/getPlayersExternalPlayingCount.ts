@@ -1,10 +1,7 @@
-// Types
-import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
+import { type QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
 
-const getPlayersExternalPlayingCount = (quiz: QuizWithRelations) => {
+export const getPlayersExternalPlayingCount = (quiz: QuizWithRelations) => {
   const playersExternalPlayingCount = quiz._count.playersExternal;
 
   return playersExternalPlayingCount;
 };
-
-export default getPlayersExternalPlayingCount;

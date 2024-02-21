@@ -5,12 +5,22 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "outDir": "dist",
+    "paths": {
+      "@app-types/*": ["./src/types/*"],
+      "@command/*": ["./src/command/*"],
+      "@config/*": ["./src/config/*"],
+      "@db/*": ["./src/db/*"],
+      "@db-prisma/*": ["./prisma/*"],
+      "@message/*": ["./src/message/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@utils/*": ["./src/utils/*"]
+    },
     "skipLibCheck": true,
     "strict": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts"],
   "ts-node": {
-    "require": ["tsconfig-paths/register"]
+    "require": ["tsconfig-paths/register", "dotenv/config"]
   }
 }

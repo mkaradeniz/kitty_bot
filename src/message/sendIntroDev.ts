@@ -1,16 +1,15 @@
-import { Markup } from 'telegraf';
+import { Markup, type Telegraf } from 'telegraf';
 
-import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
-import envConfig from '../config/env';
-import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
+import { envConfig } from '@config/env';
 
-// Types
-import { CallbackType } from '../types';
-import { Telegraf } from 'telegraf';
+import { logger } from '@utils/logger/logger';
+import { createSendMessageWithoutContext } from '@utils/message/createSendMessageWithoutContext';
+import { getButtonFromCallbackType } from '@utils/misc/getButtonFromCallbackType';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const createSendIntroDev = (bot: Telegraf<any>) => async () => {
+import { CallbackType } from '@app-types/app';
+
+export const createSendIntroDev = (bot: Telegraf<any>) => async () => {
   if (!envConfig.isDev) {
     return;
   }
@@ -43,5 +42,3 @@ const createSendIntroDev = (bot: Telegraf<any>) => async () => {
     logger.error(err);
   }
 };
-
-export default createSendIntroDev;

@@ -1,11 +1,10 @@
 import nodemailer from 'nodemailer';
+import type Mail from 'nodemailer/lib/mailer';
 
-import envConfig from '../../config/env';
-import logger from '../logger';
-import stringify from '../misc/stringify';
+import { envConfig } from '@config/env';
 
-// Types
-import Mail from 'nodemailer/lib/mailer';
+import { logger } from '@utils/logger/logger';
+import { stringify } from '@utils/misc/stringify';
 
 const EMAIL_TEXT = `Hallöchen ${envConfig.emailToName},
 
@@ -18,7 +17,7 @@ ${envConfig.botName}`;
 
 const EMAIL_SUBJECT = `${envConfig.emailFromName} will have to cancel this week`;
 
-const sendTableBookingCancelEmail = (date: string): Promise<void> => {
+export const sendTableBookingCancelEmail = (date: string): Promise<void> => {
   const subject = `${EMAIL_SUBJECT} (${date})`;
 
   return new Promise((resolve, reject) => {
@@ -59,5 +58,3 @@ const sendTableBookingCancelEmail = (date: string): Promise<void> => {
     });
   });
 };
-
-export default sendTableBookingCancelEmail;

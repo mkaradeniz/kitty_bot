@@ -1,11 +1,10 @@
-import createSendGif from '../utils/message/createSendGif';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-// Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { logger } from '@utils/logger/logger';
+import { createSendGif } from '@utils/message/createSendGif';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const replyToHallihallo = async (ctx: MyBotContext) => {
+export const replyToHallihallo = async (ctx: MyBotContext) => {
   try {
     const sendGif = createSendGif(ctx);
 
@@ -25,5 +24,3 @@ const replyToHallihallo = async (ctx: MyBotContext) => {
     logger.error(err);
   }
 };
-
-export default replyToHallihallo;

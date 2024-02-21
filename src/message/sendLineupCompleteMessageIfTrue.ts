@@ -1,17 +1,19 @@
 import { Markup } from 'telegraf';
 
-import createSendMessage from '../utils/message/createSendMessage';
-import envConfig from '../config/env';
-import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import logger from '../utils/logger';
+import { envConfig } from '@config/env';
 
-// Types
-import { CallbackType, Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-const sendLineupCompleteMessageIfTrue = async (ctx: MyBotContext) => {
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { getButtonFromCallbackType } from '@utils/misc/getButtonFromCallbackType';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+import { CallbackType, Emoji } from '@app-types/app';
+
+export const sendLineupCompleteMessageIfTrue = async (ctx: MyBotContext) => {
   const sendMessage = createSendMessage(ctx);
 
   const currentQuiz = await getOrCreateCurrentQuizDb();
@@ -38,5 +40,3 @@ const sendLineupCompleteMessageIfTrue = async (ctx: MyBotContext) => {
     logger.error(err);
   }
 };
-
-export default sendLineupCompleteMessageIfTrue;

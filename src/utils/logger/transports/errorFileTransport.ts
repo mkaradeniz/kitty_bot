@@ -1,7 +1,8 @@
 import winston, { format as winstonFormat } from 'winston';
 
-import envConfig from '../../../config/env';
-import stringify from '../../misc/stringify';
+import { envConfig } from '@config/env';
+
+import { stringify } from '@utils/misc/stringify';
 
 const { metadata, combine, json, printf, timestamp } = winstonFormat;
 
@@ -11,10 +12,8 @@ const customFormatter = printf(info => {
 
 const format = combine(json(), metadata(), timestamp(), customFormatter);
 
-const errorFileTransport = new winston.transports.File({
+export const errorFileTransport = new winston.transports.File({
   format,
   filename: `${envConfig.settingLogFilePath}/error.log`,
   level: 'error',
 });
-
-export default errorFileTransport;

@@ -1,14 +1,15 @@
-import envConfig from '../../config/env';
-import getChatIdFromContext from '../context/getChatIdFromContext';
-import logger from '../logger';
+import { type ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 
-// Types
-import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { envConfig } from '@config/env';
+
+import { getChatIdFromContext } from '@utils/context/getChatIdFromContext';
+import { logger } from '@utils/logger/logger';
+
+import { type MyBotContext } from '../../middleware/contextMiddleware';
 
 const DEFAULT_MESSAGE_OPTIONS: ExtraReplyMessage = { parse_mode: 'HTML' };
 
-const createSendMessage =
+export const createSendMessage =
   (ctx: MyBotContext) =>
   async (message: string, additionalMessageOptions: ExtraReplyMessage = {}) => {
     const chatId = getChatIdFromContext(ctx);
@@ -23,5 +24,3 @@ const createSendMessage =
 
     return sentMessage;
   };
-
-export default createSendMessage;

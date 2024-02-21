@@ -1,14 +1,14 @@
-import envConfig from '../../config/env';
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
+import { type Telegraf } from 'telegraf';
+import { type ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 
-// Types
-import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
-import { Telegraf } from 'telegraf';
+import { envConfig } from '@config/env';
+
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
 const DEFAULT_MESSAGE_OPTIONS: ExtraReplyMessage = { parse_mode: 'HTML' };
 
 // ! This only works if we have the `pubquizChatId` defined in the ENVs.
-const createSendMessageWithoutContext =
+export const createSendMessageWithoutContext =
   (bot: Telegraf<any>) =>
   async (message: string, additionalMessageOptions: ExtraReplyMessage = {}) => {
     const chatId = envConfig.pubquizChatId;
@@ -21,5 +21,3 @@ const createSendMessageWithoutContext =
 
     return sentMessage;
   };
-
-export default createSendMessageWithoutContext;

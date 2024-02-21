@@ -1,7 +1,6 @@
-// Types
-import { CallbackType, Emoji } from '../../types';
+import { CallbackType, Emoji } from '../../types/app';
 
-const getButtonFromCallbackType = (callbackType: CallbackType): string => {
+export const getButtonFromCallbackType = (callbackType: CallbackType): string => {
   switch (callbackType) {
     case CallbackType.Bench: {
       return Emoji.PlayerBenched;
@@ -48,5 +47,3 @@ const getButtonFromCallbackType = (callbackType: CallbackType): string => {
     }
   }
 };
-
-export default getButtonFromCallbackType;

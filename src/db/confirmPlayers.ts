@@ -1,12 +1,13 @@
 import pluralize from 'pluralize';
 
-import arrayify from '../utils/misc/arrayify';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import { logger } from '@utils/logger/logger';
+import { arrayify } from '@utils/misc/arrayify';
 
-const confirmPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
+import { getOrCreateCurrentQuizDb } from './getOrCreateCurrentQuiz';
+
+export const confirmPlayersDb = async (input: bigint | number | (bigint | number)[]) => {
   const telegramIds = arrayify(input);
 
   const currentQuiz = await getOrCreateCurrentQuizDb();
@@ -30,5 +31,3 @@ const confirmPlayersDb = async (input: bigint | number | (bigint | number)[]) =>
 
   return updatedQuiz;
 };
-
-export default confirmPlayersDb;

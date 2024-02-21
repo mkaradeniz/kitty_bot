@@ -1,10 +1,9 @@
 import { Markup } from 'telegraf';
+import { type ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 
-import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
+import { getButtonFromCallbackType } from '@utils/misc/getButtonFromCallbackType';
 
-// Types
-import { CallbackType } from '../types';
-import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
+import { CallbackType } from '@app-types/app';
 
 export const BUTTONS_TUTORIAL: ExtraReplyMessage = {
   ...Markup.inlineKeyboard([

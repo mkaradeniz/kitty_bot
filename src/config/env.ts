@@ -24,7 +24,7 @@ export interface EnvConfig {
   settingLogLevelDev: string;
 }
 
-const envConfig: EnvConfig = describe({
+export const envConfig: EnvConfig = describe({
   adminUserId: {
     isRequired: false,
     name: 'ADMIN_USER_ID',
@@ -137,5 +137,3 @@ const envConfig: EnvConfig = describe({
     standard: 'silly',
   },
 });
-
-export default envConfig;

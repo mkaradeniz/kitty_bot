@@ -1,14 +1,13 @@
+import { type Prisma } from '@prisma/client';
 import { format } from 'date-fns';
 
-import findNextWednesday from '../utils/misc/findNextWednesday';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-// Types
-import { Prisma } from '.prisma/client';
+import { logger } from '@utils/logger/logger';
+import { findNextWednesday } from '@utils/misc/findNextWednesday';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const getOrCreateCurrentQuizDb = async () => {
+export const getOrCreateCurrentQuizDb = async () => {
   const nextQuizDate = findNextWednesday(new Date());
 
   const maybeCurrentQuiz = await prisma.quiz.findUnique({
@@ -51,5 +50,3 @@ const getOrCreateCurrentQuizDb = async () => {
 };
 
 export type QuizWithRelations = Prisma.PromiseReturnType<typeof getOrCreateCurrentQuizDb> & { dateFormatted: string };
-
-export default getOrCreateCurrentQuizDb;

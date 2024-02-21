@@ -1,14 +1,14 @@
-import createPlayer from '../db/createPlayer';
-import doesPlayerExist from '../db/doesPlayerExist';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import { createPlayer } from '@db/createPlayer';
+import { doesPlayerExist } from '@db/doesPlayerExist';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-// Types
-import { MyBotContext } from './contextMiddleware';
+import { logger } from '@utils/logger/logger';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { stringify } from '@utils/misc/stringify';
 
-const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
+import { type MyBotContext } from './contextMiddleware';
+
+export const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
   try {
     const chatId = ctx?.message?.chat.id ?? ctx.callbackQuery?.message?.chat?.id ?? undefined;
 
@@ -46,5 +46,3 @@ const dbMiddleware = async (ctx: MyBotContext, next: () => Promise<void>) => {
     return next();
   }
 };
-
-export default dbMiddleware;

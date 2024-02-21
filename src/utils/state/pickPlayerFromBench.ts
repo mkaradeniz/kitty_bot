@@ -1,15 +1,16 @@
-import confirmPlayerDb from '../../db/confirmPlayers';
-import createSendGif from '../message/createSendGif';
-import createSendMessage from '../message/createSendMessage';
-import getOrCreateCurrentQuizDb from '../../db/getOrCreateCurrentQuiz';
-import getRandomUnbenchedGif from '../gifs/getRandomUnbenchedGif';
-import pickPlayersWeighted from '../misc/pickPlayersWeighted';
+import { confirmPlayersDb } from '@db/confirmPlayers';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-// Types
-import { Emoji } from '../../types';
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-const pickPlayerFromBench = async (ctx: MyBotContext) => {
+import { getRandomUnbenchedGif } from '@utils/gifs/getRandomUnbenchedGif';
+import { createSendGif } from '@utils/message/createSendGif';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { pickPlayersWeighted } from '@utils/misc/pickPlayersWeighted';
+
+import { Emoji } from '@app-types/app';
+
+export const pickPlayerFromBench = async (ctx: MyBotContext) => {
   const sendGif = createSendGif(ctx);
   const sendMessage = createSendMessage(ctx);
 
@@ -21,11 +22,9 @@ const pickPlayerFromBench = async (ctx: MyBotContext) => {
 
   const [pickedPlayer] = pickPlayersWeighted(currentQuiz.playersBenched, 1);
 
-  await confirmPlayerDb(pickedPlayer.telegramId);
+  await confirmPlayersDb(pickedPlayer.telegramId);
 
   const sentMessage = await sendMessage(`You're back on the team, <b>${pickedPlayer.firstName}</b> ${Emoji.Positive}.`);
 
   await sendGif(getRandomUnbenchedGif(), sentMessage?.message_id);
 };
-
-export default pickPlayerFromBench;

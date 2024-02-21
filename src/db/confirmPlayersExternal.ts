@@ -1,16 +1,17 @@
 import pluralize from 'pluralize';
 
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import { logger } from '@utils/logger/logger';
+
+import { getOrCreateCurrentQuizDb } from './getOrCreateCurrentQuiz';
 
 type ConfirmPlayersExternalDbInput = {
   invitedByTelegramId: bigint | number;
   numberOfInvitees: number;
 };
 
-const confirmPlayersExternalDb = async ({ invitedByTelegramId, numberOfInvitees }: ConfirmPlayersExternalDbInput) => {
+export const confirmPlayersExternalDb = async ({ invitedByTelegramId, numberOfInvitees }: ConfirmPlayersExternalDbInput) => {
   const currentQuiz = await getOrCreateCurrentQuizDb();
 
   const playerExternalToCreateArray = [...Array(numberOfInvitees)].map(_ => invitedByTelegramId);
@@ -25,5 +26,3 @@ const confirmPlayersExternalDb = async ({ invitedByTelegramId, numberOfInvitees 
     label: 'src/db/confirmPlayersExternal.ts:25',
   });
 };
-
-export default confirmPlayersExternalDb;

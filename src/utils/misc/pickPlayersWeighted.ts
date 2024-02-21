@@ -1,7 +1,5 @@
+import { type Player } from '@prisma/client';
 import weightedRandomObject from 'weighted-random-object';
-
-// Types
-import { Player } from '@prisma/client';
 
 type CreateGetWeightInput = {
   max: number;
@@ -23,7 +21,7 @@ const createGetWeight =
   };
 
 // ! Recursive
-const pickPlayersWeighted = (players: Player[], size = 8, pickedPlayers: Player[] = []): Player[] => {
+export const pickPlayersWeighted = (players: Player[], size = 8, pickedPlayers: Player[] = []): Player[] => {
   if (size === 0) {
     return pickedPlayers;
   }
@@ -43,5 +41,3 @@ const pickPlayersWeighted = (players: Player[], size = 8, pickedPlayers: Player[
 
   return pickPlayersWeighted(nextUsers, nextSize, nextPickedUsers);
 };
-
-export default pickPlayersWeighted;

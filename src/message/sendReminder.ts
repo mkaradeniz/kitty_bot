@@ -1,21 +1,23 @@
 import pluralize from 'pluralize';
+import { type Telegraf } from 'telegraf';
 
-import createSendEmailReminder from './sendEmailReminder';
-import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersOutCount from '../utils/state/getPlayersOutCount';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import { BUTTONS_TUTORIAL } from '../config/constants';
-import { TEXT_TUTORIAL } from '../config/texts';
+import { BUTTONS_TUTORIAL } from '@config/constants';
+import { envConfig } from '@config/env';
+import { TEXT_TUTORIAL } from '@config/texts';
 
-// Types
-import { Emoji } from '../types';
-import { Telegraf } from 'telegraf';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-const createSendReminder = (bot: Telegraf<any>) => async () => {
+import { logger } from '@utils/logger/logger';
+import { createSendMessageWithoutContext } from '@utils/message/createSendMessageWithoutContext';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { getPlayersOutCount } from '@utils/state/getPlayersOutCount';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+import { Emoji } from '@app-types/app';
+
+import { createSendEmailReminder } from './sendEmailReminder';
+
+export const createSendReminder = (bot: Telegraf<any>) => async () => {
   // ! This only works if we have the `pubquizChatId` defined in the ENVs.
   if (!isNotNullOrUndefined(envConfig.pubquizChatId)) {
     return;
@@ -73,5 +75,3 @@ const createSendReminder = (bot: Telegraf<any>) => async () => {
     logger.error(err);
   }
 };
-
-export default createSendReminder;

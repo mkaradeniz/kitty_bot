@@ -1,11 +1,12 @@
 import pluralize from 'pluralize';
 
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import { logger } from '@utils/logger/logger';
 
-const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => {
+import { getOrCreateCurrentQuizDb } from './getOrCreateCurrentQuiz';
+
+export const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => {
   const currentQuiz = await getOrCreateCurrentQuizDb();
 
   await prisma.playerExternal.deleteMany({
@@ -26,5 +27,3 @@ const removePlayersExternalDb = async (invitedByTelegramId: bigint | number) => 
     label: 'src/db/removePlayersExternal.ts:26',
   });
 };
-
-export default removePlayersExternalDb;

@@ -1,17 +1,17 @@
-import { Markup } from 'telegraf';
+import { Markup, type Telegraf } from 'telegraf';
 
-import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
-import envConfig from '../config/env';
-import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
+import { envConfig } from '@config/env';
 
-// Types
-import { CallbackType, Emoji } from '../types';
-import { Telegraf } from 'telegraf';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
+import { logger } from '@utils/logger/logger';
+import { createSendMessageWithoutContext } from '@utils/message/createSendMessageWithoutContext';
+import { getButtonFromCallbackType } from '@utils/misc/getButtonFromCallbackType';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+
+import { CallbackType, Emoji } from '@app-types/app';
+
+export const createSendEmailReminder = (bot: Telegraf<any>) => async () => {
   // ! This only works if we have the `pubquizChatId` defined in the ENVs.
   if (!isNotNullOrUndefined(envConfig.pubquizChatId)) {
     return;
@@ -43,5 +43,3 @@ Send a ${Emoji.EmailBook} or click the button below to send it now. `,
     logger.error(err);
   }
 };
-
-export default createSendEmailReminder;

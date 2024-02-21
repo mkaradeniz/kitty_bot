@@ -11,7 +11,7 @@ enum DayOfWeek {
 }
 
 // ! Recursive
-const findNextWednesday = (date: Date): Date => {
+export const findNextWednesday = (date: Date): Date => {
   const isoDayOfWeek = getISODay(date);
 
   if (isoDayOfWeek === DayOfWeek.Wednesday) {
@@ -20,5 +20,3 @@ const findNextWednesday = (date: Date): Date => {
 
   return findNextWednesday(addDays(date, 1));
 };
-
-export default findNextWednesday;
