@@ -1,19 +1,18 @@
 import nodemailer from 'nodemailer';
+import type Mail from 'nodemailer/lib/mailer';
 import pluralize from 'pluralize';
 
-import envConfig from '../../config/env';
-import logger from '../logger';
-import stringify from '../misc/stringify';
+import { envConfig } from '@config/env';
 
-// Types
-import Mail from 'nodemailer/lib/mailer';
+import { logger } from '@utils/logger/logger';
+import { stringify } from '@utils/misc/stringify';
 
 type SendTableBookingEmailInput = {
   date: string;
   playersPlayingCount: number;
 };
 
-const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEmailInput): Promise<void> => {
+export const sendTableBookingEmail = ({ date, playersPlayingCount }: SendTableBookingEmailInput): Promise<void> => {
   const subject = `${envConfig.emailFromName} will be ${playersPlayingCount} this week (${date})`;
 
   const text = `Hallöchen ${envConfig.emailToName},
@@ -63,5 +62,3 @@ Cheers
     });
   });
 };
-
-export default sendTableBookingEmail;

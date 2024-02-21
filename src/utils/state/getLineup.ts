@@ -1,22 +1,22 @@
 import pluralize from 'pluralize';
 
-import formatListPart from '../misc/formatListPart';
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
+import { type QuizWithRelations } from '@db/getOrCreateCurrentQuiz';
 
-import getExternalPlayersMap from './getExternalPlayersMap';
-import getInvitorNameById from './getInvitorNameById';
-import getPlayersBenchedCount from './getPlayersBenchedCount';
-import getPlayersOutCount from './getPlayersOutCount';
-import getPlayersPlayingCount from './getPlayersPlayingCount';
+import { formatListPart } from '@utils/misc/formatListPart';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-// Types
-import { Emoji } from '../../types';
-import { QuizWithRelations } from '../../db/getOrCreateCurrentQuiz';
+import { Emoji } from '@app-types/app';
+
+import { getExternalPlayersMap } from './getExternalPlayersMap';
+import { getInvitorNameById } from './getInvitorNameById';
+import { getPlayersBenchedCount } from './getPlayersBenchedCount';
+import { getPlayersOutCount } from './getPlayersOutCount';
+import { getPlayersPlayingCount } from './getPlayersPlayingCount';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
 
-const getLineup = (currentQuiz: QuizWithRelations) => {
+export const getLineup = (currentQuiz: QuizWithRelations) => {
   const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
   const playersOutCount = getPlayersOutCount(currentQuiz);
   const playersBenchedCount = getPlayersBenchedCount(currentQuiz);
@@ -84,5 +84,3 @@ const getLineup = (currentQuiz: QuizWithRelations) => {
 
   return `${Emoji.Lineup} Our lineup for the <b>${currentQuiz.dateFormatted}</b> ${Emoji.Lineup}\n\n${lineup}`;
 };
-
-export default getLineup;

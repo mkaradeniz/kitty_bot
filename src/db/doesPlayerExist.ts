@@ -1,9 +1,7 @@
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-const doesPlayerExist = async (telegramId: number) => {
+export const doesPlayerExist = async (telegramId: number) => {
   const count = await prisma.player.count({ where: { telegramId } });
 
   return count > 0;
 };
-
-export default doesPlayerExist;

@@ -1,21 +1,23 @@
 import { code, fmt } from 'telegraf/format';
 
-import createCallback from '../utils/misc/createCallback';
-import createSendAdminMessage from '../utils/message/createSendAdminMessage';
-import createSendMessage from '../utils/message/createSendMessage';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import logger from '../utils/logger';
-import sendTableBookingEmail from '../utils/email/sendTableBookingEmail';
-import setEmailSentDb from '../db/setEmailSent';
-import stringify from '../utils/misc/stringify';
+import { envConfig } from '@config/env';
 
-// Types
-import { Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+import { setEmailSentDb } from '@db/setEmailSent';
 
-const createSendTableBookingEmail =
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { sendTableBookingEmail } from '@utils/email/sendTableBookingEmail';
+import { logger } from '@utils/logger/logger';
+import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { stringify } from '@utils/misc/stringify';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+import { Emoji } from '@app-types/app';
+
+export const createSendTableBookingEmail =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -63,5 +65,3 @@ const createSendTableBookingEmail =
       return callback();
     }
   };
-
-export default createSendTableBookingEmail;

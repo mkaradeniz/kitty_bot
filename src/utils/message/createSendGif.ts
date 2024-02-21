@@ -1,12 +1,12 @@
-import envConfig from '../../config/env';
-import getChatIdFromContext from '../context/getChatIdFromContext';
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
-import logger from '../logger';
+import { envConfig } from '@config/env';
 
-// Types
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { getChatIdFromContext } from '@utils/context/getChatIdFromContext';
+import { logger } from '@utils/logger/logger';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const createSendGif = (ctx: MyBotContext) => async (gifUrl: string, replyId?: number) => {
+import { type MyBotContext } from '../../middleware/contextMiddleware';
+
+export const createSendGif = (ctx: MyBotContext) => async (gifUrl: string, replyId?: number) => {
   const chatId = getChatIdFromContext(ctx);
 
   if (chatId !== envConfig.pubquizChatId) {
@@ -21,5 +21,3 @@ const createSendGif = (ctx: MyBotContext) => async (gifUrl: string, replyId?: nu
 
   return sentMessage;
 };
-
-export default createSendGif;

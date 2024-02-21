@@ -1,10 +1,9 @@
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import { type Context } from 'telegraf';
+import { type Message, type Update, type User } from 'telegraf/typings/core/types/typegram';
 
-// Types
-import { Context } from 'telegraf';
-import { Message, Update, User } from 'telegraf/typings/core/types/typegram';
+import { logger } from '@utils/logger/logger';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { stringify } from '@utils/misc/stringify';
 
 export interface MyBotContext extends Context {
   myContext: {
@@ -14,7 +13,7 @@ export interface MyBotContext extends Context {
   };
 }
 
-const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
+export const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
   try {
     if (!isNotNullOrUndefined(ctx.myContext)) {
       // @ts-expect-error
@@ -57,5 +56,3 @@ const contextMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
     return next();
   }
 };
-
-export default contextMiddleware;

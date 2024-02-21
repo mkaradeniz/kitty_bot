@@ -1,17 +1,18 @@
 import { code, fmt } from 'telegraf/format';
 
-import createSendAdminMessage from '../utils/message/createSendAdminMessage';
-import createSendGif from '../utils/message/createSendGif';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import stringify from '../utils/misc/stringify';
+import { envConfig } from '@config/env';
 
-// Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-const sendDebugCommand = async (ctx: MyBotContext) => {
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { logger } from '@utils/logger/logger';
+import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
+import { createSendGif } from '@utils/message/createSendGif';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { stringify } from '@utils/misc/stringify';
+
+export const sendDebugCommand = async (ctx: MyBotContext) => {
   // ! This only works if we have the `adminUserId` defined in the ENVs.
   if (!isNotNullOrUndefined(envConfig.adminUserId)) {
     return;
@@ -35,5 +36,3 @@ const sendDebugCommand = async (ctx: MyBotContext) => {
     logger.error(err);
   }
 };
-
-export default sendDebugCommand;

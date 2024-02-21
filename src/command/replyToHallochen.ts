@@ -1,13 +1,12 @@
-import createSendGif from '../utils/message/createSendGif';
-import getRandomFuckYouGif from '../utils/gifs/getRandomFuckYouGif';
-import getRandomHelloGif from '../utils/gifs/getRandomHelloGif';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-// Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { getRandomFuckYouGif } from '@utils/gifs/getRandomFuckYouGif';
+import { getRandomHelloGif } from '@utils/gifs/getRandomHelloGif';
+import { logger } from '@utils/logger/logger';
+import { createSendGif } from '@utils/message/createSendGif';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const replyToHallochen = async (ctx: MyBotContext) => {
+export const replyToHallochen = async (ctx: MyBotContext) => {
   try {
     const sendGif = createSendGif(ctx);
 
@@ -34,5 +33,3 @@ const replyToHallochen = async (ctx: MyBotContext) => {
     logger.error(err);
   }
 };
-
-export default replyToHallochen;

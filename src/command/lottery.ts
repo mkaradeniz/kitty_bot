@@ -1,29 +1,32 @@
-import pluralize from 'pluralize';
 import { differenceBy } from 'lodash';
+import pluralize from 'pluralize';
 
-import benchPlayersDb from '../db/benchPlayers';
-import confirmPlayersDb from '../db/confirmPlayers';
-import createCallback from '../utils/misc/createCallback';
-import createSendGif from '../utils/message/createSendGif';
-import createSendLineup from './sendLineup';
-import createSendMessage from '../utils/message/createSendMessage';
-import envConfig from '../config/env';
-import formatListPart from '../utils/misc/formatListPart';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getPlayersExternalPlayingCount from '../utils/state/getPlayersExternalPlayingCount';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import getRandomBenchedGif from '../utils/gifs/getRandomBenchedGif';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import logger from '../utils/logger';
-import pickPlayersWeighted from '../utils/misc/pickPlayersWeighted';
-import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
-import setLotteryDone from '../db/setLotteryDone';
-import wait from '../utils/misc/wait';
+import { envConfig } from '@config/env';
 
-// Types
-import { Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { benchPlayersDb } from '@db/benchPlayers';
+import { confirmPlayersDb } from '@db/confirmPlayers';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+import { setLotteryDone } from '@db/setLotteryDone';
+
+import { sendLineupCompleteMessageIfTrue } from '@message/sendLineupCompleteMessageIfTrue';
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { getUsernameFromContext } from '@utils/context/getUsernameFromContext';
+import { getRandomBenchedGif } from '@utils/gifs/getRandomBenchedGif';
+import { logger } from '@utils/logger/logger';
+import { createSendGif } from '@utils/message/createSendGif';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { formatListPart } from '@utils/misc/formatListPart';
+import { pickPlayersWeighted } from '@utils/misc/pickPlayersWeighted';
+import { wait } from '@utils/misc/wait';
+import { getPlayersBenchedCount } from '@utils/state/getPlayersBenchedCount';
+import { getPlayersExternalPlayingCount } from '@utils/state/getPlayersExternalPlayingCount';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+import { Emoji } from '@app-types/app';
+
+import { createSendLineup } from './sendLineup';
 
 // @ts-expect-error | TypeScript doesn't have types for this yet.
 const listFormatter = new Intl.ListFormat('en');
@@ -33,7 +36,7 @@ type CreateLotteryInput = {
   isForced?: boolean;
 };
 
-const createLottery =
+export const createLottery =
   ({ isCallback = false, isForced = false }: CreateLotteryInput = {}) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -153,5 +156,3 @@ const createLottery =
       return callback();
     }
   };
-
-export default createLottery;

@@ -8,8 +8,6 @@ const GIFS = [
   'https://media4.giphy.com/media/XHr6LfW6SmFa0/giphy.gif?cid=790b7611912c2e60fcada35c8aa7887965461c7f6e59382e&rid=giphy.gif&ct=g',
 ];
 
-const getRandomFuckYouGif = () => {
+export const getRandomFuckYouGif = () => {
   return sample(GIFS) as string;
 };
-
-export default getRandomFuckYouGif;

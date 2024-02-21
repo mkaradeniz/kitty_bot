@@ -1,12 +1,12 @@
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import logger from '../utils/logger';
-import resetCurrentQuizDb from '../db/resetCurrentQuiz';
+import { resetCurrentQuizDb } from '@db/resetCurrentQuiz';
 
-// Types
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-const createResetCurrentQuizCommand =
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+
+export const createResetCurrentQuizCommand =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -25,5 +25,3 @@ const createResetCurrentQuizCommand =
       return callback();
     }
   };
-
-export default createResetCurrentQuizCommand;

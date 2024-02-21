@@ -1,4 +1,4 @@
-const getNumberOfInviteesFromEmoji = (emoji?: string | null) => {
+export const getNumberOfInviteesFromEmoji = (emoji?: string | null) => {
   switch (emoji) {
     case '0️⃣': {
       return 0;
@@ -45,5 +45,3 @@ const getNumberOfInviteesFromEmoji = (emoji?: string | null) => {
     }
   }
 };
-
-export default getNumberOfInviteesFromEmoji;

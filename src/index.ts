@@ -1,43 +1,43 @@
-require('dotenv').config();
-
-(BigInt.prototype as any)['toJSON'] = function () {
-  return this.toString();
-};
-
 import cron from 'node-cron';
 import { Telegraf } from 'telegraf';
 import { code, fmt } from 'telegraf/format';
 
-import calculateLastQuizsBenchedPlayersBenchCount from './db/calculateLastQuizsBenchedPlayersBenchCount';
-import contextMiddleware from './middleware/contextMiddleware';
-import createBenchPlayer from './command/benchPlayer';
-import createConfirmGuests from './command/confirmGuests';
-import createConfirmPlayer from './command/confirmPlayer';
-import createLottery from './command/lottery';
-import createResetCurrentQuizCommand from './command/resetState';
-import createSendAdminMessage from './utils/message/createSendAdminMessage';
-import createSendEmailReminder from './message/sendEmailReminder';
-import createSendIntro from './message/sendIntro';
-import createSendIntroDev from './message/sendIntroDev';
-import createSendLineup from './command/sendLineup';
-import createSendReminder from './message/sendReminder';
-import createSendTableBookingCancelEmail from './command/sendTableBookingCancelEmail';
-import createSendTableBookingEmail from './command/sendTableBookingEmail';
-import createUnconfirmPlayer from './command/unconfirmPlayer';
-import dbMiddleware from './middleware/dbMiddleware';
-import envConfig from './config/env';
-import getOrCreateCurrentQuizDb from './db/getOrCreateCurrentQuiz';
-import ignoreUnknownGroupsMiddleware from './middleware/ignoreUnknownGroupsMiddleware';
-import isNotNullOrUndefined from './utils/misc/isNotNullOrUndefined';
-import logger from './utils/logger';
-import replyToHallihallo from './command/replyToHallihallo';
-import replyToHallochen from './command/replyToHallochen';
-import sendDebugCommand from './command/sendDebug';
-import stringify from './utils/misc/stringify';
+import { envConfig } from '@config/env';
 
-// Types
-import { CallbackType, Emoji } from './types';
-import { MyBotContext } from './middleware/contextMiddleware';
+import { calculateLastQuizsBenchedPlayersBenchCount } from '@db/calculateLastQuizsBenchedPlayersBenchCount';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+
+import { createBenchPlayer } from '@command/benchPlayer';
+import { createConfirmGuests } from '@command/confirmGuests';
+import { createConfirmPlayer } from '@command/confirmPlayer';
+import { createLottery } from '@command/lottery';
+import { replyToHallihallo } from '@command/replyToHallihallo';
+import { replyToHallochen } from '@command/replyToHallochen';
+import { createResetCurrentQuizCommand } from '@command/resetState';
+import { sendDebugCommand } from '@command/sendDebug';
+import { createSendLineup } from '@command/sendLineup';
+import { createSendTableBookingCancelEmail } from '@command/sendTableBookingCancelEmail';
+import { createSendTableBookingEmail } from '@command/sendTableBookingEmail';
+import { createUnconfirmPlayer } from '@command/unconfirmPlayer';
+import { createSendEmailReminder } from '@message/sendEmailReminder';
+import { createSendIntro } from '@message/sendIntro';
+import { createSendIntroDev } from '@message/sendIntroDev';
+import { createSendReminder } from '@message/sendReminder';
+import { contextMiddleware, type MyBotContext } from '@middleware/contextMiddleware';
+import { dbMiddleware } from '@middleware/dbMiddleware';
+import { debugMiddleware } from '@middleware/debugMiddleware';
+import { ignoreUnknownGroupsMiddleware } from '@middleware/ignoreUnknownGroupsMiddleware';
+
+import { logger } from '@utils/logger/logger';
+import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { stringify } from '@utils/misc/stringify';
+
+import { CallbackType, Emoji } from '@app-types/app';
+
+(BigInt.prototype as any)['toJSON'] = function () {
+  return this.toString();
+};
 
 const bot = new Telegraf<MyBotContext>(envConfig.botToken);
 
@@ -49,6 +49,8 @@ bot.use(ignoreUnknownGroupsMiddleware);
 bot.use(contextMiddleware);
 
 bot.use(dbMiddleware);
+
+bot.use(debugMiddleware);
 
 // Callback Actions
 bot.action(CallbackType.Bench, createBenchPlayer(true));
@@ -71,6 +73,7 @@ bot.action(CallbackType.SendCancelEmail, createSendTableBookingCancelEmail(true)
 bot.action(CallbackType.Unconfirm, createUnconfirmPlayer(true));
 
 // Hears
+// This is specific to a max-player count of 8.
 bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), createConfirmGuests());
 
 bot.hears(new RegExp(`(${Emoji.PlayerBenched})`), createBenchPlayer());

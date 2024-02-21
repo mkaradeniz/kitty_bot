@@ -1,16 +1,18 @@
-import createSendMessageWithoutContext from '../utils/message/createSendMessageWithoutContext';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import { BUTTONS_TUTORIAL } from '../config/constants';
-import { TEXT_TUTORIAL } from '../config/texts';
+import { type Telegraf } from 'telegraf';
 
-// Types
-import { Emoji } from '../types';
-import { Telegraf } from 'telegraf';
+import { BUTTONS_TUTORIAL } from '@config/constants';
+import { envConfig } from '@config/env';
+import { TEXT_TUTORIAL } from '@config/texts';
 
-const createSendIntro = (bot: Telegraf<any>) => async () => {
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+
+import { logger } from '@utils/logger/logger';
+import { createSendMessageWithoutContext } from '@utils/message/createSendMessageWithoutContext';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+
+import { Emoji } from '@app-types/app';
+
+export const createSendIntro = (bot: Telegraf<any>) => async () => {
   // ! This only works if we have the `pubquizChatId` defined in the ENVs.
   if (!isNotNullOrUndefined(envConfig.pubquizChatId)) {
     return;
@@ -31,5 +33,3 @@ const createSendIntro = (bot: Telegraf<any>) => async () => {
     logger.error(err);
   }
 };
-
-export default createSendIntro;

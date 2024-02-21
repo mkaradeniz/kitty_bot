@@ -19,8 +19,6 @@ const GIFS = [
   'https://media4.giphy.com/media/pcwaLYOQb3xN6/giphy.gif?cid=790b7611c6e165dea4c5609ea7518cad11bc85b7a0c68012&rid=giphy.gif&ct=g',
 ];
 
-const getRandomBenchedGif = () => {
+export const getRandomHelloGif = () => {
   return sample(GIFS) as string;
 };
-
-export default getRandomBenchedGif;

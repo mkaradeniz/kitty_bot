@@ -1,6 +1,6 @@
 import winston from 'winston';
 
-const formatErrors = winston.format(info => {
+export const formatErrors = winston.format(info => {
   if ((info.message as any) instanceof Error) {
     return Object.assign(
       {
@@ -17,5 +17,3 @@ const formatErrors = winston.format(info => {
 
   return info;
 });
-
-export default formatErrors;

@@ -1,11 +1,11 @@
-import envConfig from '../config/env';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
+import { envConfig } from '@config/env';
 
-// Types
-import { MyBotContext } from './contextMiddleware';
+import { logger } from '@utils/logger/logger';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-const ignoreUnknownGroupsMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
+import { type MyBotContext } from './contextMiddleware';
+
+export const ignoreUnknownGroupsMiddleware = (ctx: MyBotContext, next: () => Promise<void>) => {
   try {
     // @ts-expect-error
     const chatId = ctx?.message?.chat.id ?? ctx?.update?.callback_query?.message?.chat?.id ?? undefined;
@@ -27,5 +27,3 @@ const ignoreUnknownGroupsMiddleware = (ctx: MyBotContext, next: () => Promise<vo
     return next();
   }
 };
-
-export default ignoreUnknownGroupsMiddleware;

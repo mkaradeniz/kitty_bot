@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: 'kb',
-      script: './dist/src/index.js',
+      name: 'kitty-bot',
+      script: './kitty_bot/dist/src/index.js',
     },
   ],
 };

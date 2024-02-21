@@ -1,21 +1,22 @@
 import { Markup } from 'telegraf';
 
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import getButtonFromCallbackType from '../utils/misc/getButtonFromCallbackType';
-import getLineup from '../utils/state/getLineup';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getPlayersOutCount from '../utils/state/getPlayersOutCount';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import logger from '../utils/logger';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-// Types
-import { CallbackType } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { sendOverbookedWarningIfTrue } from '@message/sendOverbookedWarningIfTrue';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-const createSendLineup =
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { getButtonFromCallbackType } from '@utils/misc/getButtonFromCallbackType';
+import { getLineup } from '@utils/state/getLineup';
+import { getPlayersBenchedCount } from '@utils/state/getPlayersBenchedCount';
+import { getPlayersOutCount } from '@utils/state/getPlayersOutCount';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+
+import { CallbackType } from '@app-types/app';
+
+export const createSendLineup =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -59,5 +60,3 @@ const createSendLineup =
       return callback();
     }
   };
-
-export default createSendLineup;

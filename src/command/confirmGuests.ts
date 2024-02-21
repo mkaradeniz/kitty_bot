@@ -1,31 +1,32 @@
 import pluralize from 'pluralize';
 
-import confirmPlayersExternalDb from '../db/confirmPlayersExternal';
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import getNumberOfInviteesFromEmoji from '../utils/state/getNumberOfInviteesFromEmoji';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersBenchedCount from '../utils/state/getPlayersBenchedCount';
-import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import hasPlayerInvitations from '../utils/state/hasPlayerInvitations';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import removePlayersExternalDb from '../db/removePlayersExternal';
-import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
-import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
+import { confirmPlayersExternalDb } from '@db/confirmPlayersExternal';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+import { removePlayersExternalDb } from '@db/removePlayersExternal';
 
-// Types
-import { Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { sendCurrentPlayerCount } from '@message/sendCurrentPlayerCount';
+import { sendLineupCompleteMessageIfTrue } from '@message/sendLineupCompleteMessageIfTrue';
+import { sendOverbookedWarningIfTrue } from '@message/sendOverbookedWarningIfTrue';
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { getTelegramIdFromContext } from '@utils/context/getTelegramIdFromContext';
+import { getUsernameFromContext } from '@utils/context/getUsernameFromContext';
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { getNumberOfInviteesFromEmoji } from '@utils/state/getNumberOfInviteesFromEmoji';
+import { getPlayersBenchedCount } from '@utils/state/getPlayersBenchedCount';
+import { hasPlayerInvitations } from '@utils/state/hasPlayerInvitations';
+
+import { Emoji } from '@app-types/app';
 
 type CreateConfirmGuestsInput = {
   isCallback?: boolean;
   numberOfInviteesFromCallback?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 };
 
-const createConfirmGuests =
+export const createConfirmGuests =
   ({ isCallback = false, numberOfInviteesFromCallback }: CreateConfirmGuestsInput = {}) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -92,5 +93,3 @@ const createConfirmGuests =
       return callback();
     }
   };
-
-export default createConfirmGuests;

@@ -1,22 +1,23 @@
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import isPlayerOut from '../utils/state/isPlayerOut';
-import logger from '../utils/logger';
-import pickPlayerFromBench from '../utils/state/pickPlayerFromBench';
-import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
-import unconfirmPlayerDb from '../db/unconfirmPlayer';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+import { unconfirmPlayerDb } from '@db/unconfirmPlayer';
 
-// Types
-import { Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
-import isPlayerRegistered from '../utils/state/isPlayerRegistered';
+import { sendCurrentPlayerCount } from '@message/sendCurrentPlayerCount';
+import { sendOverbookedWarningIfTrue } from '@message/sendOverbookedWarningIfTrue';
+import { type MyBotContext } from '@middleware/contextMiddleware';
 
-const createUnconfirmPlayer =
+import { getTelegramIdFromContext } from '@utils/context/getTelegramIdFromContext';
+import { getUsernameFromContext } from '@utils/context/getUsernameFromContext';
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { isPlayerOut } from '@utils/state/isPlayerOut';
+import { isPlayerRegistered } from '@utils/state/isPlayerRegistered';
+import { pickPlayerFromBench } from '@utils/state/pickPlayerFromBench';
+
+import { Emoji } from '@app-types/app';
+
+export const createUnconfirmPlayer =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -62,5 +63,3 @@ const createUnconfirmPlayer =
       return callback();
     }
   };
-
-export default createUnconfirmPlayer;

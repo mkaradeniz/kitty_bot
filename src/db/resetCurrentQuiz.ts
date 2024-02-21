@@ -1,9 +1,10 @@
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-import getOrCreateCurrentQuizDb from './getOrCreateCurrentQuiz';
+import { logger } from '@utils/logger/logger';
 
-const resetCurrentQuizDb = async () => {
+import { getOrCreateCurrentQuizDb } from './getOrCreateCurrentQuiz';
+
+export const resetCurrentQuizDb = async () => {
   const currentQuiz = await getOrCreateCurrentQuizDb();
 
   await prisma.quiz.update({
@@ -20,5 +21,3 @@ const resetCurrentQuizDb = async () => {
 
   logger.silly(`Reset quiz for the ${currentQuiz.dateFormatted}.`, { label: 'src/db/resetCurrentQuiz.ts:21' });
 };
-
-export default resetCurrentQuizDb;

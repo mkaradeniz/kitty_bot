@@ -1,8 +1,9 @@
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import logger from '../utils/logger';
-import prisma from '../../prisma/prisma';
+import prisma from '@db-prisma/prisma';
 
-const calculateLastQuizsBenchedPlayersBenchCount = async () => {
+import { logger } from '@utils/logger/logger';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+
+export const calculateLastQuizsBenchedPlayersBenchCount = async () => {
   try {
     const quizzesWithBenchesUncounted = await prisma.quiz.findMany({
       orderBy: [{ date: 'desc' }],
@@ -33,5 +34,3 @@ const calculateLastQuizsBenchedPlayersBenchCount = async () => {
     logger.error(err);
   }
 };
-
-export default calculateLastQuizsBenchedPlayersBenchCount;

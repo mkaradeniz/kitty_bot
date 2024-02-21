@@ -1,9 +1,8 @@
-import isNotNullOrUndefined from '../misc/isNotNullOrUndefined';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 
-// Types
-import { MyBotContext } from '../../middleware/contextMiddleware';
+import { type MyBotContext } from '../../middleware/contextMiddleware';
 
-const getUsernameFromContext = (ctx: MyBotContext) => {
+export const getUsernameFromContext = (ctx: MyBotContext) => {
   const username = ctx.myContext.user?.first_name;
 
   if (!isNotNullOrUndefined(username)) {
@@ -15,5 +14,3 @@ const getUsernameFromContext = (ctx: MyBotContext) => {
 
   return { username, usernameInBold };
 };
-
-export default getUsernameFromContext;

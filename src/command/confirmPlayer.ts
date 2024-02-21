@@ -1,25 +1,27 @@
-import benchPlayersDb from '../db/benchPlayers';
-import confirmPlayerDb from '../db/confirmPlayers';
-import createCallback from '../utils/misc/createCallback';
-import createSendMessage from '../utils/message/createSendMessage';
-import envConfig from '../config/env';
-import getOrCreateCurrentQuizDb from '../db/getOrCreateCurrentQuiz';
-import getPlayersPlayingCount from '../utils/state/getPlayersPlayingCount';
-import getTelegramIdFromContext from '../utils/context/getTelegramIdFromContext';
-import getUsernameFromContext from '../utils/context/getUsernameFromContext';
-import isNotNullOrUndefined from '../utils/misc/isNotNullOrUndefined';
-import isPlayerBenched from '../utils/state/isPlayerBenched';
-import isPlayerPlaying from '../utils/state/isPlayerRegistered';
-import logger from '../utils/logger';
-import sendCurrentPlayerCount from '../message/sendCurrentPlayerCount';
-import sendLineupCompleteMessageIfTrue from '../message/sendLineupCompleteMessageIfTrue';
-import sendOverbookedWarningIfTrue from '../message/sendOverbookedWarningIfTrue';
+import { envConfig } from '@config/env';
 
-// Types
-import { Emoji } from '../types';
-import { MyBotContext } from '../middleware/contextMiddleware';
+import { benchPlayersDb } from '@db/benchPlayers';
+import { confirmPlayersDb } from '@db/confirmPlayers';
+import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
 
-const createConfirmPlayer =
+import { sendCurrentPlayerCount } from '@message/sendCurrentPlayerCount';
+import { sendLineupCompleteMessageIfTrue } from '@message/sendLineupCompleteMessageIfTrue';
+import { sendOverbookedWarningIfTrue } from '@message/sendOverbookedWarningIfTrue';
+import { type MyBotContext } from '@middleware/contextMiddleware';
+
+import { getTelegramIdFromContext } from '@utils/context/getTelegramIdFromContext';
+import { getUsernameFromContext } from '@utils/context/getUsernameFromContext';
+import { logger } from '@utils/logger/logger';
+import { createSendMessage } from '@utils/message/createSendMessage';
+import { createCallback } from '@utils/misc/createCallback';
+import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
+import { isPlayerBenched } from '@utils/state/isPlayerBenched';
+import { isPlayerRegistered } from '@utils/state/isPlayerRegistered';
+
+import { Emoji } from '@app-types/app';
+
+export const createConfirmPlayer =
   (isCallback = false) =>
   async (ctx: MyBotContext) => {
     const callback = createCallback({ ctx, isCallback });
@@ -46,7 +48,7 @@ const createConfirmPlayer =
         return callback();
       }
 
-      if (isPlayerPlaying({ currentQuiz, telegramId })) {
+      if (isPlayerRegistered({ currentQuiz, telegramId })) {
         await sendMessage(`Thanks for letting us know, <i>again</i>, that you want to play this week, ${usernameInBold}. ${Emoji.Repeat}`);
 
         return callback();
@@ -58,7 +60,7 @@ const createConfirmPlayer =
         return callback();
       }
 
-      await confirmPlayerDb(telegramId);
+      await confirmPlayersDb(telegramId);
 
       await sendMessage(`${Emoji.Team} ${usernameInBold} is in! ${Emoji.Positive}`);
 
@@ -74,5 +76,3 @@ const createConfirmPlayer =
       return callback();
     }
   };
-
-export default createConfirmPlayer;
