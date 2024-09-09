@@ -32,6 +32,7 @@ import { logger } from '@utils/logger/logger';
 import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
 import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 import { stringify } from '@utils/misc/stringify';
+import { getNumberOfInviteesFromEmoji } from '@utils/state/getNumberOfInviteesFromEmoji';
 
 import { CallbackType, Emoji } from '@app-types/app';
 
@@ -74,7 +75,17 @@ bot.action(CallbackType.Unconfirm, createUnconfirmPlayer(true));
 
 // Hears
 // This is specific to a max-player count of 8.
-bot.hears(new RegExp('([0️⃣,1️⃣,2️⃣,3️⃣,4️⃣,5️⃣,6️⃣,7️⃣,8️⃣])'), createConfirmGuests());
+// @ts-expect-error
+bot.hears(message => {
+  // I couldn't find a regex that lisents to the combined emoji (f.e. 1️⃣) & the symbol made from the number and the enclosing keycap symbol (f.e. 1⃣).
+  const numberOInvitees = getNumberOfInviteesFromEmoji(message);
+
+  if (numberOInvitees < 0) {
+    return false;
+  }
+
+  return true;
+}, createConfirmGuests());
 
 bot.hears(new RegExp(`(${Emoji.PlayerBenched})`), createBenchPlayer());
 
