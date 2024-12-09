@@ -18,6 +18,7 @@ export interface EnvConfig {
   isDev: boolean;
   isProduction: boolean;
   maxPlayers: number;
+  minPlayersThreshold: number;
   pubquizChatId: number | null;
   settingLogFilePath: string;
   settingLogLevel: string;
@@ -110,6 +111,12 @@ export const envConfig: EnvConfig = describe({
     isRequired: false,
     name: 'MAX_PLAYERS',
     standard: 8,
+    type: Type.NUMBER,
+  },
+  minPlayersThreshold: {
+    isRequired: false,
+    name: 'MIN_PLAYERS_THRESHOLD',
+    standard: 4,
     type: Type.NUMBER,
   },
   pubquizChatId: {

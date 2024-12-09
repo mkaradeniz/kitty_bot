@@ -6,6 +6,7 @@ import { envConfig } from '@config/env';
 
 import { calculateLastQuizsBenchedPlayersBenchCount } from '@db/calculateLastQuizsBenchedPlayersBenchCount';
 import { getOrCreateCurrentQuizDb } from '@db/getOrCreateCurrentQuiz';
+import { setEmailSentDb } from '@db/setEmailSent';
 
 import { createBenchPlayer } from '@command/benchPlayer';
 import { createConfirmGuests } from '@command/confirmGuests';
@@ -28,11 +29,14 @@ import { dbMiddleware } from '@middleware/dbMiddleware';
 import { debugMiddleware } from '@middleware/debugMiddleware';
 import { ignoreUnknownGroupsMiddleware } from '@middleware/ignoreUnknownGroupsMiddleware';
 
+import { sendTableBookingCancelEmail } from '@utils/email/sendTableBookingCancelEmail';
+import { sendTableBookingEmail } from '@utils/email/sendTableBookingEmail';
 import { logger } from '@utils/logger/logger';
 import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
 import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 import { stringify } from '@utils/misc/stringify';
 import { getNumberOfInviteesFromEmoji } from '@utils/state/getNumberOfInviteesFromEmoji';
+import { getPlayersPlayingCount } from '@utils/state/getPlayersPlayingCount';
 
 import { CallbackType, Emoji } from '@app-types/app';
 
@@ -167,6 +171,27 @@ const main = async () => {
     await getOrCreateCurrentQuizDb();
 
     await calculateLastQuizsBenchedPlayersBenchCount();
+  });
+
+  // At 00:00 on Monday.
+  cron.schedule('0 2 * * 4', async () => {
+    // If we did not send the mail yet, we'll send it now.
+    // If we have less then the configured threshold of players, we'll cancel.
+    const currentQuiz = await getOrCreateCurrentQuizDb();
+
+    if (!currentQuiz.isEmailSent) {
+      const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
+
+      if (playersPlayingCount < envConfig.minPlayersThreshold) {
+        await sendTableBookingCancelEmail(currentQuiz.dateFormatted);
+
+        await setEmailSentDb();
+      } else {
+        await sendTableBookingEmail({ date: currentQuiz.dateFormatted, playersPlayingCount });
+
+        await setEmailSentDb();
+      }
+    }
   });
 
   void bot.launch();
