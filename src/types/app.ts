@@ -30,4 +30,5 @@ export enum Emoji {
   Repeat = '🫠',
   ResetState = '🗑',
   Team = '🥒',
+  Warning = '⚠️',
 }

@@ -27,7 +27,7 @@ export const sendOverbookedWarningIfTrue = async (ctx: MyBotContext) => {
   }
 
   try {
-    await sendMessage(`⚠️ We're overbooked! ⚠️`);
+    await sendMessage(`${Emoji.Warning} We're overbooked! ${Emoji.Warning}`);
 
     if (!currentQuiz.isLotteryDone) {
       await sendMessage(
