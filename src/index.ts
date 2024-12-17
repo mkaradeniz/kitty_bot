@@ -29,10 +29,10 @@ import { dbMiddleware } from '@middleware/dbMiddleware';
 import { debugMiddleware } from '@middleware/debugMiddleware';
 import { ignoreUnknownGroupsMiddleware } from '@middleware/ignoreUnknownGroupsMiddleware';
 
-import { sendTableBookingCancelEmail } from '@utils/email/sendTableBookingCancelEmail';
 import { sendTableBookingEmail } from '@utils/email/sendTableBookingEmail';
 import { logger } from '@utils/logger/logger';
 import { createSendAdminMessage } from '@utils/message/createSendAdminMessage';
+import { createSendMessageWithoutContext } from '@utils/message/createSendMessageWithoutContext';
 import { isNotNullOrUndefined } from '@utils/misc/isNotNullOrUndefined';
 import { stringify } from '@utils/misc/stringify';
 import { getNumberOfInviteesFromEmoji } from '@utils/state/getNumberOfInviteesFromEmoji';
@@ -149,6 +149,7 @@ const main = async () => {
   const sendEmailReminder = createSendEmailReminder(bot);
   const sendIntro = createSendIntro(bot);
   const sendReminder = createSendReminder(bot);
+  const sendMessageWithoutContext = createSendMessageWithoutContext(bot);
 
   // At 12:00 on Saturday.
   cron.schedule('0 12 * * 6', () => {
@@ -183,13 +184,15 @@ const main = async () => {
       const playersPlayingCount = getPlayersPlayingCount(currentQuiz);
 
       if (playersPlayingCount < envConfig.minPlayersThreshold) {
-        await sendTableBookingCancelEmail(currentQuiz.dateFormatted);
-
         await setEmailSentDb();
+
+        await sendMessageWithoutContext(`${Emoji.Negative} I just sent ${envConfig.emailToName} a breakup letter (for this week).`);
       } else {
         await sendTableBookingEmail({ date: currentQuiz.dateFormatted, playersPlayingCount });
 
         await setEmailSentDb();
+
+        await sendMessageWithoutContext(`${Emoji.EmailBook} I just sent ${envConfig.emailToName} a (love-)letter.`);
       }
     }
   });
