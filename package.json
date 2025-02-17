@@ -21,7 +21,7 @@
     "db:generate": "prisma generate",
     "db:push": "dotenv -e .env prisma db push",
     "db:studio": "prisma studio",
-    "deploy": "git pull && yarn build && supervisorctl restart bot-kitty",
+    "deploy": "git pull && yarn build && yarn sv:restart",
     "dev": "nodemon src/index.ts",
     "format": "prettier --loglevel warn --write .",
     "sv:restart": "supervisorctl restart bot-kitty",
