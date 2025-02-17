@@ -175,7 +175,7 @@ const main = async () => {
   });
 
   // At 00:00 on Monday.
-  cron.schedule('0 2 * * 4', async () => {
+  cron.schedule('0 0 * * 1', async () => {
     // If we did not send the mail yet, we'll send it now.
     // If we have less then the configured threshold of players, we'll cancel.
     const currentQuiz = await getOrCreateCurrentQuizDb();
